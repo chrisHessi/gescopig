@@ -136,4 +136,8 @@ class Enseignement extends Model
         return $this->hasMany(Note::class);
     }
 
+    public function teacher_pays(){
+        return $this->belongsToMany(TeacherPay::class, 'enseignements_payments', 'teacher_pays_id');
+    }
+
 }

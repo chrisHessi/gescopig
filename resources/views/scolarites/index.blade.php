@@ -26,6 +26,7 @@
                             <th>Scolarité</th>
                             <th>Scolarité attendue</th>
                             <th>Montant versé</th>
+                            <th>Solde</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -43,6 +44,10 @@
                                 <td>{!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') !!}</td>
                                 <td>{!! ($contrat->moratoire) ? $contrat->moratoires->where('date', '<=', Carbon\Carbon::today())->sum('montant') : $echeanciers->where('cycle_id', $contrat->cycle_id)->sum('montant') !!}</td>
                                 <td>{!! $contrat->versements->sum('montant') !!}</td>
+                                <td>{!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') 
+                                            - $contrat->versements->sum('montant') + ($contrat->corkages->first() ? $contrat->corkages->sum('montant') : 0) !!}
+                                </td>
+                                    
                                 <td>
                                     @can('print documents')
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
@@ -119,11 +124,11 @@
                             {!! Form::label('reduction', 'Bourse/Réduction:') !!}
                             {!! Form::number('reduction', null, ['class' => 'form-control']) !!}
                         </div>
-                        <div class="form-group col-xs-4 doc susp">
+                        <div class="form-group col-xs-4 doc">
                             {!! Form::label('titre', 'titre signataire:') !!}
                             {!! Form::text('titre', null, ['class' => 'form-control']) !!}
                         </div>
-                        <div class="form-group col-xs-4 doc susp">
+                        <div class="form-group col-xs-4 doc">
                             {!! Form::label('signataire', 'Nom Signataire:') !!}
                             {!! Form::text('signataire', null, ['class' => 'form-control']) !!}
                         </div>
@@ -165,6 +170,7 @@
                     $('div.doc').hide()
                     $('div.susp').show()
                 }
+
 
 
                 console.log(type)
@@ -212,7 +218,7 @@
                 //     'copy', 'excel', 'pdf'
                 // ],
                 "columnDefs":[
-                    {"orderable":false, "targets":2}
+                    {"orderable":false, "targets":6}
                 ]
             });
         });

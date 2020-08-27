@@ -27,6 +27,7 @@
                             <th>Scolarité</th>
                             <th>Scolarité attendue</th>
                             <th>Montant versé</th>
+                            <th>Solde</th>
                         </tr>
                         </thead>
 
@@ -44,6 +45,12 @@
                                     <td>{!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') !!}</td>
                                     <td>{!! ($contrat->moratoire) ? $contrat->moratoires->where('date', '<=', Carbon\Carbon::today())->sum('montant') : $echeanciers->where('cycle_id', $contrat->cycle_id)->sum('montant') !!}</td>
                                     <td>{!! $contrat->versements->sum('montant') !!}</td>
+                                    <td>
+                                        {!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') 
+                                            - $contrat->versements->sum('montant') + ($contrat->corkages->first() ? $contrat->corkages->sum('montant') : 0) 
+                                        !!}
+                                    </td>
+                                    
                                 @endif
                             </tr>
                         @endforeach

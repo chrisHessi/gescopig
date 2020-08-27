@@ -9,6 +9,8 @@ class ContratEnseignant extends Model
     protected $fillable = [
         'enseignant_id',
         'academic_year_id',
+        'mh_licence',
+        'mh_master'
     ];
 
     public function enseignant(){
@@ -22,5 +24,9 @@ class ContratEnseignant extends Model
     public function enseignements()
     {
         return $this->hasMany(\App\Models\Enseignement::class);
+    }
+
+    public function payments(){
+        return $this->hasManyThrough(TeachersPay::class, Enseignement::class);
     }
 }

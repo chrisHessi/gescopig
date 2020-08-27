@@ -26,14 +26,17 @@
                                 <td>{!! $enseignant->name !!}</td>
                                 {{--                                <td>{!! (!empty($apprenant->contrats->last()->resultatNominatifs)) ? $apprenant->contrats->last()->resultatNominatifs : '' !!}</td>--}}
                                 <td>
-                                    <a href="{{ route('contratEnseignants.save', [$enseignant->id]) }}" class="btn btn-primary">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-target="#printModal" data-id="{{ $enseignant->id }}"
+                                            id="autoriser" title="Contrat de charge d'enseignement">
                                         Autoriser
-                                    </a>
+                                    </button>
+                                    
                                 </td>
                             </tr>
                         @endforeach
                         </tbody>
-                    </table>
+                    </table>  
                 </div>
             </div>
 
@@ -43,9 +46,56 @@
         </div>
     </div>
 
+    <div class="modal fade" id="printModal" tabindex="-1" role="dialog" aria-labelledby="printModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {{Form::open(['route' => 'contratEnseignants.store'])}}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="justificationModalLabel">Infos</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group col-xs-6 doc">
+                                {!! Form::label('mh_licence', 'Montant Horaire Licence:') !!}
+                                {!! Form::text('mh_licence', null, ['class' => 'form-control']) !!}
+                            </div>
+                            
+                            <div class="form-group col-xs-6 semestre doc">
+                                {!! Form::label('mh_master', 'Montant horaire Master:') !!}
+                                {!! Form::text('mh_master', null, ['class' => 'form-control']) !!}
+                            </div>
+                            <div id="enseignant-id"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close">Close</button>
+                        <button class="btn btn-primary" id="send">Save</button>
+                    </div>
+                {{Form::close()}}
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('scripts')
+
+
+    
+
+    <script type="text/javascript">
+        $(function(){
+            $('#printModal').on('show.bs.modal', function(e){
+                var button = $(e.relatedTarget);
+                var id = button.data('id');
+                var input = '<input name="enseignant_id" type="hidden" value="'+ id +'"/>';
+                $('#enseignant-id').html(input);
+            })
+        })
+    </script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
     <script>
         $(function(){

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="app">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Gestion Scolaire de PIGIER Cameroun</title>
@@ -38,7 +38,7 @@
     @yield('css')
 </head>
 
-<body class="">
+<body class="skin-blue">
 @if (!Auth::guest())
     <div class="wrapper">
 
@@ -84,14 +84,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.2/js/adminlte.min.js"></script>
 
     {{--AngularJS--}}
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/icheck.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
     {{--<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>--}}
     {{--<script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>--}}
-
-    <script src="{{ asset("js/angular/app.js") }}"></script>
 
 
 

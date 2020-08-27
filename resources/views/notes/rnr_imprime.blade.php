@@ -27,7 +27,7 @@
                 .table-bordered> tbody>tr>td,
                 .table-bordered> thead>tr>th,
                 .table-bordered>tbody>tr>th{
-                    border: 1px solid #000000;!important;
+                    border: 1px solid #000000 !important;
                 }
             }
             #logo_pigier{
@@ -50,6 +50,10 @@
             .table-bordered> thead>tr>th,
             .table-bordered>tbody>tr>th{
                 border: 1px solid #000000;!important;
+            }
+
+            .table-bordered>thead>tr.ue{
+                background-color: #D3D3D3;
             }
             /*.resultats{*/
                 /*background-color: #a6a28c;*/
@@ -121,7 +125,7 @@
                                         </tr>
                                         <tr>
                                             <th>Specialité et niveau/ Speciality Level: </th>
-                                            <td>{{ $contrat->specialite->title. ' - '.$contrat->specialite->slug. '-L'  .$enseignements->first()->ecue->semestre->cycle->niveau }}</td>
+                                            <td>{{ $contrat->specialite->title. ' - '.$contrat->specialite->slug. (($enseignements->first()->ecue->semestre->cycle->label == 'Licence') ? '-L' : ' ') .$enseignements->first()->ecue->semestre->cycle->niveau }}</td>
                                         </tr>
                                         <tr>
                                             <th>Semestre/ Semester</th>
@@ -159,7 +163,7 @@
                         <div class="row notes-table">
                             <table class="table table-bordered">
                                 <thead>
-                                <tr style="border: 1px solid #000000">
+                                <tr style="border: 1px solid #006800" class="ue">
                                     <th>Code</th>
                                     <th colspan="2">Unité d'Enseigement (UE) /Element constitutifs de l'UE (ECUE)</th>
                                     <th>Valeur CECT</th>
@@ -174,10 +178,10 @@
                                 <tbody>
 
                                     @foreach($ues as $ue)
-                                        <tr class="bg-default">
+                                        <tr class="">
                                             {{--Nombre de lignes dependent du nombre d'ecues de l'ue + 2--}}
                                             <td rowspan="{{ $enseignements->where('ue_id', $ue->id)->count()+2 }}"><strong>{{ $ue->code. $specialityCode. $semestre->id }}</strong></td>
-                                            <td colspan="2"><strong>{{ $ue->title }}</strong></td>
+                                            <td colspan="2" class="text-primary"><strong>{{ $ue->title }}</strong></td>
                                             <td><strong>{{ $enseignements->where('ue_id', $ue->id)->sum('credits') }}</strong></td>
                                             <td><strong>{{ $contrat->ue_infos->where('ue_id', $ue->id)->first()->creditObt }}</strong></td>
                                             <td colspan="4"></td>
@@ -190,7 +194,7 @@
                                                         @if($session == 'session1')
                                                             {!! number_format($contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1, 2, ',', ' ') !!}
                                                         @elseif($session == 'session2')
-                                                            {!! number_format($contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2, 2, ',', ' ') !!}
+                                                            {!! ($contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 > $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1) ? $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 : $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1 !!}
                                                         @endif
                                                     </td>
                                                     <td>{{ $enseignement->credits }}</td>
@@ -198,7 +202,7 @@
                                                         @if($session == 'session1')
                                                             {!! number_format($contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1 * $enseignement->credits, 2, ',', ' ') !!}
                                                         @elseif($session == 'session2')
-                                                            {!! number_format($contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1 * $enseignement->credits, 2, ',', ' ') !!}
+                                                            {!! (($contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 > $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1) ? $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 : $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1) * $enseignement->credits !!}
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -206,9 +210,9 @@
                                         @endforeach
                                         <tr class="resultats">
                                             <td class="text-right">Resultat UE</td>
-                                            <td><strong>{{ $contrat->ue_infos->where('ue_id', $ue->id)->first()->mention }}</strong></td>
+                                            <td class="text-primary"><strong>{{ $contrat->ue_infos->where('ue_id', $ue->id)->first()->mention }}</strong></td>
                                             <td colspan="2" class="text-right">Moyenne UE</td>
-                                            <td>{{ number_format($contrat->ue_infos->where('ue_id', $ue->id)->first()->moyenne, 2, ',', ' ') }}</td>
+                                            <td class="text-primary">{{ number_format($contrat->ue_infos->where('ue_id', $ue->id)->first()->moyenne, 2, ',', ' ') }}</td>
                                             <td></td>
                                             <td>{{ number_format($contrat->ue_infos->where('ue_id', $ue->id)->first()->totalNotes, 2, ',', ' ') }}</td>
                                         </tr>
@@ -231,10 +235,10 @@
                             <div class="col-xs-6 text-left">
                                 <table class="table table-bordered">
 
-                                        <tr>
+                                        <!-- <tr>
                                             <th class="text-right">Nombre d'UE Validées: </th>
                                             <td>{{ $contrat->semestre_infos->where('semestre_id', $semestre->id)->first()->nbUeValid }}</td>
-                                        </tr>
+                                        </tr> -->
                                         <tr>
                                             <th class="text-right">Total CECT Acquis: </th>
                                             <td>{{ $contrat->semestre_infos->where('semestre_id', $semestre->id)->first()->creditObt }} / 30</td>
@@ -253,11 +257,11 @@
                         </div>
                         <div class="row">
                             <div class="col-xs-6">
-                                <p class="pull-left"><strong><u>Le Directeur de L'ESSEC/ The Director of ESSEC</u></strong></p><br><br><br>
+                                <p class="pull-left"><strong><u>Le Directeur de L'ESSEC/ The Director of ESSEC</u></strong></p><br><br><br><br><br>
                                 <p class="pull-left"><strong>Pr Georges Bertrand TAMOKWE PIAPTIE</strong></p>
                             </div>
                             <div class="col-xs-6">
-                                <p class="text-right"><strong><u>Le Responsable Académique/ The Head Teacher:</u></strong></p><br>
+                                <p class="text-right"><strong><u>Le Responsable Académique/ The Head Teacher:</u></strong></p><br><br><br>
                                 <p class="text-right"><strong>Pr Germain NDJIEUNDE</strong></p>
                             </div>
                         </div>

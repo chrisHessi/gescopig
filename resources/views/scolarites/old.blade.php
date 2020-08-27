@@ -26,6 +26,7 @@
                             <th>Scolarité</th>
                             <th>Année Academique</th>
                             <th>Scolarité versée</th>
+                            <th>Solde</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -41,12 +42,17 @@
                                 <td>{!! $contrat->academic_year->debut. '/' .$contrat->academic_year->fin !!}</td>
                                 <td>{!! $contrat->versements->sum('montant') !!}</td>
                                 <td>
+                                    {!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') 
+                                            - $contrat->versements->sum('montant') + ($contrat->corkages->first() ? $contrat->corkages->sum('montant') : 0) !!}
+                                </td>
+                                    
+                                <td>
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                             data-target="#printModal" data-id="{{ $contrat->id }}"
                                             id="certificat" title="Certificat de Scolarite">
                                         CS
                                     </button>
-{{--                                    <button type="button" class="btn btn-primary" data-toggle="modal"--}}
+{{--                                   <!--  <button type="button" class="btn btn-primary" data-toggle="modal"--}}
 {{--                                            data-target="#printModal" data-id="{{ $contrat->id }}"--}}
 {{--                                            id="autorisation" title="Attestation d'autorisation d'inscription">--}}
 {{--                                        AAI--}}
@@ -66,7 +72,7 @@
 {{--                                            data-target="#printModal" data-id="{{ $contrat->id }}"--}}
 {{--                                            id="attestation" title="Attestation de Scolarite">--}}
 {{--                                        AS--}}
-{{--                                    </button>--}}
+{{--                                    </button>--}} -->
                                 </td>
                             </tr>
                         @endforeach
