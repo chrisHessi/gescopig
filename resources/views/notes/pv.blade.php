@@ -176,6 +176,7 @@
                 </thead>
                 <tbody>
                 @foreach($contrats as $contrat)
+                @if($contrat->notes->first())
                     <tr>
                         <td>{{ ++$i }}</td>
                         <td>{{ $academicYear->fin. '-' .$contrat->id }}</td>
@@ -239,6 +240,7 @@
                             @endif
                         </td>
                     </tr>
+                @endif
                 @endforeach
                 </tbody>
             </table>

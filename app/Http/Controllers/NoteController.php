@@ -466,8 +466,6 @@ class NoteController extends Controller
         $contrats = ($session == 'session1') ? $c->get() : $c->whereHas('semestre_infos', function($q) use ($sem){
             $q->where('session', 'session2')->where('semestre_id', $sem);
         })->get();
-        // dd($contrats);
-
 
         if (empty($contrats)) {
             Flash::error('Aucun apprenant dans cette classe');
@@ -495,6 +493,17 @@ class NoteController extends Controller
         foreach($contrats as $contrat){
             $result = $this->saveNotes($contrat, $enseignements, $session, $sem); // renvoi true si tous les enseignements ont une note de cc
         }
+
+        //Controle pour verifier que tous les apprenants ont des notes enregistrées
+        foreach ($contrats as $contrat) {
+            foreach ($enseignements as $enseignement) {
+                if($contrat->notes->where('enseignement_id', $enseignement->id)->first() == null){
+                    Flash::error('L\'etudiant(e) '. $contrat->apprenant->nom .' '. $contrat->apprenant->prenom .' ne possede pas de note de '. $enseignement->ecue->title);
+                    return redirect()->back();
+                }
+            }
+        }
+        
 
         $specialityCode = $this->specialityCode[$specialite->slug];
         return view('notes.pv', compact('contrats', 'enseignements', 'ues', 'semestre', 'i', 'academicYear', 'session', 'specialite', 'specialityCode' ));

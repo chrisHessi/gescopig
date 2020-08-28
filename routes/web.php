@@ -138,8 +138,11 @@ Route::prefix('')->middleware('auth')->group(function(){
 
     Route::resource('academicYears', 'AcademicYearController');
 
-    Route::resource('contratEnseignants', 'ContratEnseignantController')->except('store', 'show', 'edit', 'update');
-    Route::get('contratEnseignants/save/{id}', 'ContratEnseignantController@save')->name('contratEnseignants.save');
+    Route::resource('contratEnseignants', 'ContratEnseignantController')->except('show');
+    Route::get('contratEnseignants/versements/{id}', 'ContratEnseignantController@versements')->name('contratEnseignants.versements');
+    Route::post('contratEnseignants/versements/{id}', 'ContratEnseignantController@save')->name('contratEnseignants.save');
+    Route::get('contratEnseignants/rapport/{id}', 'ContratEnseignantController@rapport')->name('contratEnseignants.rapport');
+    Route::get('contratEnseignants/contrats/{id}', 'ContratEnseignantController@contrat')->name('contratEnseignants.contrat');
 
     Route::resource('academicCalendars', 'AcademicCalendarController');
 

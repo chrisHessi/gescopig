@@ -24,6 +24,8 @@
                         <th>Nom Enseigant</th>
                         <th>Enseignement</th>
                         <th>Annee Academique</th>
+                        <th>Tarif licence</th>
+                        <th>Tarif Master</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -40,14 +42,22 @@
                                 </ul>
                             </td>
                             <td>{{ $contrat->academic_year->debut. '/' .$contrat->academic_year->fin }}</td>
+                            <td>{{ $contrat->mh_licence }}</td>
+                            <td>{{ $contrat->mh_master }}</td>
                             <td>
-                                {!! Form::open(['route' => ['contratEnseignants.destroy', $contrat->id], 'method' => 'delete']) !!}
+                                <a href="{!! route('contratEnseignants.versements', [$contrat->id]) !!}" class='btn btn-success btn-xs' title="enregistrer un paiement"><i class="glyphicon glyphicon-usd"></i></a>
+                                <a href="{!! route('contratEnseignants.edit', [$contrat->id]) !!}" class='btn btn-default btn-xs' title="editer le contrat de l'enseignant"><i class="glyphicon glyphicon-edit"></i></a>
+                                <a href="{!! route('contratEnseignants.rapport', [$contrat->id]) !!}" class='btn btn-info btn-xs' title="voir les versements de l'enseignant"><i class="glyphicon glyphicon-eye-open"></i></a>
                                 <div class='btn-group'>
-                                    @can('delete contrats')
-                                        {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
-                                    @endcan
+                                    
+                                    {!! Form::open(['route' => ['contratEnseignants.destroy', $contrat->id], 'method' => 'delete']) !!}
+                                        @can('delete contrats')
+                                            {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
+                                        @endcan
+                                    {!! Form::close() !!}
+                                <a href="{!! route('contratEnseignants.contrat', [$contrat->id]) !!}" class='btn btn-warning btn-xs' title="Imprimer le contrat"><i class="glyphicon glyphicon-print"></i></a>
                                 </div>
-                                {!! Form::close() !!}
+                                
                             </td>
                         </tr>
                         @endif
@@ -63,39 +73,16 @@
 @endsection
 
 @section('scripts')
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jq-3.3.1/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/datatables.min.js"></script>
 
+
+
     <script>
 
         $(document).ready(function() {
-            // $('#contrats-table').tablesorter();
-            // $(".search").keyup(function () {
-            //     var searchTerm = $(".search").val();
-            //     var listItem = $('.results tbody').children('tr');
-            //     var searchSplit = searchTerm.replace(/ /g, "'):containsi('")
-            //
-            //     $.extend($.expr[':'], {'containsi': function(elem, i, match, array){
-            //         return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
-            //     }
-            //     });
-            //
-            //     $(".results tbody tr").not(":containsi('" + searchSplit + "')").each(function(e){
-            //         $(this).attr('visible','false');
-            //     });
-            //
-            //     $(".results tbody tr:containsi('" + searchSplit + "')").each(function(e){
-            //         $(this).attr('visible','true');
-            //     });
-            //
-            //     var jobCount = $('.results tbody tr[visible="true"]').length;
-            //     $('.counter').text(jobCount + ' item');
-            //
-            //     if(jobCount == '0') {$('.no-result').show();}
-            //     else {$('.no-result').hide();}
-            // });
-
             var table = $('#contrats-table').DataTable({
                 responsive: true,
                 dom:'Blfrtip',

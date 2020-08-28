@@ -43,66 +43,27 @@
                     </tr>
                     </thead>
                     <tbody>
-{{--                        @if($apprenant->academic_year_id == $academicYear->id)--}}
-{{--                            <tr>--}}
-{{--                                <label for="contrat_id" class=" radio radio-inline">--}}
-{{--                                    <td>{{ Form::radio('contrat_id', $apprenant->contrats->last()->id) }}</td>--}}
-{{--                                    <td>{!! $apprenant->contrats->last()->academic_year->debut.'/'.$apprenant->contrats->last()->academic_year->fin !!}</td>--}}
-{{--                                    <td>{!! $apprenant->contrats->last()->cycle->echeanciers->where('academic_year_id', $apprenant->contrats->last()->academic_year_id)->sum('montant') !!}</td>--}}
-{{--                                    <td>{!! $apprenant->contrats->last()->specialite->slug. ' ' .$apprenant->contrats->last()->cycle->niveau !!}</td>--}}
-{{--                                    <td>{!! $apprenant->contrats->last()->versements->sum('montant') !!}</td>--}}
-{{--                                    <td></td>--}}
-{{--                                    <td>{!! $apprenant->contrats->last()->cycle->echeanciers->where('academic_year_id', $apprenant->contrats->last()->academic_year_id)->sum('montant') - $apprenant->contrats->last()->versements->sum('montant') !!}</td>--}}
-{{--                                </label>--}}
-{{--                            </tr>--}}
 
-{{--                        @else--}}
-{{--                            @if($reinscription)--}}
-{{--                                <tr>--}}
-{{--                                    @if($apprenant->contrats->last()->resultatNominatif)--}}
-{{--                                    <td>{{ Form::radio('apprenant_id', $apprenant->id) }}</td>--}}{{-- le champ reinscription s'il est envoyé sera enregistré comme apprenant --}}
-{{--                                    <td>{{ $academicYear->debut. '/' .$academicYear->fin }}</td>--}}
-{{--                                    <td>--}}
-{{--                                        {{--}}
-{{--                                            ($apprenant->contrats->last()->resultatNominatif->next_cycle_id != 0) ?--}}
-{{--                                                $apprenant->contrats->last()->resultatNominatif->cycle->echeanciers->where('academic_year_id', $apprenant->contrats->last()->academic_year_id)->sum('montant') :--}}
-{{--                                                ''--}}
-{{--                                        }}--}}
-{{--                                    </td>--}}
-{{--                                    <td>{{ $apprenant->contrats->last()->resultatNominatif->decision }}</td>--}}
-{{--                                    <td></td>--}}
-{{--                                    <td></td>--}}
-{{--                                    <td></td>--}}
-{{--                                    @else--}}
-{{--                                        <td></td>--}}
-{{--                                        <td>{{ $academicYear->debut. '/' .$academicYear->fin }}</td>--}}
-{{--                                        <td colspan="5"><strong>Veuillez renseigner les resultats nominatifs</strong></td>--}}
-{{--                                    @endif--}}
-{{--                                </tr>--}}
-{{--                            @endif--}}
-
-                            @foreach($apprenant->contrats as $contrat)
-                                <tr>
-                                    <label for="">
-                                        <td>{{ Form::radio('contrat_id', $contrat->id) }}</td>
-                                        <td>{{ $contrat->academic_year->debut. '/' .$contrat->academic_year->fin }}</td>
-                                        <td>{{ ($contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)) ? $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') : 'Echeanciers non renseignés' }}</td>
-                                        <td>{{ ($contrat->corkages->first()) ? $contrat->corkages->where('reduction', false)->sum('montant') : 0 }}</td>
-                                        <td>{{ ($contrat->corkages->first()) ? -$contrat->corkages->where('reduction', true)->sum('montant') : 0 }}</td>
-                                        <td>{{ $contrat->specialite->slug. ' ' .$contrat->cycle->niveau }}</td>
-                                        <td>{{ ($contrat->versements) ? $contrat->versements->sum('montant') : 0 }}</td>
-                                        <td>{!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') 
-                                                - $contrat->versements->sum('montant') + ($contrat->corkages->first() ? $contrat->corkages->sum('montant') : 0) !!}</td>
-                                        <td>
-                                            <div class='btn-group'>
-                                                <a href="{!! route('versements.show', [$contrat->id]) !!}" class='btn btn-default btn-xs'>Details<i class="glyphicon glyphicon-eye-open"></i></a>
-                                            </div>
-                                        </td>
-                                    </label>
-                                </tr>
-                            @endforeach
-
-{{--                        @endif--}}
+                        @foreach($apprenant->contrats as $contrat)
+                            <tr>
+                                <label for="">
+                                    <td>{{ Form::radio('contrat_id', $contrat->id) }}</td>
+                                    <td>{{ $contrat->academic_year->debut. '/' .$contrat->academic_year->fin }}</td>
+                                    <td>{{ ($contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)) ? $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') : 'Echeanciers non renseignés' }}</td>
+                                    <td>{{ ($contrat->corkages->first()) ? $contrat->corkages->where('reduction', false)->sum('montant') : 0 }}</td>
+                                    <td>{{ ($contrat->corkages->first()) ? -$contrat->corkages->where('reduction', true)->sum('montant') : 0 }}</td>
+                                    <td>{{ $contrat->specialite->slug. ' ' .$contrat->cycle->niveau }}</td>
+                                    <td>{{ ($contrat->versements) ? $contrat->versements->sum('montant') : 0 }}</td>
+                                    <td>{!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') 
+                                            - $contrat->versements->sum('montant') + ($contrat->corkages->first() ? $contrat->corkages->sum('montant') : 0) !!}</td>
+                                    <td>
+                                        <div class='btn-group'>
+                                            <a href="{!! route('versements.show', [$contrat->id]) !!}" class='btn btn-default btn-xs'>Details<i class="glyphicon glyphicon-eye-open"></i></a>
+                                        </div>
+                                    </td>
+                                </label>
+                            </tr>
+                        @endforeach
 
                     </tbody>
                 </table>
