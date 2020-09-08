@@ -12,7 +12,6 @@
 */
 
 
-use Barryvdh\DomPDF\Facade as PDF;
 
 Auth::routes();
 Route::prefix('admin')->namespace('Back')->group(function(){
@@ -115,8 +114,6 @@ Route::prefix('')->middleware('auth')->group(function(){
 
     Route::get('rnr', function(){
         return view('notes.rnr_imprime');
-//        $pdf = PDF::loadView('notes.rnr_imprime',[]);
-//        return $pdf->download('notes.rnr_imprime');
     });
     Route::get('certificat/{type}', function($type){
         return view('documents.certificat')->with(['type'=>$type]);

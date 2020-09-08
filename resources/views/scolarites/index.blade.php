@@ -35,57 +35,64 @@
                         @foreach($contrats as $contrat)
                             <tr>
                                 @if(!$contrat->apprenant)
-                                    {{ dd($contrat) }}
+                                    <td colspan="6">Apprenant supprimé</td>
                                 @else
-                                <td>{!! $contrat->apprenant->nom. ' ' .$contrat->apprenant->prenom !!}</td>
-                                <td>
-                                    {!! $contrat->specialite->slug. ' ' .$contrat->cycle->niveau !!}
-                                </td>
-                                <td>{!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') !!}</td>
-                                <td>{!! ($contrat->moratoire) ? $contrat->moratoires->where('date', '<=', Carbon\Carbon::today())->sum('montant') : $echeanciers->where('cycle_id', $contrat->cycle_id)->sum('montant') !!}</td>
-                                <td>{!! $contrat->versements->sum('montant') !!}</td>
-                                <td>{!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') 
-                                            - $contrat->versements->sum('montant') + ($contrat->corkages->first() ? $contrat->corkages->sum('montant') : 0) !!}
-                                </td>
-                                    
-                                <td>
-                                    @can('print documents')
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                            data-target="#printModal" data-id="{{ $contrat->id }}"
-                                            id="certificat" title="Certificat de Scolarite">
-                                        CS
-                                    </button>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                            data-target="#printModal" data-id="{{ $contrat->id }}"
-                                            id="autorisation" title="Attestation d'autorisation d'inscription">
-                                        AAI
-                                    </button>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                            data-target="#printModal" data-id="{{ $contrat->id }}"
-                                            id="preinscription" title="Attestation de Préinscription">
-                                        API
-                                    </button>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                            data-target="#printModal" data-id="{{ $contrat->id }}"
-                                            id="inscription" title="Attestation d'inscription">
-                                        AI
-                                    </button>
-                                    <a href="#" onclick="window.open('{!! route('scolarites.contrat', [$contrat->id]) !!}','_blank', 'menubar=no, toolbar=no, width=1000px, height=600px')" class="btn btn-primary" title="Contrat d'inscription">CI <i class="fa fa-print"></i></a>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                            data-target="#printModal" data-id="{{ $contrat->id }}"
-                                            id="attestation" title="Attestation de Scolarite">
-                                        AS
-                                    </button>
-                                    @endcan
-                                    @can('print notice')
+                                    <td>{!! $contrat->apprenant->nom. ' ' .$contrat->apprenant->prenom !!}</td>
+                                    <td>
+                                        {!! $contrat->specialite->slug. ' ' .$contrat->cycle->niveau !!}
+                                    </td>
+                                    @if(!empty($contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)))
+                                        <td>{!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') !!}</td>
+                                        <td>{!! ($contrat->moratoire) ? $contrat->moratoires->where('date', '<=', Carbon\Carbon::today())->sum('montant') : $echeanciers->where('cycle_id', $contrat->cycle_id)->sum('montant') !!}</td>
+                                        <td>{!! $contrat->versements->sum('montant') !!}</td>
+                                        <td>{!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant')
+                                                    - $contrat->versements->sum('montant') + ($contrat->corkages->first() ? $contrat->corkages->sum('montant') : 0) !!}
+                                        </td>
+                                    @else
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    @endif
+
+                                    <td>
+                                        @can('print documents')
                                         <button type="button" class="btn btn-primary" data-toggle="modal"
                                                 data-target="#printModal" data-id="{{ $contrat->id }}"
-                                                id="suspension" title="Avis de suspension">
-                                            Av.S.
+                                                id="certificat" title="Certificat de Scolarite">
+                                            CS
                                         </button>
-                                    @endcan
-                                </td>
-                                    @endif
+                                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                data-target="#printModal" data-id="{{ $contrat->id }}"
+                                                id="autorisation" title="Attestation d'autorisation d'inscription">
+                                            AAI
+                                        </button>
+                                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                data-target="#printModal" data-id="{{ $contrat->id }}"
+                                                id="preinscription" title="Attestation de Préinscription">
+                                            API
+                                        </button>
+                                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                data-target="#printModal" data-id="{{ $contrat->id }}"
+                                                id="inscription" title="Attestation d'inscription">
+                                            AI
+                                        </button>
+                                        <a href="#" onclick="window.open('{!! route('scolarites.contrat', [$contrat->id]) !!}','_blank', 'menubar=no, toolbar=no, width=1000px, height=600px')" class="btn btn-primary" title="Contrat d'inscription">CI <i class="fa fa-print"></i></a>
+                                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                data-target="#printModal" data-id="{{ $contrat->id }}"
+                                                id="attestation" title="Attestation de Scolarite">
+                                            AS
+                                        </button>
+                                        @endcan
+                                        @can('print notice')
+                                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                    data-target="#printModal" data-id="{{ $contrat->id }}"
+                                                    id="suspension" title="Avis de suspension">
+                                                Av.S.
+                                            </button>
+                                        @endcan
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                         </tbody>
