@@ -36,6 +36,7 @@ class Contrat extends Model
         'apprenant_id' => 'bail|required|integer',
         'cycle_id' => 'bail|required|integer',
         'specialite_id' => 'bail|required|integer',
+        'academic_year_id' => 'bail|required'
     ];
 
     public function apprenant(){

@@ -4,7 +4,7 @@
     <section class="content-header">
         <h1 class="pull-left">Rapport versement indemnités : {{ $contrat->enseignant->name }}</h1>
         <h1 class="pull-right">
-            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('contratEnseignants.create') !!}">Add New</a>
+            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('contratEnseignants.versements', [$contrat->id]) !!}">Add New</a>
         </h1>
     </section>
     <div class="content">
@@ -29,22 +29,26 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($payments as $payment)
-                        <tr>
-                            <td>{{ $payment->enseignements->first()->ecue->title }}</td>
-                            <td>
-                                @foreach($payment->enseignements as $enseignement)
-                                    {{ $enseignement->specialite->slug .' '. $enseignement->ecue->semestre->cycle->niveau .' ' }}
-                                @endforeach
-                            </td>
-                            <td>{{ $payment->enseignements->first()->ecue->semestre->title }}</td>
-                            <td>{{ $payment->tranche }}</td>
-                            <td>{{ $payment->montant }}</td>
-                            <td>{{ $payment->date->format('d/m/Y') }}</td>
-                            <td>{{ $payment->numero_piece }}</td>
-                            <td>{{ $payment->observation }}</td>
-                        </tr>
-                    @endforeach
+                        @foreach($payments as $payment)
+                            @if(!empty($payment->enseignements))
+                                <tr>
+                                    <td>
+                                        {{ $payment->enseignements->first()->ecue->title }}
+                                    </td>
+                                    <td>
+                                        @foreach($payment->enseignements as $enseignement)
+                                            {{ $enseignement->specialite->slug .' '. $enseignement->ecue->semestre->cycle->niveau .' ' }}
+                                        @endforeach
+                                    </td>
+                                    <td>{{ $payment->enseignements->first()->ecue->semestre->title }}</td>
+                                    <td>{{ $payment->tranche }}</td>
+                                    <td>{{ $payment->montant }}</td>
+                                    <td>{{ $payment->date->format('d/m/Y') }}</td>
+                                    <td>{{ $payment->numero_piece }}</td>
+                                    <td>{{ $payment->observation }}</td>
+                                </tr>
+                            @endif
+                        @endforeach
                     </tbody>
                 </table>
             </div>

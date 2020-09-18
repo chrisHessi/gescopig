@@ -54,10 +54,6 @@ class PermissionController extends Controller
     {
         $permission = $this->permissionRepository->create($request->except('roles'));
 
-        if($request->roles <> ''){
-            $permission->syncRoles($request->roles);
-        }
-
         Flash::success('Permissions created successfully');
         return redirect()->route('permissions.index');
     }

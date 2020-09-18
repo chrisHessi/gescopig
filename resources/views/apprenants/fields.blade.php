@@ -80,6 +80,11 @@
                 {!! Form::label('etablissement_provenance', 'Etablissement de Provenance:') !!}
                 {!! Form::text('etablissement_provenance', null, ['class' => 'form-control']) !!}
             </div>
+
+            <div class="form-group col-xs-4">
+                {!! Form::label('academic_year_id', 'Année Académique:') !!}
+                {!! Form::select('academic_year_id',$academicYears, isset($apprenant)? $apprenant->academic_year_id : null, ['class' => 'form-control', 'placeholder' => 'selectioner l\'année']) !!}
+            </div>
         </div>
         @if(!isset($apprenant))
             <div class="row">

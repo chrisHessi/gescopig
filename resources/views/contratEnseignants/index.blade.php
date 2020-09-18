@@ -15,9 +15,6 @@
         <div class="clearfix"></div>
         <div class="box box-primary">
             <div class="box-body">
-                {{--                <div class="form-group pull-right">--}}
-                {{--                    <input type="text" class="search form-control" placeholder="Search here..."/>--}}
-                {{--                </div>--}}
                 <table class="table table-responsive results" id="contrats-table">
                     <thead>
                     <tr>
@@ -45,19 +42,27 @@
                             <td>{{ $contrat->mh_licence }}</td>
                             <td>{{ $contrat->mh_master }}</td>
                             <td>
-                                <a href="{!! route('contratEnseignants.versements', [$contrat->id]) !!}" class='btn btn-success btn-xs' title="enregistrer un paiement"><i class="glyphicon glyphicon-usd"></i></a>
-                                <a href="{!! route('contratEnseignants.edit', [$contrat->id]) !!}" class='btn btn-default btn-xs' title="editer le contrat de l'enseignant"><i class="glyphicon glyphicon-edit"></i></a>
-                                <a href="{!! route('contratEnseignants.rapport', [$contrat->id]) !!}" class='btn btn-info btn-xs' title="voir les versements de l'enseignant"><i class="glyphicon glyphicon-eye-open"></i></a>
-                                <div class='btn-group'>
-                                    
-                                    {!! Form::open(['route' => ['contratEnseignants.destroy', $contrat->id], 'method' => 'delete']) !!}
-                                        @can('delete contrats')
-                                            {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
-                                        @endcan
-                                    {!! Form::close() !!}
-                                <a href="{!! route('contratEnseignants.contrat', [$contrat->id]) !!}" class='btn btn-warning btn-xs' title="Imprimer le contrat"><i class="glyphicon glyphicon-print"></i></a>
-                                </div>
-                                
+                                @can('pay teachers')
+                                    <a href="{!! route('contratEnseignants.versements', [$contrat->id]) !!}" class='btn btn-success btn-xs' title="enregistrer un paiement"><i class="glyphicon glyphicon-usd"></i></a>
+                                @endcan
+                                @can('edit teachers contract')
+                                    <a href="{!! route('contratEnseignants.edit', [$contrat->id]) !!}" class='btn btn-default btn-xs' title="editer le contrat de l'enseignant"><i class="glyphicon glyphicon-edit"></i></a>
+                                @endcan
+                                @can('read teachers contract')
+                                    <a href="{!! route('contratEnseignants.rapport', [$contrat->id]) !!}" class='btn btn-info btn-xs' title="voir les versements de l'enseignant"><i class="glyphicon glyphicon-eye-open"></i></a>
+                                @endcan
+                                @can('delete teachers contract')
+                                    <div class='btn-group'>
+                                        {!! Form::open(['route' => ['contratEnseignants.destroy', $contrat->id], 'method' => 'delete']) !!}
+                                            @can('delete contrats')
+                                                {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
+                                            @endcan
+                                        {!! Form::close() !!}
+                                    </div>
+                                @endcan
+                                @can('print teachers contract')
+                                    <a href="{!! route('contratEnseignants.contrat', [$contrat->id]) !!}" class='btn btn-warning btn-xs' title="Imprimer le contrat"><i class="glyphicon glyphicon-print"></i></a>
+                                @endcan
                             </td>
                         </tr>
                         @endif

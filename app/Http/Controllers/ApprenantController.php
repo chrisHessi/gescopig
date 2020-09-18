@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateApprenantRequest;
 
 use App\Models\Apprenant;
 use App\Models\Tutor;
+use App\Repositories\AcademicYearRepository;
 use App\Repositories\ApprenantRepository;
 use App\Http\Controllers\AppBaseController;
 use App\Repositories\ContratRepository;
@@ -27,9 +28,10 @@ class ApprenantController extends AppBaseController
     protected $scolariteRepository;
     protected $academicYear;
     protected $contratRepository;
+    protected $academicYearRepository;
 
     public function __construct(ApprenantRepository $apprenantRepo, SpecialiteRepository $specialiteRepository, ContratRepository $contratRepository,
-                                CycleRepository $cycleRepository, ScolariteRepository $scolariteRepository, AcademicYear $academicYear)
+                                CycleRepository $cycleRepository, AcademicYearRepository $academicYearRepository, ScolariteRepository $scolariteRepository, AcademicYear $academicYear)
     {
         $this->apprenantRepository = $apprenantRepo;
         $this->specialiteRepository = $specialiteRepository;
@@ -37,6 +39,7 @@ class ApprenantController extends AppBaseController
         $this->scolariteRepository = $scolariteRepository;
         $this->contratRepository = $contratRepository;
         $this->academicYear = $academicYear->getCurrentAcademicYear();
+        $this->academicYearRepository = $academicYearRepository;
 
     }
 
@@ -65,6 +68,11 @@ class ApprenantController extends AppBaseController
         $c = $this->cycleRepository->all();
         $cycles = array();
         $specialites = array();
+        $academicYears = [];
+        $ay = $this->academicYearRepository->all();
+        foreach ($ay as $a){
+            $academicYears[$a->id] = $a->debut.'/'.$a->fin;
+        }
 
         foreach($spe as $specialite){
             $specialites[$specialite->id] = $specialite->slug.' | '.$specialite->title;
@@ -72,7 +80,7 @@ class ApprenantController extends AppBaseController
         foreach($c as $cycle){
             $cycles[$cycle->id] = $cycle->label.' '.$cycle->niveau;
         }
-        return view('apprenants.create', compact('specialites', 'cycles'));
+        return view('apprenants.create', compact('specialites', 'cycles', 'academicYears'));
     }
 
     /**
@@ -89,12 +97,13 @@ class ApprenantController extends AppBaseController
             return redirect()->route('apprenants.index');
         }
         $apprenant = $this->apprenantRepository->store($request);
+        $academicYear = $request->input(['academic_year_id']);
 
         $contrat = $this->contratRepository->firstOrCreate([
             'apprenant_id' => $apprenant->id,
             'specialite_id' => $request->input('specialite_id'),
             'cycle_id' => $request->input('cycle_id'),
-            'academic_year_id' => $this->academicYear,
+            'academic_year_id' => $academicYear,
             'type' => 'Inscription',
             'state' => 'En attente'
         ]);
@@ -138,20 +147,11 @@ class ApprenantController extends AppBaseController
      */
     public function edit(Apprenant $apprenant)
     {
-//        $apprenant = $this->apprenantRepository->findWithoutFail($id);
-//        $spe = $this->specialiteRepository->all();
-//        $c = $this->cycleRepository->all();
-//        $cycle = array();
-//
-//        $specialite = array();
-//
-//        foreach($spe as $sp){
-//            $specialite[$sp->id] = $sp->slug.' | '.$sp->title;
-//        }
-//
-//        foreach($c as $cycles){
-//            $cycle[$cycles->id] = $cycles->label.' '.$cycles->niveau;
-//        }
+        $academicYears = [];
+        $ay = $this->academicYearRepository->all();
+        foreach ($ay as $a){
+            $academicYears[$a->id] = $a->debut.'/'.$a->fin;
+        }
 
         if (empty($apprenant)) {
             Flash::error('Apprenant not found');
@@ -159,7 +159,7 @@ class ApprenantController extends AppBaseController
             return redirect(route('apprenants.index'));
         }
 
-        return view('apprenants.edit', compact('apprenant'));
+        return view('apprenants.edit', compact('apprenant', 'academicYears'));
     }
 
     /**

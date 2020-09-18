@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AcademicYear;
+use App\Models\TeacherPay;
 use App\Repositories\ContratEnseignantRepository;
 use App\Repositories\EnseignantRepository;
 use App\Repositories\TeacherPayRepository;
@@ -193,7 +194,6 @@ class ContratEnseignantController extends Controller
         }
 
         $payments = $this->teacherPayRepository->findWhere(['contrat_enseignant_id' => $contrat->id]);
-
         return view('contratEnseignants.rapport', compact('payments', 'contrat'));
     }
 

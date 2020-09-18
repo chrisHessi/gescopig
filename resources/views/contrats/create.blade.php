@@ -66,6 +66,10 @@
                             {!! Form::label('cycle_id', 'Cycle :') !!}
                             {!! Form::select('cycle_id', $cycles, null, ['class' => 'form-control', 'placeholder' => '--choisissez le niveau--']) !!}
                         </div>
+                        <div class="form-group col-xs-4">
+                            {!! Form::label('academic_year_id', 'Année Académique:') !!}
+                            {!! Form::select('academic_year_id',$academicYears, null, ['class' => 'form-control', 'placeholder' => 'selectioner l\'année']) !!}
+                        </div>
                         <div id="apprenant_id"></div>
                     </div>
 
