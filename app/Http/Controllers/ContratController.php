@@ -7,6 +7,7 @@ use App\Http\Requests\ContratRequest;
 use App\Http\Requests\UpdateContratRequest;
 use App\Models\AcademicYear;
 use App\Models\Contrat;
+use App\Repositories\AcademicYearRepository;
 use App\Repositories\ApprenantRepository;
 use App\Repositories\ContratRepository;
 use App\Repositories\CycleRepository;
@@ -21,8 +22,9 @@ class ContratController extends Controller
     protected $cycleRepository;
     protected $anneeAcademique;
     protected $contratRepository;
+    protected $academicYearRepository;
 
-    public function __construct(ContratRepository $contratRepository ,ApprenantRepository $apprenantRepository, SpecialiteRepository $specialiteRepository, CycleRepository $cycleRepository)
+    public function __construct(ContratRepository $contratRepository, AcademicYearRepository $academicYearRepository ,ApprenantRepository $apprenantRepository, SpecialiteRepository $specialiteRepository, CycleRepository $cycleRepository)
     {
         $this->contratRepository = $contratRepository;
         $this->apprenantRepository = $apprenantRepository;
@@ -30,6 +32,7 @@ class ContratController extends Controller
         $this->cycleRepository = $cycleRepository;
         $inscrip = Inscrip::getCurrentAcademicYear();
         $this->anneeAcademique = AcademicYear::find($inscrip);
+        $this->academicYearRepository = $academicYearRepository;
     }
 
     /**
@@ -39,7 +42,7 @@ class ContratController extends Controller
      */
     public function index()
     {
-        $contrats = $this->contratRepository->findWhere(['academic_year_id' => $this->anneeAcademique->id]);
+        $contrats = Contrat::where('academic_year_id', '>=', $this->anneeAcademique->id)->get();
         return view('contrats.index', compact('contrats'));
     }
 
@@ -55,7 +58,8 @@ class ContratController extends Controller
      */
     public function create()
     {
-        $contrats = $this->contratRepository->findWhere(['academic_year_id'=>$this->anneeAcademique->id]);
+        $years = $this->academicYearRepository->orderBy('id', 'desc')->first();
+        $contrats = $this->contratRepository->findWhere(['academic_year_id' => $years->id]);
 
         $app=[];
         foreach($contrats as $contrat){
@@ -69,6 +73,11 @@ class ContratController extends Controller
         $c = $this->cycleRepository->all();
         $cycles = array();
         $specialites = array();
+        $academicYears = [];
+        $ay = $this->academicYearRepository->all();
+        foreach ($ay as $a){
+            $academicYears[$a->id] = $a->debut.'/'.$a->fin;
+        }
 
         foreach($c as $cycle){
             $specialites[$cycle->label] = $cycle->specialites->pluck('title', 'id')->toArray();
@@ -77,7 +86,7 @@ class ContratController extends Controller
         foreach($c as $cycle){
             $cycles[$cycle->id] = $cycle->label. ' ' .$cycle->niveau;
         }
-        return view('contrats.create', compact('apprenants', 'specialites', 'cycles'));
+        return view('contrats.create', compact('apprenants', 'specialites', 'cycles', 'academicYears'));
     }
 
     /**
@@ -91,16 +100,14 @@ class ContratController extends Controller
         $apprenant = $this->apprenantRepository->findWithoutFail($request->get('apprenant_id'));
         $type = 'Reinscription';
         $statut = 'Etabli';
-        $anneeAcademic = $this->anneeAcademique->id;
         $input = $request->all();
         $input['type'] = $type;
         $input['state'] = $statut;
-        $input['academic_year_id'] = $anneeAcademic;
 
         $contrat = $this->contratRepository->updateOrCreate(
             [
                 'apprenant_id' => $apprenant->id,
-                'academic_year_id' => $anneeAcademic,
+                'academic_year_id' => $request->input('academic_year_id'),
             ],
             $input
         );
@@ -135,7 +142,11 @@ class ContratController extends Controller
         $c = $this->cycleRepository->all();
         $cycles = array();
         $specialites = array();
-
+        $academicYears = [];
+        $ay = $this->academicYearRepository->all();
+        foreach ($ay as $a){
+            $academicYears[$a->id] = $a->debut.'/'.$a->fin;
+        }
         foreach($c as $cycle){
             $specialites[$cycle->label] = $cycle->specialites->pluck('title', 'id')->toArray();
         }
@@ -144,7 +155,7 @@ class ContratController extends Controller
             $cycles[$cycle->id] = $cycle->label. ' ' .$cycle->niveau;
         }
 
-        return view('contrats.edit', compact('contrat', 'cycles', 'apprenants', 'specialites'));
+        return view('contrats.edit', compact('contrat', 'cycles', 'apprenants', 'specialites', 'academicYears'));
     }
 
     /**

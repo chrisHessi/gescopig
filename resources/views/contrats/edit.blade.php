@@ -22,6 +22,10 @@
                         {!! Form::label('cycle_id', 'Cycle :') !!}
                         {!! Form::select('cycle_id', $cycles, $contrat->cycle->id, ['class' => 'form-control', 'placeholder' => '--choisissez le niveau--']) !!}
                     </div>
+                    <div class="form-group col-xs-4">
+                        {!! Form::label('academic_year_id', 'Année Académique:') !!}
+                        {!! Form::select('academic_year_id',$academicYears, null, ['class' => 'form-control', 'placeholder' => 'selectioner l\'année']) !!}
+                    </div>
                     <div class="form-group col-md-4">
                         {!! Form::label('state', 'Statut :') !!}
                         {!! Form::select('state', ['Etabli'=>'Etabli', 'En Attente de Retour' => 'En Attente de Retour', 'Retourné' => 'Retourné'], $contrat->state, ['class' => 'form-control']) !!}

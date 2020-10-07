@@ -91,7 +91,7 @@
 {{--                        <p>Fait à Yaounde le </p>--}}
                         <br>
                         <p>Le Responsable Académique : Pr Germain NDJIEUNDE</p>
-                        <p>P/o : {{ ($titre) ? $titre : 'Le Directeur des Etudes' }}</p>
+                        <p>P/o : {{ ($titre) ? $titre : 'Le Directeur Académique chargé de la Recherche et du Développement' }}</p>
                         <br><br><br>
                         <p><strong>{{ ($titre)? $signataire : 'Pr. NKAKLEU Raphaël' }}</strong></p>
                     </div>

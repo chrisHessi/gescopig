@@ -9,7 +9,7 @@
     <div class="clearfix"></div>
 
     <section class="content-header">
-        {{ $contrats->first()->specialite->slug. ' '. $contrats->first()->cycle->niveau .' - '. $enseignement->ecue->title }}
+        {{ $enseignement->specialite->slug. ' '. $enseignement->semestre->cycle->niveau .' - '. $enseignement->ecue->title }}
     </section>
 
     <div class="content">

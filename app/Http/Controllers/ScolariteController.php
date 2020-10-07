@@ -84,7 +84,7 @@ class ScolariteController extends Controller
 
     public function index(){
         $academicYear = $this->academicYear;
-        $contrats = $this->contratRepository->findWhere(['academic_year_id' => $academicYear->id]);
+        $contrats = Contrat::where('academic_year_id', '>=', $this->academicYear->id)->get();
         $today = Carbon::today();
         $echeanciers = $this->echeancierRepository->findWhere(['academic_year_id' => $academicYear->id, ['date', '<=', $today]]);
         return view('scolarites.index', compact('contrats', 'academicYear', 'echeanciers'));
@@ -108,7 +108,7 @@ class ScolariteController extends Controller
         if($request->type){
             $titre = $request->titre;
             $signataire = $request->signataire;
-            $currentContrat = $this->contratRepository->findWhere(['academic_year_id'=> $this->academicYear->id]);
+            $currentContrat = $this->contratRepository->findWhere(['academic_year_id'=> $contrat->academic_year_id]);
             $ids = [];
             foreach ($currentContrat as $c){
                 (isset($c->autorisation)) ? $ids[] = $c->autorisation->id : '';
