@@ -267,7 +267,7 @@
         </div>
         <div class=" fixed-bottom">
             <br><br><br><br><br><br><br><br><br><br><br>
-            <h4 class="pull-right"><strong>{{ 'PIG/'.(env('APP_URL') == 'https://www.gescopigyaounde.com' ? 'YDE' : 'DLA') }}</strong></h4>
+            <h4 class="pull-right"><strong>{{ 'PIG/'.(url()->current() == 'https://www.gescopigyaounde.com' ? 'YDE' : 'DLA') }}</strong></h4>
         </div>
 
     </div>
