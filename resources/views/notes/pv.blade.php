@@ -267,7 +267,7 @@
         </div>
         <div class=" fixed-bottom">
             <br><br><br><br><br><br><br><br><br><br><br>
-            <h4 class="pull-right"><strong>{{ 'PIG/'.(url()->current() == 'https://www.gescopigyaounde.com' ? 'YDE' : 'DLA') }}</strong></h4>
+            <h4 class="pull-right"><strong>{{ 'PIG/'.(request()->getHost() == 'https://www.gescopigyaounde.com' ? 'YDE' : 'DLA') }}</strong></h4>
         </div>
 
     </div>
@@ -285,8 +285,10 @@
         document.body.innerHTML = printContents;
         window.print();
         document.body.innerHTML = originalContents;
+        console.log({{ request()->getHost() }})
     }
+    console.log({{ request()->getHost() }})
 </script>
 </body>
 
-</
+</html>
