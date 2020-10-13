@@ -287,7 +287,6 @@
         document.body.innerHTML = originalContents;
         console.log({{ request()->getHost() }})
     }
-    console.log({{ request()->getHost() }})
 </script>
 </body>
 
