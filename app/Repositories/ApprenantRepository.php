@@ -65,14 +65,12 @@ class ApprenantRepository extends BaseRepository
 
     private function getApprenantInput($request)
     {
-        $inscrip = AcademicYear::getCurrentAcademicYear();
-        $anneeInscrip = AcademicYearModel::find($inscrip);
-        $suffixe = $anneeInscrip->apprenants()->withTrashed()->count() + 1;
-        $matricule = $anneeInscrip->fin. 'PIG'. str_pad($suffixe,3,0,STR_PAD_LEFT);
+        $inscrip = AcademicYearModel::find($request->input('academic_year_id'));
+        $suffixe = $inscrip->apprenants()->withTrashed()->count() + 1;
+        $matricule = $inscrip->fin. 'PIG'. str_pad($suffixe,3,0,STR_PAD_LEFT);
         $inputApprenant = $request->only('nom', 'prenom', 'sexe', 'addresse', 'tel', 'matricule', 'dateNaissance', 'lieuNaissance', 'nationalite', 'civilite', 'email', 'quartier', 'academic_year_id', 'etablissement_provenance', 'academic_mail', 'diplome', 'situation_professionnelle');
         $inputApprenant['matricule'] = $matricule;
-        $inputApprenant['academic_year_id'] = $inscrip;
-//        $inputApprenant['tutor_id'] = $tutor;
+        $inputApprenant['academic_year_id'] = $inscrip->id;
 
         return $inputApprenant;
     }
