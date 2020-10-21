@@ -107,6 +107,7 @@ class Apprenant extends Model
         'academic_mail',
         'diplome' => 'bail|required',
         'situation_professionnelle' => 'bail|required',
+        'academic_year_id' => 'bail|required',
 
     ];
 
