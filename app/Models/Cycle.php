@@ -86,6 +86,6 @@ class Cycle extends Model
     }
 
     public function resultatNominatifs(){
-        $this->hasMany(ResultatNomimatif::class);
+        $this->hasMany(ResultatNominatif::class);
     }
 }
