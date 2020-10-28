@@ -76,7 +76,8 @@ Route::prefix('')->middleware('auth')->group(function(){
     Route::get('notes/affiche/{semestre}/{specialite}', 'NoteController@affiche')->name('notes.affiche');
     Route::get('notes/imprime/{semestre}/{specialite}', 'NoteController@imprime')->name('notes.imprime');
     Route::get('notes/releve/{session}/{contrat}/{semestre}', 'NoteController@releve')->name('notes.releve');
-    Route::get('notes/pv/{specialite}/{semestre}/{type?}', 'NoteController@pv')->name('notes.pv');
+    Route::get('notes/pv/{specialite}/{semestre}/{type?}', 'NoteController@a_deliberer')->name('notes.a_deliberer');
+    Route::post('notes/pv/{specialite}/{semestre}/{type?}', 'NoteController@pv')->name('notes.pv');
     Route::get('notes/pvcc/{specialite}/{semestre}', 'NoteController@pvcc')->name('notes.pvcc');
     Route::get('notes/rn_intermediaire/{specialite}/{semestre}/{type?}', 'NoteController@rn_intermediaire')->name('notes.rn_intermediaire');
     Route::resource('notes', 'NoteController')->except('store', 'show');

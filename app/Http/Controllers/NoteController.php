@@ -448,7 +448,7 @@ class NoteController extends Controller
         return view('notes.rn_intermediaire', compact('contrats', 'enseignements', 'semestre', 'i', 'academicYear', 'session'));
     }
 
-    public function pv($sem, $spec, $session){
+    public function a_deliberer($sem, $spec, $session){
 
         $cycle = $this->semestreRepository->findWithoutFail($sem)->cycle;
 
@@ -459,6 +459,37 @@ class NoteController extends Controller
             ->where('specialite_id', $spec)
             ->where('cycle_id', $cycle->id)
             ->where('contrats.academic_year_id', $this->anneeAcademic->id)
+            ->orderBy('apprenants.nom')
+            ->orderBy('apprenants.prenom');
+
+        //Si on est en deuxieme session? on recupere les etudiant qui son alles en 2e session
+        $contrats = ($session == 'session1') ? $c->get() : $c->whereHas('semestre_infos', function($q) use ($sem){
+            $q->where('session', 'session2')->where('semestre_id', $sem);
+        })->get();
+
+        if (empty($contrats)) {
+            Flash::error('Aucun apprenant dans cette classe');
+            return redirect()->back();
+        }
+        return view('notes.a_deliberer', compact('contrats', 'sem', 'session', 'spec'));
+    }
+
+    public function pv($sem, $spec, $session, Request $request){
+        $id = $request->input('contrat_id');
+        if (empty($id)) {
+            Flash::error('Selectionnez au moins un étudiant');
+            return redirect()->back();
+        }
+        $cycle = $this->semestreRepository->findWithoutFail($sem)->cycle;
+
+        //on recupere tous les contrats par ordre alphabetique
+
+        $c = Contrat::join('apprenants', 'apprenant_id', '=', 'apprenants.id')
+            ->select('contrats.*')
+            ->where('specialite_id', $spec)
+            ->where('cycle_id', $cycle->id)
+            ->where('contrats.academic_year_id', $this->anneeAcademic->id)
+            ->whereIn('contrats.id', $id)
             ->orderBy('apprenants.nom')
             ->orderBy('apprenants.prenom');
 
