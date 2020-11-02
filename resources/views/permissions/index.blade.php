@@ -48,7 +48,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(function(){
-            @foreach($ecues as $ecue)
             $('.table').DataTable({
                 responsive: true,
                 dom:'Blfrtip',
@@ -56,7 +55,6 @@
                     'excel', 'copy'
                 ],
             })
-            @endforeach
         })
     </script>
 @endsection
