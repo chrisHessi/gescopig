@@ -54,7 +54,7 @@ class PermissionController extends Controller
     {
         $permission = $this->permissionRepository->create($request->except('roles'));
 
-        Flash::success('Permissions created successfully');
+        Flash::success('permissions created successfully');
         return redirect()->route('permissions.index');
     }
 
@@ -97,7 +97,7 @@ class PermissionController extends Controller
             $permission->syncRoles($request->roles);
         }
 
-        Flash::success('Permissions updated successfully');
+        Flash::success('permissions updated successfully');
         return redirect()->route('permissions.index');
     }
 
@@ -110,7 +110,7 @@ class PermissionController extends Controller
     public function destroy(Permission $permission)
     {
         $permission->delete();
-        Flash::success('Permissions deleted successfully');
+        Flash::success('permissions deleted successfully');
         return redirect()->route('permissions.index');
     }
 }
