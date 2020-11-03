@@ -19,7 +19,7 @@
                             {!! Form::label('academic_year_id', 'Année Académique:') !!}
                             {!! Form::select('academic_year_id',$academicYears, isset($apprenant)? $apprenant->academic_year_id : null, ['class' => 'form-control', 'placeholder' => 'selectioner l\'année']) !!}
                         </div>
-                    
+
                         <div class="form-group col-md-4">
                             {!! Form::label('title', 'Title:') !!}
                             {!! Form::text('title', null, ['class' => 'form-control', 'id' => 'ecue', 'disabled']) !!}

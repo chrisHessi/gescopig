@@ -176,7 +176,7 @@ class EcueController extends AppBaseController
             return redirect(route('ecues.index'));
         }
 
-        return view('ecues.edit', compact('ecue', 'specialites', 'semestreEcue', 'semestres'));
+        return view('ecues.edit', compact('ecue', 'specialites', 'semestreEcue', 'semestres', 'academicYears'));
     }
 
     /**
