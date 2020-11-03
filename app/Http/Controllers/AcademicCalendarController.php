@@ -26,7 +26,7 @@ class AcademicCalendarController extends Controller
     }
 
     public function index(){
-        $calendars = AcademicCalendar::where(['academic_year_id', '>=', $this->academicYear]);
+        $calendars = AcademicCalendar::where('academic_year_id', '>=', $this->academicYear)->get();
         return view('academicCalendars.index', compact('calendars'));
     }
 

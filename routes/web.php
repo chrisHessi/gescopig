@@ -39,6 +39,7 @@ Route::prefix('')->middleware('auth')->group(function(){
     Route::get('contrats/all', 'ContratController@all')->name('contrats.all');
     Route::resource('contrats', 'ContratController');
 
+    Route::get('ecues/{id}/getEcues', 'EcueController@getEcues');
     Route::resource('ecues', 'EcueController');
 
     Route::resource('cycles', 'CycleController');

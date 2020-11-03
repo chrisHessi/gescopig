@@ -53,6 +53,7 @@ class Ecue extends Model
     public static $rules = [
         'title' => 'bail|required',
         'semestre_id' => 'bail|required|',
+        'academic_year_id' => 'bail|required|',
     ];
 
     /**

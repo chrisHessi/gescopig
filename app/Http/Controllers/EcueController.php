@@ -66,9 +66,10 @@ class EcueController extends AppBaseController
     {
         $sem = $this->semestreRepository->all();
         $specialites = $this->specialiteRepository->all();
-        $ecues = $this->ecueRepository->findWhere(['academic_year_id' => $this->academicYear]);
+        $ecues = Ecue::where('academic_year_id', $this->academicYear)->get();
         $specialiteEcue = null;
         $semestres = array();
+        $ac = $this->academicYear;
 
         $academicYears = [];
         $ay = $this->academicYearRepository->all();
@@ -81,7 +82,21 @@ class EcueController extends AppBaseController
         }
 
 
-        return view('ecues.create', compact('semestres', 'specialites', 'specialiteEcue', 'ecues', 'academicYears'));
+        return view('ecues.create', compact('semestres', 'specialites', 'specialiteEcue', 'ecues', 'academicYears', 'ac'));
+    }
+
+    public function getEcues($id){
+        $academic_year = $this->academicYearRepository->findWithoutFail($id);
+        if (empty($academic_year)) {
+            Flash::error('Année academique non renseignée');
+
+            return json_encode([
+                'status' => false,
+                'error' => ('Année academique non renseignée')
+            ]);
+        }
+        $ecues = Ecue::where('academic_year_id', $academic_year->id)->get();
+        return $ecues;
     }
 
     /**

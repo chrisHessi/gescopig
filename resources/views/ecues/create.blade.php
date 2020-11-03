@@ -15,19 +15,19 @@
                     {!! Form::open(['route' => 'ecues.store']) !!}
 
                         {{--@include('ecues.fields')--}}
+                        <div class="form-group col-xs-4">
+                            {!! Form::label('academic_year_id', 'Année Académique:') !!}
+                            {!! Form::select('academic_year_id',$academicYears, isset($apprenant)? $apprenant->academic_year_id : null, ['class' => 'form-control', 'placeholder' => 'selectioner l\'année']) !!}
+                        </div>
+                    
                         <div class="form-group col-md-4">
                             {!! Form::label('title', 'Title:') !!}
-                            {!! Form::text('title', null, ['class' => 'form-control', 'id' => 'ecue']) !!}
+                            {!! Form::text('title', null, ['class' => 'form-control', 'id' => 'ecue', 'disabled']) !!}
                         </div>
 
                         <div class="form-group col-md-4">
                             {!! Form::label('semestre_id', 'Semestre') !!}
-                            {!! Form::select('semestre_id', $semestres, null, ['class' => 'form-control']) !!}
-                        </div>
-
-                        <div class="form-group col-xs-4">
-                            {!! Form::label('academic_year_id', 'Année Académique:') !!}
-                            {!! Form::select('academic_year_id',$academicYears, isset($apprenant)? $apprenant->academic_year_id : null, ['class' => 'form-control', 'placeholder' => 'selectioner l\'année']) !!}
+                            {!! Form::select('semestre_id', $semestres, null, ['class' => 'form-control', 'disabled']) !!}
                         </div>
 
                         <div class="panel panel-default">
@@ -41,7 +41,7 @@
                                                 <label class="checkbox-inline">
                                                     {{--{!! Form::hidden('cycle', false) !!}--}}
 
-                                                    {!! Form::checkbox('specialite[]', $specialite->id,null,['id' => $specialite->title]) !!}
+                                                    {!! Form::checkbox('specialite[]', $specialite->id,null) !!}
                                                     {!! Form::label($specialite->title,$specialite->title. ' - ' .$specialite->slug)!!}
 
                                                 </label>
@@ -76,21 +76,45 @@
     <script src="{{ url('js/jquery.easy-autocomplete.min.js') }}"></script>
     <script type="text/javascript">
         $(function(){
-            var title = {
-                data : {!! $ecues !!},
-                getValue: 'title',
-                list: {
-                    match:{
-                        enabled: true
-                    },
-                    onClickEvent: function(e){
+            var ecues = {!! $ecues !!};
+            var title = null
+            $("#academic_year_id").change(function () {
+                var ay = $("#academic_year_id").val()
+                if (ay !='') {
+                    $("#ecue, #semestre_id").attr('disabled', false)
+                    var url = 'http://' + window.location.host + '/public/ecues/' + ay + '/getEcues'
+                    $.ajax({
+                        url: url,
+                        type: 'get',
+                        success: (data, status) => {
+                            ecues = data
+                            title = {
+                                data: ecues,
+                                getValue: function (e) {
+                                    return e.title
+                                },
+                                list: {
+                                    match: {
+                                        enabled: true
+                                    },
+                                    onClickEvent: function (e) {
 
-                        var id = $('#ecue').getSelectedItemData().id;
-                        window.location.href = 'http://'+ window.location.host +'/ecues/' + id +'/edit';
-                    }
+                                        var id = $('#ecue').getSelectedItemData().id;
+                                        window.location.href = 'http://' + window.location.host + '/ecues/' + id + '/edit';
+                                    }
+                                }
+                            };
+
+                            console.log(title)
+
+                            $('#ecue').easyAutocomplete(title);
+                        }
+                    })
                 }
-            };
-            $('#ecue').easyAutocomplete(title);
+                else {
+                    $("#ecue, #semestre_id").attr('disabled', true)
+                }
+            })
         });
     </script>
 
