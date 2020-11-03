@@ -1,12 +1,17 @@
 <!-- Title Field -->
-<div class="form-group col-md-6">
+<div class="form-group col-md-4">
     {!! Form::label('title', 'Title:') !!}
     {!! Form::text('title', null, ['class' => 'form-control']) !!}
 </div>
 
-<div class="form-group col-md-6">
+<div class="form-group col-md-4">
     {!! Form::label('semestre_id', 'Semestre') !!}
     {!! Form::select('semestre_id', $semestres, $semestreEcue, ['class' => 'form-control']) !!}
+</div>
+
+<div class="form-group col-xs-4">
+    {!! Form::label('academic_year_id', 'Année Académique:') !!}
+    {!! Form::select('academic_year_id',$academicYears, isset($apprenant)? $apprenant->academic_year_id : null, ['class' => 'form-control', 'placeholder' => 'selectioner l\'année']) !!}
 </div>
 
 <div class="panel panel-default ">

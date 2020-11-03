@@ -84,7 +84,7 @@ class Ecue extends Model
         return $this->hasMany(\App\Models\Enseignement::class);
     }
 
-    public function academicYears(){
+    public function academicYear(){
         return $this->belongsTo(AcademicYear::class);
     }
 }

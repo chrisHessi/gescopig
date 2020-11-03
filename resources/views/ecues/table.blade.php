@@ -5,9 +5,8 @@
             <th>Title</th>
             <th>Semestre</th>
             <th>Slug</th>
-            <th>Credits</th>
             <th>Specialites</th>
-            {{--<th>Unité d'enseignement</th>--}}
+            <th>Année académique</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -17,7 +16,6 @@
             <td>{!! $ecue->title !!}</td>
             <td>{!! $ecue->semestre->title !!}</td>
             <td>{!! $ecue->slug !!}</td>
-            <td>{!! $ecue->credits !!}  </td>
             <td>
                 <div class="label-group">
                     @foreach($ecue->specialites as $specialite)
@@ -25,6 +23,7 @@
                     @endforeach
                 </div>
             </td>
+            <td>{!! $ecue->academicYear->debut. '/'. $ecue->academicYear->fin !!}</td>
 
             <td>
                 {!! Form::open(['route' => ['ecues.destroy', $ecue->id], 'method' => 'delete']) !!}

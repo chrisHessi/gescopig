@@ -6,6 +6,7 @@ use App\Helpers\AcademicYear;
 use App\Http\Requests\CreateEcueRequest;
 use App\Http\Requests\UpdateEcueRequest;
 use App\Models\Ecue;
+use App\Repositories\AcademicYearRepository;
 use App\Repositories\EcueRepository;
 use App\Http\Controllers\AppBaseController;
 use App\Repositories\SemestreRepository;
@@ -24,14 +25,16 @@ class EcueController extends AppBaseController
     protected $specialiteRepository;
     protected $ueRepository;
     protected $academicYear;
+    protected $academicYearRepository;
 
-    public function __construct(EcueRepository $ecueRepo, SemestreRepository $semestreRepository,UeRepository $ueRepository, AcademicYear $ay, SpecialiteRepository $specialiteRepository)
+    public function __construct(EcueRepository $ecueRepo, AcademicYearRepository $academicYearRepository, SemestreRepository $semestreRepository,UeRepository $ueRepository, AcademicYear $ay, SpecialiteRepository $specialiteRepository)
     {
         $this->ecueRepository = $ecueRepo;
         $this->semestreRepository = $semestreRepository;
         $this->specialiteRepository = $specialiteRepository;
         $this->ueRepository = $ueRepository;
         $this->academicYear = $ay::getCurrentAcademicYear();
+        $this->academicYearRepository = $academicYearRepository;
     }
 
     /**
@@ -43,7 +46,7 @@ class EcueController extends AppBaseController
     public function index(Request $request)
     {
         $this->ecueRepository->pushCriteria(new RequestCriteria($request));
-        $ecues = $this->ecueRepository->findWhere(['academic_year_id' => $this->academicYear]);;
+        $ecues = Ecue::where('academic_year_id', '>=', $this->academicYear)->get();
 //        $ecues = Ecue::withTrashed()->get();
 //        foreach ($ecues as $ecue){
 //            $ecue->academic_year_id = $this->academicYear;
@@ -67,12 +70,18 @@ class EcueController extends AppBaseController
         $specialiteEcue = null;
         $semestres = array();
 
+        $academicYears = [];
+        $ay = $this->academicYearRepository->all();
+        foreach ($ay as $a){
+            $academicYears[$a->id] = $a->debut.'/'.$a->fin;
+        }
+
         foreach($sem as $semestre){
             $semestres[$semestre->id] = $semestre->title. ' - ' . $semestre->cycle->label;
         }
 
 
-        return view('ecues.create', compact('semestres', 'specialites', 'specialiteEcue', 'ecues'));
+        return view('ecues.create', compact('semestres', 'specialites', 'specialiteEcue', 'ecues', 'academicYears'));
     }
 
     /**
@@ -88,7 +97,6 @@ class EcueController extends AppBaseController
         $slug = 'EC'. str_pad($ecueNb,3,0,STR_PAD_LEFT);
         $input = $request->except('specialite');
         $input['slug'] = $slug;
-        $input['academic_year_id'] = $this->academicYear;
         $specialites= $request->input('specialite');
 
         $ecue = $this->ecueRepository->create($input);
@@ -136,6 +144,12 @@ class EcueController extends AppBaseController
         $semestreEcue = $ecue->semestre->id;
         $specialites = $this->specialiteRepository->all();
         $semestres = array();
+
+        $academicYears = [];
+        $ay = $this->academicYearRepository->all();
+        foreach ($ay as $a){
+            $academicYears[$a->id] = $a->debut.'/'.$a->fin;
+        }
 
         foreach($sem as $semestre){
             $semestres[$semestre->id] = $semestre->title. ' - ' . $semestre->cycle->label;
