@@ -11,21 +11,28 @@
             @include('adminlte-templates::common.errors')
 
             {!! Form::open(['route' => 'academicCalendars.store', 'id' => 'form']) !!}
+            <div class="row">
+                <div class="form-group col-xs-6">
+                    {!! Form::label('academic_year_id', 'Année Académique:') !!}
+                    {!! Form::select('academic_year_id',$academicYears, null, ['class' => 'form-control', 'placeholder' => 'selectioner l\'année']) !!}
+                </div>
+            </div>
+            <hr>
             @foreach($semestres as $semestre)
                 <div class="row">
                     <div class="form-group col-sm-3">
                         {!! Form::label('dateDebutPrevue'. $semestre->id, 'Date debut prevue:') !!}
-                        {!! Form::date('dateDebutPrevue'. $semestre->id, ($semestre->academic_calendars->where('academic_year_id', $ay)->first() != null) ? $semestre->academic_calendars->where('academic_year_id', $ay)->first()->dateDebutPrevue : null, ['class' => 'form-control']) !!}
+                        {!! Form::date('dateDebutPrevue'. $semestre->id, null, ['class' => 'form-control']) !!}
                     </div>
 
                     <div class="form-group col-sm-3">
                         {!! Form::label('dateDebut'. $semestre->id, 'Date debut effective:') !!}
-                        {!! Form::date('dateDebut'. $semestre->id, ($semestre->academic_calendars->where('academic_year_id', $ay)->first() != null) ? $semestre->dateDebut : null, ['class' => 'form-control']) !!}
+                        {!! Form::date('dateDebut'. $semestre->id, null, ['class' => 'form-control']) !!}
                     </div>
 
                     <div class="form-group col-sm-3">
                         {!! Form::label('dateFinPrevue'. $semestre->id, 'Date fin prevue:') !!}
-                        {!! Form::date('dateFinPrevue'. $semestre->id, ($semestre->academic_calendars->where('academic_year_id', $ay)->first() != null) ? $semestre->academic_calendars->where('academic_year_id', $ay)->first()->dateFinPrevue : null, ['class' => 'form-control']) !!}
+                        {!! Form::date('dateFinPrevue'. $semestre->id, null, ['class' => 'form-control']) !!}
                     </div>
 
                     <div class="form-group col-sm-3">

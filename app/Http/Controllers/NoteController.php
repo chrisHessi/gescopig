@@ -448,6 +448,16 @@ class NoteController extends Controller
         return view('notes.rn_intermediaire', compact('contrats', 'enseignements', 'semestre', 'i', 'academicYear', 'session'));
     }
 
+    /**
+     * @param $sem
+     * @param $spec
+     * @param $session
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     *
+     * Liste des etudiants à deliberer (possibilité de choisir les etudiants avant delibération)
+     *
+     */
+
     public function a_deliberer($sem, $spec, $session){
 
         $cycle = $this->semestreRepository->findWithoutFail($sem)->cycle;
