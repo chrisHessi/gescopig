@@ -7,6 +7,14 @@
     @include('flash::message')
 
     <div class="clearfix"></div>
+        @if(isset($academicYears))
+            <div class="row">
+                <div class="form-group col-xs-2 pull-right">
+                    {!! Form::label('academic_year_id', 'Année Académique:') !!}
+                    {!! Form::select('academic_year_id',$academicYears, null, ['class' => 'form-control', 'placeholder' => 'selectioner l\'année']) !!}
+                </div>
+            </div>
+        @endif
         <div>
     @foreach($cycles as $cycle)
         @foreach($cycle->specialites as $specialite)
@@ -35,7 +43,7 @@
                         </a>
                     @else
                         @foreach($cycle->semestres as $semestre)
-                            <a href="{!! route($model .'.'.$method,[$semestre->id, $specialite->id, isset($type) ? $type : '']) !!}" class="small-box-footer ">
+                            <a href="{!! route($model .'.'.$method,[$semestre->id, $specialite->id, isset($type) ? $type : '']). ($model == 'notes') ? '?ay_id='. $cur_year->id : '' !!}" class="small-box-footer ">
                                 <font style="vertical-align: inherit;">
                                     <font style="vertical-align: inherit;">
                                         {!! $semestre->title !!}
@@ -87,6 +95,26 @@
            $(".TL").addClass('bg-aqua');
             $('.TL .icon>i').addClass('fa fa-truck');
         });
+
+        $('#academic_year_id').change(function () {
+            ay_id = $('#academic_year_id').val()
+            var links = document.querySelectorAll(".small-box a")
+
+            links.forEach(element => {
+                href = element.getAttribute('href')
+
+                if(href.slice(-1) == '?'){
+                    url = href + 'ay_id='+ ay_id
+                }
+                else if(href.slice(-7,-2) == 'ay_id'){
+                    url = href.slice(0,-1) + ay_id
+                }
+                else {
+                    url = href + '?ay_id='+ ay_id
+                }
+                element.setAttribute('href', url)
+            });
+        })
     </script>
 
 @endsection

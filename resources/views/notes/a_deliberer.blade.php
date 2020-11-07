@@ -37,7 +37,7 @@
                                     <td>{!! $contrat->specialite->slug.' '.$contrat->cycle->niveau !!}</td>
                                 </tr>
                             @endforeach
-
+                            {!! Form::hidden('ay_id', $contrats->first()->academic_year_id) !!}
                             </tbody>
                         </table>
                     </div>

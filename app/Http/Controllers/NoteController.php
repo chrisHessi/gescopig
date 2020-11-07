@@ -8,6 +8,7 @@ use App\Http\Requests\CreateNoteRequest;
 use App\Models\AcademicYear;
 use App\Models\Contrat;
 use App\Models\Enseignement;
+use App\Repositories\AcademicYearRepository;
 use App\Repositories\ContratRepository;
 use App\Repositories\CycleRepository;
 use App\Repositories\EcueRepository;
@@ -36,12 +37,14 @@ class NoteController extends Controller
     protected $semestreInfoRepository;
     protected $resultatNominatifsRepository;
     protected $specialityCode;
+    protected $academicYearRepository;
 
     public function __construct(CycleRepository $cycleRepository, SpecialiteRepository $specialiteRepository,
                                 SemestreRepository $semestreRepository, EnseignementRepository $enseignementRepository,
                                 ContratRepository $contratRepository, Inscrip $academicYear,
                                 NoteRepository $noteRepository, EcueRepository $ecueRepository, UeInfoRepository $ueInfoRepository,
-                                SemestreInfoRepository $semestreInfoRepository, ResultatNominatifRepository $resultatNominatifRepository)
+                                SemestreInfoRepository $semestreInfoRepository, ResultatNominatifRepository $resultatNominatifRepository,
+                                AcademicYearRepository $academicYearRepository)
     {
         $this->cycleRepository = $cycleRepository;
         $this->specialiteRepository = $specialiteRepository;
@@ -55,6 +58,7 @@ class NoteController extends Controller
         $this->semestreInfoRepository = $semestreInfoRepository;
         $this->ueInfoRepository = $ueInfoRepository;
         $this->resultatNominatifsRepository = $resultatNominatifRepository;
+        $this->academicYearRepository = $academicYearRepository;
 
         $this->specialityCode = [
             'BF' => 1,
@@ -76,6 +80,14 @@ class NoteController extends Controller
     public function search($n, $type = null){
         $specialites = $this->specialiteRepository->all();
         $cycles = $this->cycleRepository->all();
+
+        $academicYears = [];
+        $ay = $this->academicYearRepository->all();
+        foreach ($ay as $a){
+            $academicYears[$a->id] = $a->debut.'/'.$a->fin;
+        }
+        $cur_year= $this->anneeAcademic;
+
         if($n == '2')
             $method = 'imprime';
         elseif($n == '1')
@@ -95,7 +107,7 @@ class NoteController extends Controller
         }
         $model = 'notes';
 
-        return view('search',compact('cycles','model', 'method', 'type'));
+        return view('search',compact('cycles','model', 'method', 'type', 'academicYears', 'cur_year'));
     }
 
     /**
@@ -104,17 +116,19 @@ class NoteController extends Controller
      * cette fonction sert à l'enregistrement des notes de l'etudiant
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function affiche($sem, $spe){
+    public function affiche($sem, $spe, Request $request){
         $semestre = $this->semestreRepository->findWithoutFail($sem);
         $specialite = $this->specialiteRepository->findWithoutFail($spe);
         $ecues = $specialite->ecues->where('semestre_id', $semestre->id);
-        $aa = $this->anneeAcademic;
+        $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
         $ens = [];
         foreach($ecues as $ec){
             $enseignement = $ec->enseignements->where('specialite_id', $specialite->id)->where('academic_year_id', '==', $aa->id)->first();
             isset($enseignement->id) ? array_push($ens, $enseignement->id) : '';
         }
         $enseignements = $this->enseignementRepository->findWhereIn('id', $ens);
+
+//        dd($enseignements);
 
 
         return view('notes.affiche', compact('enseignements', 'specialite', 'semestre'));
@@ -126,13 +140,14 @@ class NoteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function deliberation($sem, $spec){
+    public function deliberation($sem, $spec, Request $request){
         $specialite = $this->specialiteRepository->findWithoutFail($spec);
         $semestre = $this->semestreRepository->findWithoutFail($sem);
+        $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
         $contrats = $this->contratRepository->findWhere([
             'specialite_id' => $specialite->id,
             'cycle_id' => $semestre->cycle->id,
-            'academic_year_id' => $this->anneeAcademic->id
+            'academic_year_id' => $aa->id
         ]);
 
         return view('notes.deliberation', compact('specialite', 'semestre', 'contrats'));
@@ -142,14 +157,14 @@ class NoteController extends Controller
     public function noteDeliberation($type, $app, $sem){
         $contrat = $this->contratRepository->findWithoutFail($app);
         $semestre = $this->semestreRepository->findWithoutFail($sem);
-        $ecues = $contrat->specialite->ecues->where('semestre_id', $semestre->id); // toutes les ecues de la specialite de l'etudiant.
+        $ecues = $contrat->specialite->ecues->where('semestre_id', $semestre->id)->where('academic_year_id', $contrat->academic_year_id); // toutes les ecues de la specialite de l'etudiant.
 
         $denied = false; //pour verifier que les notes de 1ere session ont ete deja renseignees
 
         $enseignements = []; //conteneur dans lequel seront chargés tous les enseignements concernés
 
         foreach($ecues as $ecue){
-            $ens = $ecue->enseignements->where('specialite_id', $contrat->specialite_id)->where('academic_year_id', '==', $this->anneeAcademic->id)->first();
+            $ens = $ecue->enseignements->where('specialite_id', $contrat->specialite_id)->where('academic_year_id', '==', $contrat->academic_year_id)->first();
             ($ens) ? $enseignements[] = $ens : '';
         }
 
@@ -165,10 +180,10 @@ class NoteController extends Controller
                 $denied = true;
         }
 
-        // if($denied){
-        //     Flash::error('Veuillez renseigner les notes de '.$type .' de tous les etudiants avant de deliberer');
-        //     return redirect()->back();
-        // }
+         if($denied){
+             Flash::error('Veuillez renseigner les notes de '.$type .' de tous les etudiants avant de deliberer');
+             return redirect()->back();
+         }
 
         return view('notes.noteDeliberation', compact('contrat', 'enseignements', 'type', 'sem'));
     }
@@ -188,7 +203,6 @@ class NoteController extends Controller
                 $note->update(['del1'=> $value]);
             }
             elseif ($type == 'session2'){
-
                 ($value != null) ? $note->update(['del2' => $value]) : "";
             }
         }
@@ -269,13 +283,13 @@ class NoteController extends Controller
         }
     }
 
-    public function rattrapage($sem, $spec){
+    public function rattrapage($sem, $spec, Request $request){
 
         $semestre = $this->semestreRepository->findWithoutFail($sem);
         $specialite = $this->specialiteRepository->findWithoutFail($spec);
+        $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
 
-
-        $app = $this->contratRepository->findWhere(['specialite_id' => $specialite->id, 'cycle_id' => $semestre->cycle_id, 'academic_year_id' => $this->anneeAcademic->id]);
+        $app = $this->contratRepository->findWhere(['specialite_id' => $specialite->id, 'cycle_id' => $semestre->cycle_id, 'academic_year_id' => $aa->id]);
 
         $contrats = [];
 
@@ -366,7 +380,7 @@ class NoteController extends Controller
             ->select('contrats.*')
             ->where('specialite_id', $specialite)
             ->where('cycle_id', $cycle)
-            ->where('contrats.academic_year_id', $this->anneeAcademic->id)
+            ->where('contrats.academic_year_id', $enseignement->academic_year_id)
             ->orderBy('apprenants.nom')
             ->orderBy('apprenants.prenom');
 
@@ -391,23 +405,32 @@ class NoteController extends Controller
         return view('notes.show', compact('enseignement', 'contrats' , 'type'));
     }
 
-    public function imprime($sem, $specialite){
+    public function imprime($sem, $specialite, Request $request){
         $semestre = $this->semestreRepository->findWithoutFail($sem);
-        $contrats = $this->contratRepository->findWhere(['specialite_id' => $specialite, 'cycle_id' => $semestre->cycle_id, 'academic_year_id' => $this->anneeAcademic->id]);
+        $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
+        $contrats = $this->contratRepository->findWhere(['specialite_id' => $specialite, 'cycle_id' => $semestre->cycle_id, 'academic_year_id' => $aa->id]);
 
         return view('notes.imprime', compact('contrats', 'semestre'));
     }
 
     public function releve($session, $contrat, $semestre){
 
-        $academicYear = $this->anneeAcademic;
-
         $contrat = $this->contratRepository->findWithoutFail($contrat);
+
+
+
+        $academicYear = $contrat->academic_year;
 
         $semestre = $this->semestreRepository->findWithoutFail($semestre);
 
-        $enseignements = $semestre->enseignements->where('specialite_id', $contrat->specialite_id)->where('academic_year_id', $this->anneeAcademic->id);
+        $enseignements = $semestre->enseignements->where('specialite_id', $contrat->specialite_id)->where('academic_year_id', $contrat->academic_year_id);
 
+        foreach ($enseignements as $enseignement) {
+            if($contrat->notes->where('enseignement_id', $enseignement->id)->first() == null){
+                Flash::error('L\'etudiant(e) '. $contrat->apprenant->nom .' '. $contrat->apprenant->prenom .' ne possede pas de note de '. $enseignement->ecue->title);
+                return redirect()->back();
+            }
+        }
         $ues = [];
 
         foreach ($enseignements as $enseignement) {
@@ -419,14 +442,16 @@ class NoteController extends Controller
         return view('notes.rnr_imprime', compact('contrat', 'semestre', 'enseignements', 'ues', 'academicYear', 'session', 'specialityCode'));
     }
 
-    public function rn_intermediaire($sem, $spec, $session){
+    public function rn_intermediaire($sem, $spec, $session, Request $request){
         $semestre = $this->semestreRepository->findWithoutFail($sem);
         $cycle = $this->semestreRepository->findWithoutFail($sem)->cycle;
+        $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
+
         $c = Contrat::join('apprenants', 'apprenant_id', '=', 'apprenants.id')
             ->select('contrats.*')
             ->where('specialite_id', $spec)
             ->where('cycle_id', $cycle->id)
-            ->where('contrats.academic_year_id', $this->anneeAcademic->id)
+            ->where('contrats.academic_year_id', $aa->id)
             ->orderBy('apprenants.nom')
             ->orderBy('apprenants.prenom');
 
@@ -443,7 +468,7 @@ class NoteController extends Controller
         foreach($ec as $ecue){
             $ecues[] = $ecue->id;
         }
-        $enseignements = $specialite->enseignements->whereIn('ecue_id', $ecues)->where('academic_year_id', $this->anneeAcademic->id);
+        $enseignements = $specialite->enseignements->whereIn('ecue_id', $ecues)->where('academic_year_id', $aa->id);
         
         return view('notes.rn_intermediaire', compact('contrats', 'enseignements', 'semestre', 'i', 'academicYear', 'session'));
     }
@@ -458,9 +483,10 @@ class NoteController extends Controller
      *
      */
 
-    public function a_deliberer($sem, $spec, $session){
+    public function a_deliberer($sem, $spec, $session, Request $request){
 
         $cycle = $this->semestreRepository->findWithoutFail($sem)->cycle;
+        $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
 
         //on recupere tous les contrats par ordre alphabetique
 
@@ -468,7 +494,7 @@ class NoteController extends Controller
             ->select('contrats.*')
             ->where('specialite_id', $spec)
             ->where('cycle_id', $cycle->id)
-            ->where('contrats.academic_year_id', $this->anneeAcademic->id)
+            ->where('contrats.academic_year_id', $aa->id)
             ->orderBy('apprenants.nom')
             ->orderBy('apprenants.prenom');
 
@@ -491,6 +517,7 @@ class NoteController extends Controller
             return redirect()->back();
         }
         $cycle = $this->semestreRepository->findWithoutFail($sem)->cycle;
+        $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
 
         //on recupere tous les contrats par ordre alphabetique
 
@@ -498,7 +525,7 @@ class NoteController extends Controller
             ->select('contrats.*')
             ->where('specialite_id', $spec)
             ->where('cycle_id', $cycle->id)
-            ->where('contrats.academic_year_id', $this->anneeAcademic->id)
+            ->where('contrats.academic_year_id', $aa->id)
             ->whereIn('contrats.id', $id)
             ->orderBy('apprenants.nom')
             ->orderBy('apprenants.prenom');
@@ -508,21 +535,23 @@ class NoteController extends Controller
             $q->where('session', 'session2')->where('semestre_id', $sem);
         })->get();
 
+//        dd($contrats, $id, $request->ay_id, $aa->id);
+
         if (empty($contrats)) {
-            Flash::error('Aucun apprenant dans cette classe');
+            Flash::error('Aucun des apprenants selectionnés dans cette classe ne possède de note');
             return redirect()->back();
         }
         $i=0; // increment d'effectif
         $semestre = $this->semestreRepository->findWithoutFail($sem);
         $specialite = $this->specialiteRepository->findWithoutFail($spec);
         $ecues =[];
-        $academicYear = $this->anneeAcademic;
+        $academicYear = $aa;
         $ec = $specialite->ecues->where('semestre_id', $sem);
         foreach($ec as $ecue){
             $ecues[] = $ecue->id;
         }
         // $enseignements = $specialite->enseignements->whereIn('ecue_id', $ecues)->where('academic_year_id', $this->anneeAcademic->id);
-        $enseignements = Enseignement::whereHas('notes')->whereIn('ecue_id', $ecues)->where('academic_year_id', $this->anneeAcademic->id)->where('specialite_id', $specialite->id)->get();
+        $enseignements = Enseignement::whereHas('notes')->whereIn('ecue_id', $ecues)->where('academic_year_id', $aa->id)->where('specialite_id', $specialite->id)->get();
         // dd($enseignements);
 
         $ues = [];
@@ -550,26 +579,28 @@ class NoteController extends Controller
         return view('notes.pv', compact('contrats', 'enseignements', 'ues', 'semestre', 'i', 'academicYear', 'session', 'specialite', 'specialityCode' ));
     }
 
-    public function pvcc($sem, $spec){
+    public function pvcc($sem, $spec, Request $request){
         $specialite = $this->specialiteRepository->findWithoutFail($spec);
         $semestre = $this->semestreRepository->findWithoutFail($sem);
         $cycle = $this->semestreRepository->findWithoutFail($semestre->id)->cycle;
+        $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
+
         $contrats = Contrat::join('apprenants', 'apprenant_id', '=', 'apprenants.id')
             ->select('contrats.*')
             ->where('specialite_id', $spec)
             ->where('cycle_id', $cycle->id)
-            ->where('contrats.academic_year_id', $this->anneeAcademic->id)
+            ->where('contrats.academic_year_id', $aa->id)
             ->orderBy('apprenants.nom')
             ->orderBy('apprenants.prenom')
             ->get();
 
         $ecues =[];
-        $academicYear = $this->anneeAcademic;
+        $academicYear = $aa;
         $ec = $specialite->ecues->where('semestre_id', $sem);
         foreach($ec as $ecue){
             $ecues[] = $ecue->id;
         }
-        $enseignements = $specialite->enseignements->whereIn('ecue_id', $ecues)->where('academic_year_id', $academicYear->id);
+        $enseignements = $specialite->enseignements->whereIn('ecue_id', $ecues)->where('academic_year_id', $aa->id);
 
         return view('notes.pvcc', compact('contrats', 'enseignements', 'academicYear', 'semestre'));
     }
