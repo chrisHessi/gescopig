@@ -43,7 +43,7 @@
                         </a>
                     @else
                         @foreach($cycle->semestres as $semestre)
-                            <a href="{!! route($model .'.'.$method,[$semestre->id, $specialite->id, isset($type) ? $type : '']). ($model == 'notes') ? '?ay_id='. $cur_year->id : '' !!}" class="small-box-footer ">
+                            <a href="{!! route($model .'.'.$method,[$semestre->id, $specialite->id, isset($type) ? $type : '']) !!}" class="small-box-footer ">
                                 <font style="vertical-align: inherit;">
                                     <font style="vertical-align: inherit;">
                                         {!! $semestre->title !!}
@@ -94,10 +94,18 @@
             $('.CMD .icon>i').addClass('fa fa-laptop');
            $(".TL").addClass('bg-aqua');
             $('.TL .icon>i').addClass('fa fa-truck');
+            get_academic()
         });
 
+        @if($model == 'notes')
         $('#academic_year_id').change(function () {
-            ay_id = $('#academic_year_id').val()
+            get_academic()
+        })
+
+        function get_academic() {
+            select_id = $('#academic_year_id').val()
+            ay_id = (select_id == '') ? "{!! $cur_year->id !!}" : select_id
+            console.log(ay_id)
             var links = document.querySelectorAll(".small-box a")
 
             links.forEach(element => {
@@ -114,7 +122,14 @@
                 }
                 element.setAttribute('href', url)
             });
-        })
+        }
+
+        @else
+            function get_academic(){
+                //
+            }
+        @endif
+
     </script>
 
 @endsection

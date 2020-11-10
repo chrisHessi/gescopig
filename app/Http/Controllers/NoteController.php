@@ -107,6 +107,7 @@ class NoteController extends Controller
         }
         $model = 'notes';
 
+
         return view('search',compact('cycles','model', 'method', 'type', 'academicYears', 'cur_year'));
     }
 
