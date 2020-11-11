@@ -73,10 +73,20 @@ class EnseignantController extends AppBaseController
      */
     public function store(CreateEnseignantRequest $request)
     {
-        $input = $request->all();
+        $input = $request->except(['mh_licence', 'mh_master']);
 
         $enseignant = $this->enseignantRepository->create($input);
-        $contrat = $this->contratEnseignantRepository->create(['enseignant_id' => $enseignant->id, 'academic_year_id' => $this->academicYear]);
+
+        $last_range = $this->contratEnseignantRepository->findWhere(['academic_year_id' => $this->academicYear])->last()->rang;
+        $rang = $last_range + 1;
+
+        $contratInput = $request->except(['mh_licence', 'mh_master']);
+
+        $contratInput['enseignant_id'] = $enseignant->id;
+        $contratInput['academic_year_id'] = $this->academicYear;
+        $contratInput['rang'] = $rang;
+
+        $contrat = $this->contratEnseignantRepository->create($contratInput);
 
         Flash::success('Enseignant saved successfully.');
 

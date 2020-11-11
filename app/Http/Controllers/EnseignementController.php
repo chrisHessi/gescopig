@@ -264,7 +264,7 @@ class EnseignementController extends AppBaseController
         $url = back()->getTargetUrl();
         session(['url' => $url]);
 
-        return view('enseignements.editMh', compact('enseignement', 'ecues', 'url'));
+        return view('enseignements.editMh', compact('enseignement', 'url'));
     }
 
     public function updateMh($id, UpdateEnseignementRequest $request){

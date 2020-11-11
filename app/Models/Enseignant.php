@@ -28,7 +28,12 @@ class Enseignant extends Model
     public $fillable = [
         'name',
         'tel',
-        'mail'
+        'mail',
+        'date_naissance',
+        'lieu_naissance',
+        'profession',
+        'domicile',
+        'nationalite'
     ];
 
     /**
@@ -39,7 +44,8 @@ class Enseignant extends Model
     protected $casts = [
         'name' => 'string',
         'tel' => 'string',
-        'mail' => 'string'
+        'mail' => 'string',
+        'date_naissance' => 'date',
     ];
 
     /**
@@ -50,7 +56,14 @@ class Enseignant extends Model
     public static $rules = [
         'name' => 'bail|required|max:255',
         'tel' => 'bail|required|max:20',
-        'mail' => 'bail|required|max:255|email'
+        'mail' => 'bail|required|max:255|email',
+        'date_naissance' => 'bail|required|date',
+        'lieu_naissance' => 'bail|required',
+        'profession' => 'bail|required',
+        'domicile' => 'bail|required',
+        'nationalite' => 'bail|required',
+        'mh_licence' => 'bail',
+        'mh_master' => 'bail'
     ];
 
     /**

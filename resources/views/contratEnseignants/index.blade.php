@@ -61,7 +61,12 @@
                                     </div>
                                 @endcan
                                 @can('print teachers contract')
-                                    <a href="{!! route('contratEnseignants.contrat', [$contrat->id]) !!}" class='btn btn-warning btn-xs' title="Imprimer le contrat"><i class="glyphicon glyphicon-print"></i></a>
+                                    <a type="button" class="btn btn-warning btn-xs" data-toggle="modal"
+                                            data-target="#printModal" data-id="{{ $contrat->id }}"
+                                            id="imprimer" title="Contrat de charge d'enseignement">
+                                        <i class="glyphicon glyphicon-print"></i>
+                                    </a>
+{{--                                    <a href="{!! route('contratEnseignants.contrat', [$contrat->id]) !!}" class='btn btn-warning btn-xs' title="Imprimer le contrat"><i class="glyphicon glyphicon-print"></i></a>--}}
                                 @endcan
                             </td>
                         </tr>
@@ -69,6 +74,30 @@
                     @endforeach
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div class="modal fade" id="printModal" tabindex="-1" role="dialog" aria-labelledby="printModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="justificationModalLabel">Imprimer contrat</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group col-xs-6 doc">
+                                {!! Form::label('signataire', 'Signataires:') !!}
+                                {!! Form::text('signataire', null, ['class' => 'form-control']) !!}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close">Close</button>
+                        <button class="btn btn-primary" id="send">Imprimer</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="text-center">
@@ -79,14 +108,36 @@
 
 @section('scripts')
 
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('div #printModal').on('show.bs.modal', function(e){
+                var button = $(e.relatedTarget);
+                var type = button.attr('id');
+                var contrat = button.data('id')
+                var modal = $(this);
+
+                console.log(contrat)
+
+                $('#send').click(function(e){
+                    e.preventDefault();
+                    console.log(3)
+                    var signataire = $('#signataire').val()
+
+                    var url = 'http://'+ window.location.host + '/contratEnseignants/contrats/'+contrat+'?signataire='+signataire;
+
+
+                    window.open(url,'_blank', 'menubar=no, toolbar=no, width=1000px, height=600px')
+                    window.location.reload();
+                });
+            });
+        })
+    </script>
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jq-3.3.1/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/datatables.min.js"></script>
 
-
-
     <script>
-
         $(document).ready(function() {
             var table = $('#contrats-table').DataTable({
                 responsive: true,

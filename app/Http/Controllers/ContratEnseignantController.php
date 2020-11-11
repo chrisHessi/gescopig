@@ -73,6 +73,8 @@ class ContratEnseignantController extends Controller
     public function store(Request $request){
         $input = $request->except('_token');
         $input['academic_year_id'] = $this->academicYear;
+        $last_range = $this->contratEnseignantRepository->findWhere(['academic_year_id' => $this->academicYear])->last()->rang;
+        $input['rang'] = $last_range + 1;
         $contrat = $this->contratEnseignantRepository->create($input);
 
         Flash::success('Contrat de l\'Enseignant enregistré avec succès.');
@@ -197,7 +199,7 @@ class ContratEnseignantController extends Controller
         return view('contratEnseignants.rapport', compact('payments', 'contrat'));
     }
 
-    public function contrat($id){
+    public function contrat($id, Request $request){
         $contrat = $this->contratEnseignantRepository->findWithoutFail($id);
         if(empty($contrat)){
             Flash::error('Contrat inexistant');
@@ -205,6 +207,8 @@ class ContratEnseignantController extends Controller
             return redirect(route('contratEnseignants.index'));
         }
         $ecues = [];
+        $signataire = $request->get('signataire');
+        dd($signataire);
 
         foreach ($contrat->enseignements as $enseignement) {
             $ecues[$enseignement->ecue->id] = $enseignement->ecue;

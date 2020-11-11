@@ -135,7 +135,7 @@
                 </div>
                 
                 <div class="row text-center">
-                    <h4 id="annee"><i>ANNEE ACADEMIQUE 2019-2020/PIG/DLA/091/19-20/PDGF/DE/DA</i></h3>
+                    <h4 id="annee"><i>ANNEE ACADEMIQUE {{ $contrat->academic_year->debut.'-'.$contrat->academic_year->fin .'/PIG/'.(request()->getHost() == 'www.gescopigyaounde.com' ? 'YDE' : 'DLA').'/' .$contrat->rang.'/'. substr($contrat->academic_year->debut, -2).'-'.substr($contrat->academic_year->fin, -2).'/' }}</i></h4>
                 </div>
                 <div id="contenu">
                     <p><strong>ENTRE LES SOUSSIGNES</strong></p>
@@ -143,28 +143,28 @@
                     <p>D’une part</p>
                     <p>Et</p>
                     <p>
-                        Monsieur/Madame {!! '<strong>'.$contrat->enseignant->name.'</strong> ; né(e) le <strong>20/06/1984</strong> deumerant à <strong>Douala;</strong> nationalité : <strong>Camerounaise</strong>, ci après désigné(e) <strong>l\'enseignant</strong> '!!}
+                        Monsieur/Madame {!! '<strong>'.$contrat->enseignant->name.'</strong> ; né(e) le <strong>'. $contrat->enseignant->date_naissance. 'à '. $contrat->enseignant->lieu_naissance .'</strong> deumerant à <strong>'. $contrat->enseignant->domicile .';</strong> nationalité : <strong>Camerounaise</strong>, ci après désigné(e) <strong>l\'enseignant</strong> '!!}
                     </p>
                     <p>
-                        De profession : <strong>Enseignant</strong> ; Tél : <strong>{{ $contrat->enseignant->tel }}</strong>  ; e-mail : <strong>{{ $contrat->enseignant->mail }}</strong>; 
+                        De profession : <strong>{{ ($contrat->enseignant->profession) ? $contrat->enseignant->profession : 'Non rensenseigné' }}</strong> ; Tél : <strong>{{ $contrat->enseignant->tel }}</strong>  ; e-mail : <strong>{{ $contrat->enseignant->mail }}</strong>;
                     </p><br>
-                    <p>
-                        ECUE(s) enseigné(s):
-                        @foreach($ecues as $ecue)
-                            <span>{{ $ecue->title }}; </span>
-                        @endforeach
-                    </p><br>
+                    {{--<p>--}}
+                        {{--ECUE(s) enseigné(s):--}}
+                        {{--@foreach($ecues as $ecue)--}}
+                            {{--<span><strong>{{ $ecue->title }};</strong></span>--}}
+                        {{--@endforeach--}}
+                    {{--</p><br>--}}
                     <p>D’autre part,</p>
                     <p>Il a été convenu ce qui suit :</p>
                     <ol>
                         <li>
-                            L’enseignant s’engage à assurer en qualité de chargé d’enseignement associé des cours à l’ESCM PIGIER Cameroun en fonction de l’emploi de temps établi par la Direction des Etudes et ce pour les ECUEs arrêtés de commun accord ;
+                            L’enseignant s’engage à assurer en qualité de chargé d’enseignement associé des cours à l’ESCM PIGIER Cameroun en fonction de l’emploi de temps établi par la Direction des Etudes et ce pour les ECUEs arrêtés de commun accord (Voir annexe au contrat);
                         </li>
                         <li>
                             Il s’engage également à respecter le règlement intérieur des enseignants en vigueur dans l’Etablissement ;
                         </li>
                         <li>
-                            La rémunération brute horaire est de F CFA 7 500  Licence
+                            La rémunération brute horaire est de <strong>F CFA {{ $contrat->mh_licence }}</strong>  Licence, Pour master <strong>F CFA {{ $contrat->mh_master }}</strong>
                         </li>
                         <li>
                             La rémunération n’est due que pour les heures de cours effectivement assurées en présence des apprenants après dépôt auprès de la Direction des Etudes dans les délais arrêtés des documents ci-après :
@@ -174,6 +174,7 @@
                                 <li>Notes de contrôle continu</li>
                                 <li>Deux sujets d’examen de fin de semestre avec corrigés types</li>
                                 <li>Liste de trois ouvrages pour la bibliothèque ;</li>
+                                <li>Note d'honoraires</li>
                             </ul>
 
                         </li>

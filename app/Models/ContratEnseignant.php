@@ -10,7 +10,8 @@ class ContratEnseignant extends Model
         'enseignant_id',
         'academic_year_id',
         'mh_licence',
-        'mh_master'
+        'mh_master',
+        'rang'
     ];
 
     public function enseignant(){
