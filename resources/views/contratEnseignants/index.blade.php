@@ -110,7 +110,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $('div #printModal').on('show.bs.modal', function(e){
+            $('#printModal').on('show.bs.modal', function(e){
                 var button = $(e.relatedTarget);
                 var type = button.attr('id');
                 var contrat = button.data('id')
@@ -123,7 +123,7 @@
                     console.log(3)
                     var signataire = $('#signataire').val()
 
-                    var url = 'http://'+ window.location.host + '/contratEnseignants/contrats/'+contrat+'?signataire='+signataire;
+                    var url = 'http://'+ window.location.host + '/public/contratEnseignants/contrats/'+contrat+'?signataire='+signataire;
 
 
                     window.open(url,'_blank', 'menubar=no, toolbar=no, width=1000px, height=600px')
@@ -135,23 +135,25 @@
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jq-3.3.1/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/datatables.min.js"></script>
+    {{--<script type="text/javascript" src="https://cdn.datatables.net/v/bs/jq-3.3.1/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/datatables.min.js"></script>--}}
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.22/b-1.6.5/b-html5-1.6.5/b-print-1.6.5/datatables.min.js"></script>
 
     <script>
-        $(document).ready(function() {
-            var table = $('#contrats-table').DataTable({
-                responsive: true,
-                dom:'Blfrtip',
-                buttons:[
-                    'copy', 'excel', 'pdf'
-                ],
-                "columnDefs":[
-                    {"orderable":false, "targets":3}
-                ]
+
+            $(function() {
+                var table = $('#contrats-table').DataTable({
+                    responsive: true,
+                    dom:'Blfrtip',
+                    // buttons:[
+                    //     'copy', 'excel', 'pdf'
+                    // ],
+                    "columnDefs":[
+                        {"orderable":false, "targets":5}
+                    ]
+                });
             });
 
-            table.buttons().container().appendTo($('.col-sm-6:eq(0)', table.table().container() ))
-        });
+            // table.buttons().container().appendTo($('.col-sm-6:eq(0)', table.table().container() ))
     </script>
 
 @endsection
@@ -160,5 +162,8 @@
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jq-3.3.1/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/datatables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/ju/dt-1.10.22/b-1.6.5/b-html5-1.6.5/b-print-1.6.5/datatables.min.css"/>
+
+    {{--<script type="text/javascript" src="https://cdn.datatables.net/v/ju/dt-1.10.22/b-1.6.5/b-html5-1.6.5/b-print-1.6.5/datatables.min.js"></script>--}}
 
 @endsection

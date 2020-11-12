@@ -135,7 +135,7 @@
                 </div>
                 
                 <div class="row text-center">
-                    <h4 id="annee"><i>ANNEE ACADEMIQUE {{ $contrat->academic_year->debut.'-'.$contrat->academic_year->fin .'/PIG/'.(request()->getHost() == 'www.gescopigyaounde.com' ? 'YDE' : 'DLA').'/' .$contrat->rang.'/'. substr($contrat->academic_year->debut, -2).'-'.substr($contrat->academic_year->fin, -2).'/' }}</i></h4>
+                    <h4 id="annee"><i>ANNEE ACADEMIQUE {{ $contrat->academic_year->debut.'-'.$contrat->academic_year->fin .'/PIG/'.(request()->getHost() == 'www.gescopigyaounde.com' ? 'YDE' : 'DLA').'/' .str_pad($contrat->rang,3,0,STR_PAD_LEFT).'/'. substr($contrat->academic_year->debut, -2).'-'.substr($contrat->academic_year->fin, -2).'/'.$signataire }}</i></h4>
                 </div>
                 <div id="contenu">
                     <p><strong>ENTRE LES SOUSSIGNES</strong></p>
@@ -143,7 +143,7 @@
                     <p>D’une part</p>
                     <p>Et</p>
                     <p>
-                        Monsieur/Madame {!! '<strong>'.$contrat->enseignant->name.'</strong> ; né(e) le <strong>'. $contrat->enseignant->date_naissance. 'à '. $contrat->enseignant->lieu_naissance .'</strong> deumerant à <strong>'. $contrat->enseignant->domicile .';</strong> nationalité : <strong>Camerounaise</strong>, ci après désigné(e) <strong>l\'enseignant</strong> '!!}
+                        Monsieur/Madame {!! '<strong>'.$contrat->enseignant->name.'</strong> ; né(e) le <strong>'. $contrat->enseignant->date_naissance->format('d/m/Y'). ' à '. $contrat->enseignant->lieu_naissance .'</strong>; deumerant à <strong>'. $contrat->enseignant->domicile .';</strong> nationalité : <strong>Camerounaise</strong>, ci après désigné(e) <strong>l\'enseignant</strong> '!!}
                     </p>
                     <p>
                         De profession : <strong>{{ ($contrat->enseignant->profession) ? $contrat->enseignant->profession : 'Non rensenseigné' }}</strong> ; Tél : <strong>{{ $contrat->enseignant->tel }}</strong>  ; e-mail : <strong>{{ $contrat->enseignant->mail }}</strong>;

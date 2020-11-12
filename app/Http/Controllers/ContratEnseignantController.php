@@ -208,11 +208,11 @@ class ContratEnseignantController extends Controller
         }
         $ecues = [];
         $signataire = $request->get('signataire');
-        dd($signataire);
+//        dd($signataire);
 
         foreach ($contrat->enseignements as $enseignement) {
             $ecues[$enseignement->ecue->id] = $enseignement->ecue;
         }
-        return view('contratEnseignants.contrat', compact('contrat', 'ecues'));
+        return view('contratEnseignants.contrat', compact('contrat', 'ecues', 'signataire'));
     }
 }
