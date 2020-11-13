@@ -123,12 +123,12 @@
                     console.log(3)
                     var signataire = $('#signataire').val()
 
-                    var url = 'http://'+ window.location.host + '/public/contratEnseignants/contrats/'+contrat+'?signataire='+signataire;
-
+                    var url = 'http://'+ ((window.location.host == 'pigier.test:81') ? window.location.host+'/public' : window.location.host) + '/contratEnseignants/contrats/'+contrat+'?signataire='+signataire;
 
                     window.open(url,'_blank', 'menubar=no, toolbar=no, width=1000px, height=600px')
                     window.location.reload();
                 });
+                console.log(window.location.host)
             });
         })
     </script>
