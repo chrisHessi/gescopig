@@ -117,7 +117,7 @@
 
 <div class="wrapper">
     <div class="content-wrapper">
-        <section class="content container-fluid .page-break" >
+        <section class="content container-fluid .page-break">
             <div class="container-fluid">
                 <div class="logo-container row">
                     <div class="col-xs-2"><img src="{{ ($contrat->cycle->label == 'MBA') ? url('images/mbway.jpg') : url('images/logo_pigier.jpg') }}" alt="logo pigier" class="logo {{($contrat->cycle->label != 'MBA' ? 'pigier_logo' : 'logo')}}"></div>

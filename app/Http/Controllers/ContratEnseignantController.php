@@ -121,6 +121,7 @@ class ContratEnseignantController extends Controller
         $input = $request->only(['mh_licence', 'mh_master']);
         // dd($input);
         $contrat = $this->contratEnseignantRepository->findWithoutFail($id);
+
         if(empty($contrat)){
             Flash::error('Contrat inexistant');
 
@@ -201,6 +202,18 @@ class ContratEnseignantController extends Controller
 
     public function contrat($id, Request $request){
         $contrat = $this->contratEnseignantRepository->findWithoutFail($id);
+        $rang = 0;
+
+        if ($contrat->rang == null){
+            $last_range = $this->contratEnseignantRepository->findWhere(['academic_year_id' => $this->academicYear])->last()->rang;
+            $rang = $last_range + 1;
+        }
+
+        if($rang != 0){
+            $contrat->rang = $rang;
+            $contrat->save();
+        }
+
         if(empty($contrat)){
             Flash::error('Contrat inexistant');
 
