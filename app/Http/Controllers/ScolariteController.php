@@ -105,6 +105,8 @@ class ScolariteController extends Controller
 
     public function contrats($id, Request $request){
         $contrat = $this->contratRepository->findWithoutFail($id);
+        $lastContract = Contrat::withTrashed()->where('academic_year_id', '<', $this->academicYear->id)->count();
+        $rang = $contrat->id - $lastContract;
         if($request->type){
             $titre = $request->titre;
             $signataire = $request->signataire;
@@ -123,7 +125,7 @@ class ScolariteController extends Controller
         }
         $contrat->state = 'Etabli';
         $contrat->save();
-        return view('documents.contrats', compact('contrat'));
+        return view('documents.contrats', compact('contrat', 'rang'));
 
     }
 

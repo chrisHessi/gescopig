@@ -51,8 +51,6 @@ class AbsenceController extends AppBaseController
                 $this->middleware(['permission:create absences']);
             if ($request->route()->getName() == 'absences.update')
                 $this->middleware(['permission:edit absences']);
-            if ($request->route()->getName() == 'absences.store')
-                $this->middleware(['role:Admin|AA']);
         }
 
 

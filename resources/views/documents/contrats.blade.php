@@ -124,8 +124,8 @@
                     <div class="col-xs-2 text-right small-text"><p>ECOLE SUPERIEURE DE COMMERCE ET DE MANAGEMENT <br>BP: 1133 Douala</p></div>
                     <div class="col-xs-4 text-center big-text">
                         <p id="acad"><strong><i>ANNEE ACADEMIQUE : {{ $contrat->academic_year->debut.'-'.$contrat->academic_year->fin }}</i></strong></p>
-{{--                        <p><strong>CONTRAT N° : 2019-039</strong></p>--}}
-                        <p><strong>Incsription</strong></p>
+{{--                        <p><strong>CONTRAT N° : {{ $contrat->academic_year->debut. '-' .str_pad($rang, 3, 0,STR_PAD_LEFT)}}</strong></p>--}}
+                        <br><p><strong>{{ $contrat->type == 'Contrat d\'inscription' ? $contrat->type : 'Contrat de Réinscription' }}</strong></p>
                     </div>
                     <div class="col-xs-2"><img src="{{ url('images/Office365Partner.png') }}" alt="logo microsoft" class="logo"></div>
                     <div class="col-xs-2"><img src="{{ url('images/office-specialist.jpg') }}" alt="logo microsoft" class="logo"></div>
