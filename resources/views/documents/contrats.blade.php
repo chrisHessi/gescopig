@@ -125,7 +125,7 @@
                     <div class="col-xs-4 text-center big-text">
                         <p id="acad"><strong><i>ANNEE ACADEMIQUE : {{ $contrat->academic_year->debut.'-'.$contrat->academic_year->fin }}</i></strong></p>
 {{--                        <p><strong>CONTRAT N° : {{ $contrat->academic_year->debut. '-' .str_pad($rang, 3, 0,STR_PAD_LEFT)}}</strong></p>--}}
-                        <br><p><strong>{{ $contrat->type == 'Contrat d\'inscription' ? $contrat->type : 'Contrat de Réinscription' }}</strong></p>
+                        <br><p><strong>{{ $contrat->type == 'Inscription' ? 'Contrat d\'inscription' : 'Contrat de Réinscription' }}</strong></p>
                     </div>
                     <div class="col-xs-2"><img src="{{ url('images/Office365Partner.png') }}" alt="logo microsoft" class="logo"></div>
                     <div class="col-xs-2"><img src="{{ url('images/office-specialist.jpg') }}" alt="logo microsoft" class="logo"></div>
