@@ -22,6 +22,7 @@ class PermissionController extends Controller
     public function __construct(PermissionRepository $permissionRepository)
     {
         $this->middleware('auth');
+        $this->middleware(['role:admin']);
         $this->permissionRepository = $permissionRepository;
     }
 

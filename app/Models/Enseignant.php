@@ -26,6 +26,7 @@ class Enseignant extends Model
 
 
     public $fillable = [
+        'titre',
         'name',
         'tel',
         'mail',
@@ -54,6 +55,7 @@ class Enseignant extends Model
      * @var array
      */
     public static $rules = [
+        'titre' => 'bail|required',
         'name' => 'bail|required|max:255',
         'tel' => 'bail|required|max:20',
         'mail' => 'bail|required|max:255|email',

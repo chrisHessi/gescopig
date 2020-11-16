@@ -143,7 +143,7 @@
                     <p>D’une part</p>
                     <p>Et</p>
                     <p>
-                        Monsieur/Madame {!! '<strong>'.$contrat->enseignant->name.'</strong> ; né(e) le <strong>'. (($contrat->enseignant->date_naissance != null) ? $contrat->enseignant->date_naissance->format('d/m/Y') : ''). ' à '. $contrat->enseignant->lieu_naissance .'</strong>; deumerant à <strong>'. $contrat->enseignant->domicile .';</strong> nationalité : <strong>Camerounaise</strong>, ci après désigné(e) <strong>l\'enseignant</strong> '!!}
+                        {!! '<strong>'.$contrat->enseignant->titre .' ' .$contrat->enseignant->name.'</strong> ; né(e) le <strong>'. (($contrat->enseignant->date_naissance != null) ? $contrat->enseignant->date_naissance->format('d/m/Y') : ''). ' à '. $contrat->enseignant->lieu_naissance .'</strong>; deumerant à <strong>'. $contrat->enseignant->domicile .';</strong> nationalité : <strong>Camerounaise</strong>, ci après désigné(e) <strong>l\'enseignant</strong> '!!}
                     </p>
                     <p>
                         De profession : <strong>{{ ($contrat->enseignant->profession) ? $contrat->enseignant->profession : 'Non rensenseigné' }}</strong> ; Tél : <strong>{{ $contrat->enseignant->tel }}</strong>  ; e-mail : <strong>{{ $contrat->enseignant->mail }}</strong>;

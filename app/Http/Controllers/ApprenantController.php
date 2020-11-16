@@ -204,6 +204,10 @@ class ApprenantController extends AppBaseController
             return redirect(route('apprenants.index'));
         }
 
+        foreach ($apprenant->contrats as $contrat){
+            $this->contratRepository->delete($contrat->id);
+        }
+
         $this->apprenantRepository->delete($id);
 
         Flash::success('Apprenant deleted successfully.');
