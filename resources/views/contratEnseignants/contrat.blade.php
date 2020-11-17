@@ -74,7 +74,7 @@
         }
         p{
             margin-bottom: 3px;
-            /*text-align: justify;*/
+            color: #000000;
         }
         .signatures{
             /*background-color: #7DA0B1;*/
