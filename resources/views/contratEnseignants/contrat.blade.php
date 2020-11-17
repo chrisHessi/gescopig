@@ -30,7 +30,7 @@
             border-bottom: solid 5px #ffde16;
         }
         #annee{
-            color: #ffde16;
+            color: #002d72;
             font-size: 22px;
         }
         #acad{
@@ -217,6 +217,9 @@
                         <div class="col-xs-4 pull-left">
                             <p><strong>Pour l'ESCM PIGIER</strong></p>
                             <p><strong>Le Promoteur Directeur Général et Franchisé (PDGF)</strong></p>
+                            @if(request()->getHost() == 'www.gescopigyaounde.com')
+                                <p>P/O :<strong> Le Directeur Délégué</strong></p>
+                            @endif
                         </div> 
                         <div class="col-xs-4 pull-right">
                             <p><strong>L'enseignant(e)</strong></p>
