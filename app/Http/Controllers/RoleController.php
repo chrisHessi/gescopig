@@ -22,7 +22,7 @@ class RoleController extends Controller
     public function __construct(RoleRepository $roleRepository)
     {
         $this->middleware('auth');
-        $this->middleware(['role:admin']);
+        $this->middleware(['role:Admin']);
         $this->roleRepository = $roleRepository;
     }
 
