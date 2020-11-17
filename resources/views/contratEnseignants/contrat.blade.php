@@ -27,7 +27,7 @@
         }
         .logo-container{
             margin: 20px auto;
-            border-bottom: solid 5px #ffde16;
+            border-bottom: solid 5px #9e9e9e;
         }
         #annee{
             color: #002d72;
@@ -74,6 +74,7 @@
         }
         p{
             margin-bottom: 3px;
+            /*text-align: justify;*/
         }
         .signatures{
             /*background-color: #7DA0B1;*/
@@ -137,7 +138,7 @@
                 <div class="row text-center">
                     <h4 id="annee"><i>ANNEE ACADEMIQUE {{ $contrat->academic_year->debut.'-'.$contrat->academic_year->fin .'/PIG/'.(request()->getHost() == 'www.gescopigyaounde.com' ? 'YDE' : 'DLA').'/' .str_pad($contrat->rang,3,0,STR_PAD_LEFT).'/'. substr($contrat->academic_year->debut, -2).'-'.substr($contrat->academic_year->fin, -2).'/'.$signataire }}</i></h4>
                 </div>
-                <div id="contenu">
+                <div id="contenu" style="text-align: justify">
                     <p><strong>ENTRE LES SOUSSIGNES</strong></p>
                     <p><strong>L’ECOLE SUPERIEURE DE COMMERCE ET DE MANAGEMENT PIGIER CAMEROUN</strong> B.P 1133, représentée par son Promoteur Directeur Général et Franchisé <strong>Docteur TAFOU TCHOUATO Henri,</strong></p>
                     <p>D’une part</p>
