@@ -2,7 +2,7 @@
 
 <div class="form-group col-sm-6">
     {!! Form::label('titre', 'Titre:') !!}
-    {!! Form::text('titre', ['Mr' => 'Mr', 'Mme' => 'Mme', 'Dr' => 'Dr', 'Me' => 'Me'], null, ['class' => 'form-control']) !!}
+    {!! Form::select('titre', ['Monsieur' => 'Monsieur', 'Madame' => 'Madame', 'Docteur' => 'Docteur', 'Professeur' => 'Professeur'], null, ['class' => 'form-control']) !!}
 </div>
 
 <div class="form-group col-sm-6">
@@ -47,15 +47,6 @@
     {!! Form::text('lieu_naissance', null, ['class' => 'form-control']) !!}
 </div>
 
-<div class="form-group col-sm-6">
-    {!! Form::label('mh_licence', 'Montant Horaire licence:') !!}
-    {!! Form::number('mh_licence', null, ['class' => 'form-control']) !!}
-</div>
-
-<div class="form-group col-sm-6">
-    {!! Form::label('mh_master', 'Montant Horaire master:') !!}
-    {!! Form::number('mh_master', null, ['class' => 'form-control']) !!}
-</div>
 
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
