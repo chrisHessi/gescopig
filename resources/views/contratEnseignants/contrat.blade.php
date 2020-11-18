@@ -197,7 +197,7 @@
 
                         </li>
                         <li>
-                            Le présent contrat n’est valable que pour l’année académique 2019-2020 ;
+                            Le présent contrat n’est valable que pour l’année académique {{ $contrat->academic_year->debut.'-'.$contrat->academic_year->fin }} ;
                         </li>
                         <li>
                             Le présent contrat n’est pas un contrat de travail au sens du code de travail et donc n’emporte aucune obligation entre les parties au-delà de la période indiquée au point 10 ;

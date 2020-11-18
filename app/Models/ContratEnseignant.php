@@ -14,6 +14,15 @@ class ContratEnseignant extends Model
         'rang'
     ];
 
+    public static $rules = [
+        'montant' => 'bail|required|integer',
+        'date' => 'bail|required|date',
+        'tranche' => 'bail|required',
+        'numero_piece' => 'bail|required',
+        'ecue_id' => 'bail|required|integer',
+        'specialite' => 'bail|required'
+    ];
+
     public function enseignant(){
         return $this->belongsTo(Enseignant::class);
     }
