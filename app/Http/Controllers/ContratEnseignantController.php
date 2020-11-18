@@ -37,7 +37,7 @@ class ContratEnseignantController extends Controller
      */
     public function index()
     {
-        $contrats = $this->contratEnseignantRepository->findWhere(['academic_year_id' => $this->academicYear]);
+        $contrats = $this->contratEnseignantRepository->all();
 
         return view('contratEnseignants.index', compact('contrats'));
     }

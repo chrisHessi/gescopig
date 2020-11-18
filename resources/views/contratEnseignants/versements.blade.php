@@ -9,7 +9,7 @@
 
     <section class="content-header">
         <h1>
-            Paiement des honoraires de : {{ $contrat->enseignant->name }}
+            Paiement des honoraires de : {{ $contrat->enseignant->name. ' - ' .$contrat->academic_year->debut. '/' .$contrat->academic_year->fin }}
         </h1>
     </section>
     <div class="content">
