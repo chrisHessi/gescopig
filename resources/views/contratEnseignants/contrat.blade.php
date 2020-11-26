@@ -69,6 +69,11 @@
             width:90%;
             margin-left: 30px;
         }
+
+        ol li {
+            color: #000;
+        }
+
         .footer p{
             color: #ffffff;
         }
