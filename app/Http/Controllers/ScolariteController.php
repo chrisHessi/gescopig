@@ -136,7 +136,7 @@ class ScolariteController extends Controller
         $signataire = $request->signataire;
         $circuit = $request->circuit;
         $semestre = $request->semestre;
-        $currentContrat = $this->contratRepository->findWhere(['academic_year_id'=> $this->academicYear->id]);// liste des contrats de la promo de l'etudiant
+        $currentContrat = $this->contratRepository->findWhere(['academic_year_id'=> $contrat->academic_year_id]);// liste des contrats de la promo de l'etudiant
         $ids = [];
         $view = '';
         $document = null;
