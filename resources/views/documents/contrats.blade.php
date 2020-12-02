@@ -72,8 +72,8 @@
             margin-bottom: 3px;
         }
 
-        p .text-justify{
-            color: black;
+        .text-justify, div{
+            color: #000000;
         }
         .signatures{
             /*background-color: #7DA0B1;*/
