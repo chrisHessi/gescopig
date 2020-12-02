@@ -71,6 +71,10 @@
         p{
             margin-bottom: 3px;
         }
+
+        p .text-justify{
+            color: black;
+        }
         .signatures{
             /*background-color: #7DA0B1;*/
             height: 60px;
