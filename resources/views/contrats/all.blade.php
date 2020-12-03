@@ -58,7 +58,7 @@
                             <td>{{ $contrat->apprenant->civilite }}</td>
                             <td>{{ $contrat->apprenant->situation_professionnelle }}</td>
                             <td>{{ $contrat->apprenant->academic_year->debut. '/' .$contrat->apprenant->academic_year->fin }}</td>
-                            <td>{!! $apprenant->etablissement_provenance !!}</td>
+                            <td>{!! $contrat->apprenant->etablissement_provenance !!}</td>
                             <th>{{ $contrat->apprenant->diplome }}</th>
                             <td>{{ $contrat->specialite->slug. ' ' .$contrat->cycle->niveau }}</td>
                             <td>{{ $contrat->apprenant->tel }}</td>
