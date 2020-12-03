@@ -186,7 +186,7 @@
                         </li>
                         <li>
                             <strong>
-                                Les paiements s’effectueront 30 jours fin de mois fin de module pour les 4/5 des honoraires prévus et le 1/5 restant dû sera payé à la fin du semestre après correction et remise de toutes les copies d’examen et toutes les notes ;
+                                Les paiements s’effectueront 30 jours fin de mois fin de module après correction et remise de toutes les copies d’examen et toutes les notes des premières sessions d'examens ;
                             </strong>
                         </li>
                         <li>

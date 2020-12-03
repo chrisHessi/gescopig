@@ -32,6 +32,7 @@
                         <th>Civilité</th>
                         <th>Situation Professionnelle</th>
                         <th>Année de 1ère inscription</th>
+                        <th>Etablissement de provenance</th>
                         <th>Diplôme d'entrée</th>
                         <th>Spécialite</th>
                         <th>Téléphone</th>
@@ -57,6 +58,7 @@
                             <td>{{ $contrat->apprenant->civilite }}</td>
                             <td>{{ $contrat->apprenant->situation_professionnelle }}</td>
                             <td>{{ $contrat->apprenant->academic_year->debut. '/' .$contrat->apprenant->academic_year->fin }}</td>
+                            <td>{!! $apprenant->etablissement_provenance !!}</td>
                             <th>{{ $contrat->apprenant->diplome }}</th>
                             <td>{{ $contrat->specialite->slug. ' ' .$contrat->cycle->niveau }}</td>
                             <td>{{ $contrat->apprenant->tel }}</td>
