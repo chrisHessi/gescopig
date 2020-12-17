@@ -183,10 +183,10 @@ class NoteController extends Controller
                 $denied = true;
         }
 
-         if($denied){
-             Flash::error('Veuillez renseigner les notes de '.$type .' de tous les etudiants avant de deliberer');
-             return redirect()->back();
-         }
+//         if($denied){
+//             Flash::error('Veuillez renseigner les notes de '.$type .' de tous les etudiants avant de deliberer');
+//             return redirect()->back();
+//         }
 
         return view('notes.noteDeliberation', compact('contrat', 'enseignements', 'type', 'sem'));
     }
