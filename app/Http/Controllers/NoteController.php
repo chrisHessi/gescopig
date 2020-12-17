@@ -178,6 +178,7 @@ class NoteController extends Controller
             if($contrat->notes->where('enseignement_id', $e->id)->first() && $contrat->notes->where('enseignement_id', $e->id)->first()->session1 == null)
                 $denied = true;
             elseif (!$contrat->notes->where('enseignement_id', $e->id)->first())
+                dd($e);
                 $denied = true;
         }
 
