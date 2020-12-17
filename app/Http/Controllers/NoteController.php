@@ -175,12 +175,14 @@ class NoteController extends Controller
          */
 
         foreach ($enseignements as $e){
-            if($contrat->notes->where('enseignement_id', $e->id)->first() && $contrat->notes->where('enseignement_id', $e->id)->first()->session1 == null)
+            if($contrat->notes->where('enseignement_id', $e->id)->first() && $contrat->notes->where('enseignement_id', $e->id)->first()->session1 == null) {
                 dd($e);
                 $denied = true;
-            elseif (!$contrat->notes->where('enseignement_id', $e->id)->first())
+            }
+            elseif (!$contrat->notes->where('enseignement_id', $e->id)->first()) {
                 dd($e);
                 $denied = true;
+            }
         }
 
          if($denied){
