@@ -186,7 +186,7 @@
                         </li>
                         <li>
                             <strong>
-                                Les paiements s’effectueront 30 jours fin de mois fin de module après remise de tous les documents cités au N°4 ;
+                                Les paiements s’effectueront 30 jours fin de mois fin de module après remise de tous les documents cités au point N°4 ;
                             </strong>
                         </li>
                         <li>
