@@ -143,6 +143,10 @@ Route::prefix('')->middleware('auth')->group(function(){
     Route::get('contratEnseignants/rapport/{id}', 'ContratEnseignantController@rapport')->name('contratEnseignants.rapport');
     Route::get('contratEnseignants/contrats/{id}', 'ContratEnseignantController@contrat')->name('contratEnseignants.contrat');
 
+    Route::get('attestation', function (){
+        return view('documents.attestation_reussite');
+    });
+
     Route::resource('academicCalendars', 'AcademicCalendarController');
 
     Route::resource('corkages', 'CorkageController')->except('create');

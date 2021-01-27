@@ -42,7 +42,7 @@
                                         {!! $contrat->specialite->slug. ' ' .$contrat->cycle->niveau !!}
                                     </td>
                                     <td>{!! $contrat->academic_year->debut. '/' .$contrat->academic_year->fin !!}</td>
-                                    <td>{!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') !!}</td>
+                                    <td>{!! $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') - ($contrat->corkages->first() ? $contrat->corkages->where('reduction', 1)->sum('montant') : 0) !!}</td>
                                     <td>{!! ($contrat->moratoire) ? $contrat->moratoires->where('date', '<=', Carbon\Carbon::today())->sum('montant') : $echeanciers->where('cycle_id', $contrat->cycle_id)->sum('montant') !!}</td>
                                     <td>{!! $contrat->versements->sum('montant') !!}</td>
                                     <td>
