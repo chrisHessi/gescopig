@@ -66,7 +66,7 @@ class ContratEnseignantController extends Controller
                     }
                 }
                 else{
-                    if (!empty($payment->enseignements)) {
+                    if ($payment->enseignements->first()) {
                         $payment->teachable_id = $payment->enseignements->first()->id;
                         $payment->teachable_type = Enseignement::class;
                         $payment->save();
