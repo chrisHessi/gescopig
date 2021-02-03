@@ -20,7 +20,7 @@ class TeacherPay extends Model
 
     protected $dates = ['date'];
 
-    public function enseignements(){ //A supprimer
+    public function enseignements(){
     	return $this->belongsToMany(Enseignement::class, 'enseignements_payments', 'teacher_pays_id', 'enseignement_id');
     }
 

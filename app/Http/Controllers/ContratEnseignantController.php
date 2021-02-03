@@ -66,10 +66,11 @@ class ContratEnseignantController extends Controller
                     }
                 }
                 else{
-                    dd($payment, $payment->enseignements);
-                    $payment->teachable_id = $payment->enseignements->first()->id;
-                    $payment->teachable_type = Enseignement::class;
-                    $payment->save();
+                    if (!empty($payment->enseignements)) {
+                        $payment->teachable_id = $payment->enseignements->first()->id;
+                        $payment->teachable_type = Enseignement::class;
+                        $payment->save();
+                    }
                 }
             }
         }
