@@ -37,6 +37,9 @@ class ContratEnseignant extends Model
     }
 
     public function payments(){
-        return $this->hasManyThrough(TeachersPay::class, Enseignement::class);
+        return $this->hasMany(TeacherPay::class);
+//        return $this->morphMany(TeacherPay::class, 'teachable');
     }
+
+
 }
