@@ -41,39 +41,39 @@ class ContratEnseignantController extends Controller
     {
         $contrats = $this->contratEnseignantRepository->all();
 
-        foreach($contrats as $contrat){
-            foreach ($contrat->payments as $payment){
-                if($payment->enseignements->count() > 1){
-                    if(!$payment->tronc_commun){
-
-                        if ($payment->enseignements->where('tronc_commun_id', '<>', null)->count()){
-                            $tronc_commun = $payment->enseignements->where('tronc_commun_id', '<>', null)->first()->tronc_commun_id;
-                        }
-                        else {
-                            $tronc_commun = TroncCommun::create();
-                            $tronc_commun = $tronc_commun->id;
-                        }
-
-                        foreach ($payment->enseignements as $enseignement){
-                            $enseignement->tronc_commun_id = $tronc_commun;
-                            $enseignement->save();
-                        }
-
-                        $payment->tronc_commun = true;
-                        $payment->teachable_id = $tronc_commun;
-                        $payment->teachable_type = TroncCommun::class;
-                        $payment->save();
-                    }
-                }
-                else{
-                    if ($payment->enseignements->first()) {
-                        $payment->teachable_id = $payment->enseignements->first()->id;
-                        $payment->teachable_type = Enseignement::class;
-                        $payment->save();
-                    }
-                }
-            }
-        }
+//        foreach($contrats as $contrat){
+//            foreach ($contrat->payments as $payment){
+//                if($payment->enseignements->count() > 1){
+//                    if(!$payment->tronc_commun){
+//
+//                        if ($payment->enseignements->where('tronc_commun_id', '<>', null)->count()){
+//                            $tronc_commun = $payment->enseignements->where('tronc_commun_id', '<>', null)->first()->tronc_commun_id;
+//                        }
+//                        else {
+//                            $tronc_commun = TroncCommun::create();
+//                            $tronc_commun = $tronc_commun->id;
+//                        }
+//
+//                        foreach ($payment->enseignements as $enseignement){
+//                            $enseignement->tronc_commun_id = $tronc_commun;
+//                            $enseignement->save();
+//                        }
+//
+//                        $payment->tronc_commun = true;
+//                        $payment->teachable_id = $tronc_commun;
+//                        $payment->teachable_type = TroncCommun::class;
+//                        $payment->save();
+//                    }
+//                }
+//                else{
+//                    if ($payment->enseignements->first()) {
+//                        $payment->teachable_id = $payment->enseignements->first()->id;
+//                        $payment->teachable_type = Enseignement::class;
+//                        $payment->save();
+//                    }
+//                }
+//            }
+//        }
 
         return view('contratEnseignants.index', compact('contrats'));
     }
