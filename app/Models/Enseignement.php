@@ -138,8 +138,8 @@ class Enseignement extends Model
     }
 
     public function payments(){
-//        return $this->belongsToMany(TeacherPay::class, 'enseignements_payments', 'enseignement_id', 'teacher_pays_id');
-        return $this->morphMany(TeacherPay::class, 'teachable');
+        return $this->belongsToMany(TeacherPay::class, 'enseignements_payments', 'enseignement_id', 'teacher_pays_id');
+//        return $this->morphMany(TeacherPay::class, 'teachable');
     }
 
     public function tronc_commun(){
