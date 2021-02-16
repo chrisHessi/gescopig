@@ -50,25 +50,25 @@ class EcueController extends AppBaseController
         $ecues = Ecue::where('academic_year_id', '>=', $this->academicYear)->get();
         $ec = $this->ecueRepository->all();
 
-        foreach ($ec as $ecue){
-            if($ecue->enseignements->count() > 1) {
-                if ($ecue->enseignements->where('tronc_commun_id', null)->count() > 0) {
-
-                    $tronc_commun = ($ecue->enseignements->where('tronc_commun_id', '<>', null)->first()) ? $ecue->enseignements->where('tronc_commun_id', '<>', null)->first()->tronc_commun : TroncCommun::create();
-                    foreach ($ecue->enseignements as $enseignement) {
-                        $enseignement->tronc_commun_id = $tronc_commun->id;
-                        $enseignement->save();
-                    }
-                }
-                else {
-                    $tronc_commun = $ecue->enseignements->where('tronc_commun_id', '<>', null)->first()->tronc_commun_id;
-                    foreach ($ecue->enseignements->where('tronc_commun_id', '<>', null) as $enseignement){
-                        $enseignement->tronc_commun_id = $tronc_commun;
-                        $enseignement->save();
-                    }
-                }
-            }
-        }
+//        foreach ($ec as $ecue){
+//            if($ecue->enseignements->count() > 1) {
+//                if ($ecue->enseignements->where('tronc_commun_id', null)->count() > 0) {
+//
+//                    $tronc_commun = ($ecue->enseignements->where('tronc_commun_id', '<>', null)->first()) ? $ecue->enseignements->where('tronc_commun_id', '<>', null)->first()->tronc_commun : TroncCommun::create();
+//                    foreach ($ecue->enseignements as $enseignement) {
+//                        $enseignement->tronc_commun_id = $tronc_commun->id;
+//                        $enseignement->save();
+//                    }
+//                }
+//                else {
+//                    $tronc_commun = $ecue->enseignements->where('tronc_commun_id', '<>', null)->first()->tronc_commun_id;
+//                    foreach ($ecue->enseignements->where('tronc_commun_id', '<>', null) as $enseignement){
+//                        $enseignement->tronc_commun_id = $tronc_commun;
+//                        $enseignement->save();
+//                    }
+//                }
+//            }
+//        }
         return view('ecues.index')
             ->with('ecues', $ecues);
     }

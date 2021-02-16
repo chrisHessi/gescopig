@@ -20,9 +20,9 @@ class TeacherPay extends Model
 
     protected $dates = ['date'];
 
-    public function enseignements(){
-    	return $this->belongsToMany(Enseignement::class, 'enseignements_payments', 'teacher_pays_id', 'enseignement_id');
-    }
+//    public function enseignements(){
+//    	return $this->belongsToMany(Enseignement::class, 'enseignements_payments', 'teacher_pays_id', 'enseignement_id');
+//    }
 
     public function contrat_enseignant(){
         return $this->belongsTo(ContratEnseignant::class);
