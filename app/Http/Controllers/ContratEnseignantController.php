@@ -8,6 +8,7 @@ use App\Models\TeacherPay;
 use App\Models\TroncCommun;
 use App\Repositories\ContratEnseignantRepository;
 use App\Repositories\EnseignantRepository;
+use App\Repositories\EnseignementRepository;
 use App\Repositories\TeacherPayRepository;
 use App\Repositories\EcueRepository;
 use Illuminate\Http\Request;
@@ -21,15 +22,17 @@ class ContratEnseignantController extends Controller
     protected $enseignantRepository;
     protected $teacherPayRepository;
     protected $ecueRepository;
+    protected $enseignementRepository;
 
     public function __construct(ContratEnseignantRepository $contratEnseignantRepository, EcueRepository $ecueRepository,
-     TeacherPayRepository $teacherPayRepository, EnseignantRepository $enseignantRepository, AcademicYear $ay)
+     TeacherPayRepository $teacherPayRepository, EnseignantRepository $enseignantRepository, AcademicYear $ay, EnseignementRepository $enseignementRepository)
     {
         $this->contratEnseignantRepository = $contratEnseignantRepository;
         $this->academicYear = $ay::getCurrentAcademicYear();
         $this->enseignantRepository = $enseignantRepository;
         $this->teacherPayRepository = $teacherPayRepository;
         $this->ecueRepository = $ecueRepository;
+        $this->enseignementRepository = $enseignementRepository;
     }
 
     /**
@@ -189,35 +192,42 @@ class ContratEnseignantController extends Controller
         return redirect(route('contratEnseignants.index'));
     }
 
-    public function versements($id){
-        $contrat = $this->contratEnseignantRepository->findWithoutFail($id);
-        if(empty($contrat)){
-            Flash::error('Contrat inexistant');
+    public function versements($id, Request $request){
+//        $contrat = $this->contratEnseignantRepository->findWithoutFail($id);
+        $type = $request->type;
+        if($type){
+            $teachable = TroncCommun::find($id);
+            $contrat = $teachable->enseignements->first()->contratEnseignant;
+        }
+        else{
+            $teachable = $this->enseignementRepository->findWithoutFail($id);
+            $contrat = $teachable->contratEnseignant;
+        }
+        if(empty($teachable)){
+            Flash::error('Ecue Incorect Veuillez choiser la bonne ecue');
 
             return redirect(route('contratEnseignants.index'));
         }
 
-        $ecues = [];
+//        $ecues = [];
+//
+//        foreach ($contrat->enseignements as $enseignement) {
+//            $ecues[$enseignement->ecue->id] = $enseignement->ecue;
+//        }
 
-        foreach ($contrat->enseignements as $enseignement) {
-            $ecues[$enseignement->ecue->id] = $enseignement->ecue;
-        }
-        return view('contratEnseignants.versements', compact('contrat', 'ecues'));
+        return view('contratEnseignants.versements', compact('teachable', 'type', 'contrat'));
     }
 
     public function save(Request $request, $id){
-        $payment_input = $request->except('ecue_id', 'specialite');
-        $payment_input['contrat_enseignant_id'] = $id;
-        $ecue = $this->ecueRepository->findWithoutFail($request->input('ecue_id'));
-        $specialites = $request->input('specialite');
+        $payment_input = $request->except('type');
+        $teachable = $request->input('type') ? TroncCommun::find($id) : $this->enseignementRepository->findWithoutFail($id);
 
-        $payment = $this->teacherPayRepository->create($payment_input);
+        $contrat = (int)$request->input('type') ? $teachable->enseignements->first()->contratEnseignant : $teachable->contratEnseignant;
+        $payment_input['contrat_enseignant_id'] = $contrat->id;
 
-        foreach ($specialites as $specialite) {
-            $enseignement = $ecue->enseignements->where('specialite_id', $specialite)->first();
-            // dd($enseignement);
-            $payment->enseignements()->attach($enseignement->id);
-        }
+        $payment = $this->teacherPayRepository->makeModel()->fill($payment_input);
+        $t = $teachable->payments()->save($payment);
+
         Flash::success('Paiement enregistré avec succes.');
 
         return redirect(route('contratEnseignants.index'));
@@ -231,9 +241,21 @@ class ContratEnseignantController extends Controller
 
             return redirect(route('contratEnseignants.index'));
         }
+        $tronc_communs = [];
+        foreach ($contrat->enseignements as $enseignement){
+            if ($enseignement->tronc_commun_id != null)
+                $tronc_communs[$enseignement->tronc_commun_id] = $enseignement->tronc_commun;
+        }
 
         $payments = $this->teacherPayRepository->findWhere(['contrat_enseignant_id' => $contrat->id]);
-        return view('contratEnseignants.rapport', compact('payments', 'contrat'));
+        return view('contratEnseignants.rapport', compact('payments', 'contrat', 'tronc_communs'));
+    }
+
+    public function details($id, Request $request){
+        $type = $request->type;
+        $teachable = ($type) ? TroncCommun::find($id) : $this->enseignementRepository->findWithoutFail($id);
+
+        return view('contratEnseignants.details', compact('teachable', 'type'));
     }
 
     public function contrat($id, Request $request){
@@ -263,5 +285,38 @@ class ContratEnseignantController extends Controller
             $ecues[$enseignement->ecue->id] = $enseignement->ecue;
         }
         return view('contratEnseignants.contrat', compact('contrat', 'ecues', 'signataire'));
+    }
+
+    public function edit_payment($id){
+        $payment = $this->teacherPayRepository->findWithoutFail($id);
+        if (empty($payment)){
+            Flash::error('Paiement inexistant');
+
+            return redirect()-back();
+        }
+        return view('contratEnseignants.edit_payment', compact('payment'));
+    }
+
+    public function update_payment($id, Request $request){
+        $payment = $this->teacherPayRepository->findWithoutFail($id);
+        if (empty($payment)){
+            Flash::error('Paiement inexistant');
+
+            return redirect()-back();
+        }
+        $payment = $this->teacherPayRepository->update($request->all(), $id);
+
+        return redirect(route('contratEnseignants.index'));
+    }
+
+    public function delete_payment($id){
+        $payment = $this->teacherPayRepository->findWithoutFail($id);
+        if (empty($payment)){
+            Flash::error('Paiement inexistant');
+
+            return redirect()-back();
+        }
+        $this->teacherPayRepository->delete($id);
+        return redirect(route('contratEnseignants.index'));
     }
 }

@@ -52,7 +52,8 @@ class Enseignement extends Model
         'progression',
         'cc',
         'ue_id',
-        'credits'
+        'credits',
+        'tronc_commun_id'
 
     ];
 
@@ -100,9 +101,9 @@ class Enseignement extends Model
         return $this->belongsTo(\App\Models\ContratEnseignant::class);
     }
 
-    public function enseignant(){
-        return $this->belongsTo(Enseignant::class);
-    }
+//    public function enseignant(){
+//        return $this->belongsTo(Enseignant::class);
+//    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -136,9 +137,9 @@ class Enseignement extends Model
         return $this->hasMany(Note::class);
     }
 
-    public function teacher_pays(){
-        return $this->belongsToMany(TeacherPay::class, 'enseignements_payments', 'enseignement_id', 'teacher_pays_id');
-//        return $this->morphMany(TeacherPay::class, 'teachable');
+    public function payments(){
+//        return $this->belongsToMany(TeacherPay::class, 'enseignements_payments', 'enseignement_id', 'teacher_pays_id');
+        return $this->morphMany(TeacherPay::class, 'teachable');
     }
 
     public function tronc_commun(){

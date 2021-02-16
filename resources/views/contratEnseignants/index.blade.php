@@ -42,9 +42,6 @@
                             <td>{{ $contrat->mh_licence }}</td>
                             <td>{{ $contrat->mh_master }}</td>
                             <td>
-                                @can('pay teachers')
-                                    <a href="{!! route('contratEnseignants.versements', [$contrat->id]) !!}" class='btn btn-success btn-xs' title="enregistrer un paiement"><i class="glyphicon glyphicon-usd"></i></a>
-                                @endcan
                                 @can('edit teachers contract')
                                     <a href="{!! route('contratEnseignants.edit', [$contrat->id]) !!}" class='btn btn-default btn-xs' title="editer le contrat de l'enseignant"><i class="glyphicon glyphicon-edit"></i></a>
                                 @endcan

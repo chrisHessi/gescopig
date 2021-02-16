@@ -139,9 +139,13 @@ Route::prefix('')->middleware('auth')->group(function(){
 
     Route::resource('contratEnseignants', 'ContratEnseignantController')->except('show');
     Route::get('contratEnseignants/versements/{id}', 'ContratEnseignantController@versements')->name('contratEnseignants.versements');
-    Route::post('contratEnseignants/versements/{id}', 'ContratEnseignantController@save')->name('contratEnseignants.save');
+    Route::post('contratEnseignants/versements/{id}/{type?}', 'ContratEnseignantController@save')->name('contratEnseignants.save');
     Route::get('contratEnseignants/rapport/{id}', 'ContratEnseignantController@rapport')->name('contratEnseignants.rapport');
     Route::get('contratEnseignants/contrats/{id}', 'ContratEnseignantController@contrat')->name('contratEnseignants.contrat');
+    Route::get('contratEnseignants/details/{id}', 'ContratEnseignantController@details')->name('contratEnseignants.details');
+    Route::get('contratEnseignants/{id}/edit_payment', 'ContratEnseignantController@edit_payment')->name('contratEnseignants.edit_payment');
+    Route::delete('contratEnseignants/delete/{id}', 'ContratEnseignantController@delete_payment')->name('contratEnseignants.delete_payment');
+    Route::patch('contratEnseignants/update_payment/{id}', 'ContratEnseignantController@update_payment')->name('contratEnseignants.update_payment');
 
     Route::get('attestation', function (){
         return view('documents.attestation_reussite');

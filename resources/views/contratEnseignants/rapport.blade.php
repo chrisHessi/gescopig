@@ -21,33 +21,62 @@
                         <th>Enseignement</th>
                         <th>Specialites</th>
                         <th>Semestre</th>
-                        <th>Tranche</th>
-                        <th>Montant</th>
-                        <th>Date</th>
-                        <th>Numero de piece</th>
-                        <th>Observation</th>
+                        <th>mh Tot.</th>
+                        <th>Mh Eff</th>
+                        <th>Mh Rest.</th>
+                        <th>Montant Tot.</th>
+                        <th>NAP</th>
+                        <th>Montant versé</th>
+                        <th>Solde</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
-                        @foreach($payments as $payment)
-                            @if(!empty($payment->enseignements))
-                                <tr>
-                                    <td>
-                                        {{ $payment->enseignements->first()->ecue->title }}
-                                    </td>
-                                    <td>
-                                        @foreach($payment->enseignements as $enseignement)
-                                            {{ $enseignement->specialite->slug .' '. $enseignement->ecue->semestre->cycle->niveau .' ' }}
-                                        @endforeach
-                                    </td>
-                                    <td>{{ $payment->enseignements->first()->ecue->semestre->title }}</td>
-                                    <td>{{ $payment->tranche }}</td>
-                                    <td>{{ $payment->montant }}</td>
-                                    <td>{{ $payment->date->format('d/m/Y') }}</td>
-                                    <td>{{ $payment->numero_piece }}</td>
-                                    <td>{{ $payment->observation }}</td>
-                                </tr>
-                            @endif
+                        @foreach($tronc_communs as $tronc_commun)
+                            <tr>
+                                <td>
+                                    {{ $tronc_commun->enseignements->first()->ecue->title }}
+                                </td>
+                                <td>
+                                    @foreach($tronc_commun->enseignements as $enseignement)
+                                        {{ $enseignement->specialite->slug .' '. $enseignement->ecue->semestre->cycle->niveau .' ' }}
+                                    @endforeach
+                                </td>
+                                <td>{{ $tronc_commun->enseignements->first()->ecue->semestre->title }}</td>
+                                <td>{{ $mhTot = $tronc_commun->enseignements->first()->mhTotal }}</td>
+                                <td>{{ $mhEff = $tronc_commun->enseignements->first()->mhEff }}</td>
+                                <td>{{ $tronc_commun->enseignements->first()->mhTotal - $tronc_commun->enseignements->first()->mhEff }}</td>
+                                <td>{{ $mt = (($tronc_commun->enseignements->first()->ecue->semestre->cycle->label == 'Licence') ? $contrat->mh_licence : $contrat->mh_master) * (($mhTot > $mhEff) ? $mhEff : $mhTot) }}</td>
+                                <td>{{ $nap = $mt * (1 - 0.055) }}</td>
+                                <td>{{ $pay = $tronc_commun->payments->sum('montant') }}</td>
+                                <td>{{ $nap - $pay }}</td>
+                                <td>
+                                    <a href="{!! route('contratEnseignants.versements', [$tronc_commun->id, 'type='. 1]) !!}" class='btn btn-success btn-xs' title="enregistrer un paiement"><i class="glyphicon glyphicon-usd"></i></a>
+                                    <a href="{!! route('contratEnseignants.details', [$tronc_commun->id, 'type='. 1]) !!}" class="btn btn-warning" title="Details des versements"><i class="glyphicon glyphicon-list-alt"></i></a>
+                                </td>
+                            </tr>
+                        @endforeach
+                        @foreach($contrat->enseignements->where('tronc_commun_id', null) as $enseignement)
+                            <td>
+                                {{ $enseignement->ecue->title }}
+                            </td>
+                            <td>
+                                {{ $enseignement->specialite->slug .' '. $enseignement->ecue->semestre->cycle->niveau }}
+                            </td>
+                            <td>{{ $enseignement->ecue->semestre->title }}</td>
+                            <td>{{ $mhTot = $enseignement->mhTotal }}</td>
+                            <td>{{ $mhEff = $enseignement->mhEff }}</td>
+                            <td>{{ $enseignement->mhTotal - $enseignement->mhEff }}</td>
+                            <td>{{ $mt = (($enseignement->ecue->semestre->cycle->label == 'Licence') ? $contrat->mh_licence : $contrat->mh_master) * (($mhTot > $mhEff) ? $mhEff : $mhTot) }}</td>
+                            <td>{{ $nap = $mt * (1 - 0.055) }}</td>
+                            <td>{{ $pay = $enseignement->payments->sum('montant') }}</td>
+                            <td>{{ $nap - $pay }}</td>
+                            <td>
+                                @can('pay teachers')
+                                    <a href="{!! route('contratEnseignants.versements', [$enseignement->id, 'type='. 0]) !!}" class='btn btn-success' title="enregistrer un paiement"><i class="glyphicon glyphicon-usd"></i></a>
+                                    <a href="{!! route('contratEnseignants.details', [$enseignement->id, 'type='. 0]) !!}" class="btn btn-warning" title="Details des versements"><i class="glyphicon glyphicon-list-alt"></i></a>
+                                @endcan
+                            </td>
                         @endforeach
                     </tbody>
                 </table>

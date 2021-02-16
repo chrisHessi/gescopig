@@ -8,6 +8,7 @@ use App\Helpers\AcademicYear;
 use App\Http\Requests;
 use App\Http\Requests\CreateEnseignementRequest;
 use App\Http\Requests\UpdateEnseignementRequest;
+use App\Models\TroncCommun;
 use App\Repositories\ContratEnseignantRepository;
 use App\Repositories\CycleRepository;
 use App\Repositories\EcueRepository;
@@ -170,17 +171,33 @@ class EnseignementController extends AppBaseController
      * @param CreateEnseignementRequest $request
      *
      * @return Response
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
     public function store(CreateEnseignementRequest $request)
     {
         $input = $request->except(['ecue_id', 'specialite_id']);
         $input['academic_year_id'] = $this->anneeAcademic;
 //        dd($input);
+
+        $ecue = $this->ecueRepository->findWithoutFail($request->input('ecue_id'));
+        $tc = null;
+        if($ecue->enseignements->where('contrat_enseignant_id', $input['contrat_enseignant_id'])->count() >= 1){
+            if($ecue->enseignements->where('contrat_enseignant_id', $input['contrat_enseignant_id'])->first()->tronc_commun_id == null){
+                $tc = TroncCommun::create()->id;
+                foreach ($ecue->enseignements->where('contrat_enseignant_id', $input['contrat_enseignant_id']) as $e){
+                    $e->tronc_commun_id = $tc;
+                    $e->save();
+                }
+            }
+            else
+                $tc = $ecue->enseignements->where('academic_year_id', $this->anneeAcademic)->first()->tronc_commun_id;
+        }
+        $input['tronc_commun_id'] = $tc;
+//        dd($input);
         $enseignement = $this->enseignementRepository->updateOrCreate([
             'ecue_id' => $request->input('ecue_id'), 'specialite_id' => $request->input('specialite_id')],
             $input
         );
-//        dd($enseignement);
 
         Flash::success('Enseignement saved successfully.');
 
@@ -269,18 +286,21 @@ class EnseignementController extends AppBaseController
 
     public function updateMh($id, UpdateEnseignementRequest $request){
 
-        $enseignement = $this->enseignementRepository->findWithoutFail($id);
-        $input = $request->all();
-        $input['mhEff'] = (int)($enseignement->mhEff + $input['mhEff']);
-//        dd($input);
-
-        if (empty($enseignement)) {
+        $ens = $this->enseignementRepository->findWithoutFail($id);
+        if (empty($ens)) {
             Flash::error('Enseignement not found');
 
             return redirect(route('enseignements.index'));
         }
 
-        $enseignement = $this->enseignementRepository->update($input, $id);
+        $enseignements = $ens->ecue->enseignements->where('contrat_enseignant_id', $ens->contratEnseignant->id);
+        $input = $request->all();
+        foreach ($enseignements as $enseignement){
+            $input['mhEff'] = (int)($enseignement->mhEff + $input['mhEff']);
+//            dd($enseignement->id);
+            $enseignement = $this->enseignementRepository->update($input, $enseignement->id);
+        }
+//        dd($input);
 
         Flash::success('Enseignement updated successfully.');
 
@@ -310,8 +330,6 @@ class EnseignementController extends AppBaseController
     {
         $enseignement = $this->enseignementRepository->findWithoutFail($id);
         $input = $request->all();
-        //$input['mhEff'] = (int)($enseignement->mhEff + $input['mhEff']);
-        //dd($input);
 
         if (empty($enseignement)) {
             Flash::error('Enseignement not found');
@@ -320,6 +338,19 @@ class EnseignementController extends AppBaseController
         }
         
         $enseignement = $this->enseignementRepository->update($input, $id);
+
+        /** On verifie que tous les enseignements ayant le meme ecue et le même enseignant possede le meme id de tronc commun */
+        $ecue = $enseignement->ecue;
+        if ($ecue->enseignements->where('contrat_enseignant_id', $enseignement->contratEnseignant->id)->count() > 1){
+            $tc = $ecue->enseignements->where('tronc_commun_id', '!=', null)->first()->tronc_commun_id;
+            $tc = ($tc != null) ? $tc : TroncCommun::create()->id;
+
+            foreach ($ecue->enseignements->where('contrat_enseignant_id', $enseignement->contratEnseignant->id) as $e){
+                $e->tronc_commun_id = $tc;
+                $e->save();
+            }
+
+        }
         //dd($enseignement);
 
         Flash::success('Enseignement updated successfully.');

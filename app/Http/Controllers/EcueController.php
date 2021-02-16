@@ -6,6 +6,7 @@ use App\Helpers\AcademicYear;
 use App\Http\Requests\CreateEcueRequest;
 use App\Http\Requests\UpdateEcueRequest;
 use App\Models\Ecue;
+use App\Models\TroncCommun;
 use App\Repositories\AcademicYearRepository;
 use App\Repositories\EcueRepository;
 use App\Http\Controllers\AppBaseController;
@@ -47,12 +48,27 @@ class EcueController extends AppBaseController
     {
         $this->ecueRepository->pushCriteria(new RequestCriteria($request));
         $ecues = Ecue::where('academic_year_id', '>=', $this->academicYear)->get();
-//        $ecues = Ecue::withTrashed()->get();
-//        foreach ($ecues as $ecue){
-//            $ecue->academic_year_id = $this->academicYear;
-//            $ecue->save();
+        $ec = $this->ecueRepository->all();
+
+//        foreach ($ec as $ecue){
+//            if($ecue->enseignements->count() > 1) {
+//                if ($ecue->enseignements->where('tronc_commun_id', null)->count() > 0) {
+//
+//                    $tronc_commun = ($ecue->enseignements->where('tronc_commun_id', '<>', null)->first()) ? $ecue->enseignements->where('tronc_commun_id', '<>', null)->first()->tronc_commun : TroncCommun::create();
+//                    foreach ($ecue->enseignements as $enseignement) {
+//                        $enseignement->tronc_commun_id = $tronc_commun->id;
+//                        $enseignement->save();
+//                    }
+//                }
+//                else {
+//                    $tronc_commun = $ecue->enseignements->where('tronc_commun_id', '<>', null)->first()->tronc_commun_id;
+//                    foreach ($ecue->enseignements->where('tronc_commun_id', '<>', null) as $enseignement){
+//                        $enseignement->tronc_commun_id = $tronc_commun;
+//                        $enseignement->save();
+//                    }
+//                }
+//            }
 //        }
-//        dd($ecues);
         return view('ecues.index')
             ->with('ecues', $ecues);
     }
