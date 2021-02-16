@@ -57,26 +57,28 @@
                             </tr>
                         @endforeach
                         @foreach($contrat->enseignements->where('tronc_commun_id', null) as $enseignement)
-                            <td>
-                                {{ $enseignement->ecue->title }}
-                            </td>
-                            <td>
-                                {{ $enseignement->specialite->slug .' '. $enseignement->ecue->semestre->cycle->niveau }}
-                            </td>
-                            <td>{{ $enseignement->ecue->semestre->title }}</td>
-                            <td>{{ $mhTot = $enseignement->mhTotal }}</td>
-                            <td>{{ $mhEff = $enseignement->mhEff }}</td>
-                            <td>{{ $enseignement->mhTotal - $enseignement->mhEff }}</td>
-                            <td>{{ $mt = (($enseignement->ecue->semestre->cycle->label == 'Licence') ? $contrat->mh_licence : $contrat->mh_master) * (($mhTot > $mhEff) ? $mhEff : $mhTot) }}</td>
-                            <td>{{ $nap = $mt * (1 - 0.055) }}</td>
-                            <td>{{ $pay = $enseignement->payments->sum('montant') }}</td>
-                            <td>{{ $nap - $pay }}</td>
-                            <td>
-                                @can('pay teachers')
-                                    <a href="{!! route('contratEnseignants.versements', [$enseignement->id, 'type='. 0]) !!}" class='btn btn-success' title="enregistrer un paiement"><i class="glyphicon glyphicon-usd"></i></a>
-                                    <a href="{!! route('contratEnseignants.details', [$enseignement->id, 'type='. 0]) !!}" class="btn btn-warning" title="Details des versements"><i class="glyphicon glyphicon-list-alt"></i></a>
-                                @endcan
-                            </td>
+                            <tr>
+                                <td>
+                                    {{ $enseignement->ecue->title }}
+                                </td>
+                                <td>
+                                    {{ $enseignement->specialite->slug .' '. $enseignement->ecue->semestre->cycle->niveau }}
+                                </td>
+                                <td>{{ $enseignement->ecue->semestre->title }}</td>
+                                <td>{{ $mhTot = $enseignement->mhTotal }}</td>
+                                <td>{{ $mhEff = $enseignement->mhEff }}</td>
+                                <td>{{ $enseignement->mhTotal - $enseignement->mhEff }}</td>
+                                <td>{{ $mt = (($enseignement->ecue->semestre->cycle->label == 'Licence') ? $contrat->mh_licence : $contrat->mh_master) * (($mhTot > $mhEff) ? $mhEff : $mhTot) }}</td>
+                                <td>{{ $nap = $mt * (1 - 0.055) }}</td>
+                                <td>{{ $pay = $enseignement->payments->sum('montant') }}</td>
+                                <td>{{ $nap - $pay }}</td>
+                                <td>
+                                    @can('pay teachers')
+                                        <a href="{!! route('contratEnseignants.versements', [$enseignement->id, 'type='. 0]) !!}" class='btn btn-success' title="enregistrer un paiement"><i class="glyphicon glyphicon-usd"></i></a>
+                                        <a href="{!! route('contratEnseignants.details', [$enseignement->id, 'type='. 0]) !!}" class="btn btn-warning" title="Details des versements"><i class="glyphicon glyphicon-list-alt"></i></a>
+                                    @endcan
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
