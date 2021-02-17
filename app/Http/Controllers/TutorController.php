@@ -32,7 +32,6 @@ class TutorController extends Controller
         $apprenant = $this->apprenantRepository->findWithoutFail($id);
         $input = $request->all();
         $input['apprenant_id'] = $id;
-//        dd($input);
         $tutor = $this->tutorRepository->create($input);
         return redirect()->route('tutors.index', [$apprenant->id]);
     }
