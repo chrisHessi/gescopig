@@ -81,6 +81,21 @@
                             </tr>
                         @endforeach
                     </tbody>
+                    <tfoot>
+                    <tr>
+                        <td><h4>Total</h4></td>
+                        <td id=""></td>
+                        <td id=""></td>
+                        <td id=""></td>
+                        <td id=""></td>
+                        <td id=""></td>
+                        <td id="total"></td>
+                        <td id="nap"></td>
+                        <td id="mt_verse"></td>
+                        <td id="solde"></td>
+                        <td></td>
+                    </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -95,7 +110,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jq-3.3.1/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/datatables.min.js"></script>
-
+    <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.22/api/sum().js"></script>
 
 
     <script>
@@ -105,12 +120,22 @@
                 responsive: true,
                 dom:'Blfrtip',
                 buttons:[
-                    'copy', 'excel', 'pdf'
+                    {extend:'copy', footer: true}, {extend:'excel', footer: true}, {extend:'pdf', footer: true}
                 ],
                 "columnDefs":[
                     {"orderable":false, "targets":3}
                 ]
             });
+
+            var total = table.column(6).data().sum();
+            var nap = table.column(7).data().sum();
+            var mt_verse = table.column(8).data().sum();
+            var solde = table.column(9).data().sum();
+
+            $('#total').html(total)
+            $('#nap').html(nap)
+            $('#mt_verse').html(mt_verse)
+            $('#solde').html(solde)
 
             table.buttons().container().appendTo($('.col-sm-6:eq(0)', table.table().container() ))
         });
