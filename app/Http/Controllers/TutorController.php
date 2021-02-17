@@ -30,7 +30,10 @@ class TutorController extends Controller
 
     public function store(Request $request, $id){
         $apprenant = $this->apprenantRepository->findWithoutFail($id);
-        $tutor = $this->tutorRepository->create([$request->all(), 'apprenant_id'=>$id]);
+        $input = $request->all();
+        $input['apprenant_id'] = $id;
+//        dd($input);
+        $tutor = $this->tutorRepository->create($input);
         return redirect()->route('tutors.index', [$apprenant->id]);
     }
 
