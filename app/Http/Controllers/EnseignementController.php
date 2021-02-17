@@ -342,8 +342,8 @@ class EnseignementController extends AppBaseController
         /** On verifie que tous les enseignements ayant le meme ecue et le même enseignant possede le meme id de tronc commun */
         $ecue = $enseignement->ecue;
         if ($ecue->enseignements->where('contrat_enseignant_id', $enseignement->contratEnseignant->id)->count() > 1){
-            $tc = $ecue->enseignements->where('tronc_commun_id', '!=', null)->first()->tronc_commun_id;
-            $tc = ($tc != null) ? $tc : TroncCommun::create()->id;
+            $tc = $ecue->enseignements->where('tronc_commun_id', '!=', null)->first();
+            $tc = ($tc != null) ? $tc->id : TroncCommun::create()->id;
 
             foreach ($ecue->enseignements->where('contrat_enseignant_id', $enseignement->contratEnseignant->id) as $e){
                 $e->tronc_commun_id = $tc;
