@@ -89,10 +89,10 @@
                         <td id=""></td>
                         <td id=""></td>
                         <td id=""></td>
-                        <td id="total"></td>
-                        <td id="nap"></td>
-                        <td id="mt_verse"></td>
-                        <td id="solde"></td>
+                        <td><strong id="total"></strong></td>
+                        <td><strong id="nap"></strong></td>
+                        <td><strong id="mt_verse"></strong></td>
+                        <td><strong id="solde"></strong></td>
                         <td></td>
                     </tr>
                     </tfoot>
