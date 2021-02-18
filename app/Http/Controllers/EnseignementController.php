@@ -295,6 +295,7 @@ class EnseignementController extends AppBaseController
 
         $enseignements = $ens->ecue->enseignements->where('contrat_enseignant_id', $ens->contratEnseignant->id);
         $input = $request->all();
+//        dd((int)($enseignements->first()->mhEff +$input['mhEff']), $enseignements->first()->mhEff);
         foreach ($enseignements as $enseignement){
             $input['mhEff'] = (int)($enseignement->mhEff + $input['mhEff']);
 //            dd($enseignement->id);
