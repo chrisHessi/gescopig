@@ -294,10 +294,10 @@ class EnseignementController extends AppBaseController
         }
 
         $enseignements = $ens->ecue->enseignements->where('contrat_enseignant_id', $ens->contratEnseignant->id);
-        $input = $request->all();
+        $mheff = $request->input('mhEff');
 //        dd((int)($enseignements->first()->mhEff +$input['mhEff']), $enseignements->first()->mhEff);
         foreach ($enseignements as $enseignement){
-            $input['mhEff'] = (int)($enseignement->mhEff + $input['mhEff']);
+            $input['mhEff'] = (int)($enseignement->mhEff + $mheff);
 //            dd($enseignement->id);
             $enseignement = $this->enseignementRepository->update($input, $enseignement->id);
         }
