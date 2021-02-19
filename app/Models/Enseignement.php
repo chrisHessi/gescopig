@@ -70,6 +70,7 @@ class Enseignement extends Model
         'dateFin' => 'date',
         'mhTotal' => 'integer',
         'mhEff' => 'integer',
+
     ];
 
     /**

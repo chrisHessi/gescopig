@@ -293,11 +293,13 @@ class EnseignementController extends AppBaseController
             return redirect(route('enseignements.index'));
         }
 
+        $input = $request->all();
         $enseignements = $ens->ecue->enseignements->where('contrat_enseignant_id', $ens->contratEnseignant->id);
         $mheff = $request->input('mhEff');
 //        dd((int)($enseignements->first()->mhEff +$input['mhEff']), $enseignements->first()->mhEff);
         foreach ($enseignements as $enseignement){
             $input['mhEff'] = (int)($enseignement->mhEff + $mheff);
+            dd($input);
 //            dd($enseignement->id);
             $enseignement = $this->enseignementRepository->update($input, $enseignement->id);
         }
