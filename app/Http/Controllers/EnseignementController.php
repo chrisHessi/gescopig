@@ -299,8 +299,6 @@ class EnseignementController extends AppBaseController
 //        dd((int)($enseignements->first()->mhEff +$input['mhEff']), $enseignements->first()->mhEff);
         foreach ($enseignements as $enseignement){
             $input['mhEff'] = (int)($enseignement->mhEff + $mheff);
-            dd($input);
-//            dd($enseignement->id);
             $enseignement = $this->enseignementRepository->update($input, $enseignement->id);
         }
 //        dd($input);
