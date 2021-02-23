@@ -37,7 +37,7 @@
                                 <a href="{!! route('contratEnseignants.edit_payment', [$payment->id]) !!}" class='btn btn-default btn-xs' title="modifier le paiement"><i class="glyphicon glyphicon-edit"></i></a>
                                 <div class='btn-group'>
                                     {!! Form::open(['route' => ['contratEnseignants.delete_payment', $payment->id], 'method' => 'delete']) !!}
-                                    @can('delete contrats')
+                                    @can('delete payment')
                                         {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
                                     @endcan
                                     {!! Form::close() !!}

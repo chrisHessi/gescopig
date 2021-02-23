@@ -19,10 +19,13 @@
                     <thead>
                     <tr>
                         <th>Nom Enseigant</th>
-                        <th>Enseignement</th>
                         <th>Annee Academique</th>
                         <th>Tarif licence</th>
                         <th>Tarif Master</th>
+                        <th>Montant total</th>
+                        <th>Montant à payé</th>
+                        <th>Montant versé</th>
+                        <th>Montant restant</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -31,16 +34,13 @@
                         @if(isset($contrat->enseignant))
                         <tr>
                             <td>{{ $contrat->enseignant->name }}</td>
-                            <td>
-                                <ul>
-                                @foreach($contrat->enseignements as $enseignement)
-                                    <li>{{ $enseignement->ecue->title }}</li>
-                                @endforeach
-                                </ul>
-                            </td>
                             <td>{{ $contrat->academic_year->debut. '/' .$contrat->academic_year->fin }}</td>
                             <td>{{ $contrat->mh_licence }}</td>
                             <td>{{ $contrat->mh_master }}</td>
+                            <td id="{{ 'total-'. $contrat->id }}"></td>
+                            <td id="{{ 'du-'. $contrat->id }}"></td>
+                            <td id="{{ 'verse-'. $contrat->id }}"></td>
+                            <td id="{{ 'rest-'. $contrat->id }}"></td>
                             <td>
                                 @can('edit teachers contract')
                                     <a href="{!! route('contratEnseignants.edit', [$contrat->id]) !!}" class='btn btn-default btn-xs' title="editer le contrat de l'enseignant"><i class="glyphicon glyphicon-edit"></i></a>
@@ -70,6 +70,19 @@
                         @endif
                     @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td><h4>Total</h4></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><strong id="total"></strong></td>
+                            <td><strong id="nap"></strong></td>
+                            <td><strong id="mt_verse"></strong></td>
+                            <td><strong id="solde"></strong></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -134,10 +147,32 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     {{--<script type="text/javascript" src="https://cdn.datatables.net/v/bs/jq-3.3.1/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/datatables.min.js"></script>--}}
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.22/b-1.6.5/b-html5-1.6.5/b-print-1.6.5/datatables.min.js"></script>
-
+    <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.22/api/sum().js"></script>
     <script>
 
             $(function() {
+
+                @foreach($contrats as $contrat)
+                    var total = 0
+                    var du = 0
+                    var verse =0
+                    var rest = 0
+
+                    @foreach($enseignements[$contrat->id] as $enseignement)
+                        var mh = {{ ($enseignement->mhTotal < $enseignement->mhEff) ? $enseignement->mhTotal : $enseignement->mhEff }}
+                        total += parseInt('{{ (int)(($enseignement->ecue->semestre->cycle->label == 'Licence') ? $contrat->mh_licence : $contrat->mh_master) }}') * mh
+                    @endforeach
+                    du = total * (1 - 0.05)
+                    verse = parseInt('{{ (!empty($contrat->payments)) ? $contrat->payments->sum('montant') : 0 }}')
+                    rest = du - verse
+
+                    $('#'+'{{ 'total-'.$contrat->id }}').html(total)
+                    $('#'+'{{ 'du-'.$contrat->id }}').html(du)
+                    $('#'+'{{ 'verse-'.$contrat->id }}').html(verse)
+                    $('#'+'{{ 'rest-'.$contrat->id }}').html(rest)
+
+                @endforeach
+
                 var table = $('#contrats-table').DataTable({
                     responsive: true,
                     dom:'Blfrtip',
@@ -145,12 +180,23 @@
                     //     'copy', 'excel', 'pdf'
                     // ],
                     "columnDefs":[
-                        {"orderable":false, "targets":5}
+                        {"orderable":false, "targets":8}
                     ]
                 });
+
+                var total = table.column(4).data().sum();
+                var nap = table.column(5).data().sum();
+                var mt_verse = table.column(6).data().sum();
+                var solde = table.column(7).data().sum();
+
+                $('#total').html(total)
+                $('#nap').html(nap)
+                $('#mt_verse').html(mt_verse)
+                $('#solde').html(solde)
             });
 
             // table.buttons().container().appendTo($('.col-sm-6:eq(0)', table.table().container() ))
+
     </script>
 
 @endsection

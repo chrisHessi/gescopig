@@ -43,42 +43,27 @@ class ContratEnseignantController extends Controller
     public function index()
     {
         $contrats = $this->contratEnseignantRepository->all();
+        $enseignements =[];
 
-//        foreach($contrats as $contrat){
-//            foreach ($contrat->payments as $payment){
-//                if($payment->enseignements->count() > 1){
-//                    if(!$payment->tronc_commun){
-//
-//                        if ($payment->enseignements->where('tronc_commun_id', '<>', null)->count()){
-//                            $tronc_commun = $payment->enseignements->where('tronc_commun_id', '<>', null)->first()->tronc_commun_id;
-//                        }
-//                        else {
-//                            $tronc_commun = TroncCommun::create();
-//                            $tronc_commun = $tronc_commun->id;
-//                        }
-//
-//                        foreach ($payment->enseignements as $enseignement){
-//                            $enseignement->tronc_commun_id = $tronc_commun;
-//                            $enseignement->save();
-//                        }
-//
-//                        $payment->tronc_commun = true;
-//                        $payment->teachable_id = $tronc_commun;
-//                        $payment->teachable_type = TroncCommun::class;
-//                        $payment->save();
-//                    }
-//                }
-//                else{
-//                    if ($payment->enseignements->first()) {
-//                        $payment->teachable_id = $payment->enseignements->first()->id;
-//                        $payment->teachable_type = Enseignement::class;
-//                        $payment->save();
-//                    }
-//                }
-//            }
-//        }
+        foreach ($contrats as $contrat){
+            $tronc_communs = [];
+            $ens =[]; //variable contenant enseignements distincts dispensés par enseignant
+            /** Ici on selectionne les differents troncs communs de l'enseignant afin de selectionner un enseignement par tronc commun*/
+            foreach ($contrat->enseignements as $enseignement){
+                if ($enseignement->tronc_commun_id != null)
+                    $tronc_communs[$enseignement->tronc_commun_id] = $enseignement->tronc_commun;
+            }
+            /** On ajoute maintenant les de l'enseignant dans le tableau enseignementa */
+            foreach ($tronc_communs as $tronc_commun){
+                $ens[$tronc_commun->enseignements->first()->id] = $tronc_commun->enseignements->first();
+            }
+            foreach ($contrat->enseignements->where('tronc_commun_id', null) as $special){
+                $ens[$special->id] = $special;
+            }
+            $enseignements[$contrat->id] = $ens;
+        }
 
-        return view('contratEnseignants.index', compact('contrats'));
+        return view('contratEnseignants.index', compact('contrats', 'enseignements'));
     }
 
     /**
@@ -230,7 +215,7 @@ class ContratEnseignantController extends Controller
 
         Flash::success('Paiement enregistré avec succes.');
 
-        return redirect(route('contratEnseignants.index'));
+        return redirect(route('contratEnseignants.rapport', [$contrat->id]));
     }
 
     public function rapport($id){
@@ -241,6 +226,7 @@ class ContratEnseignantController extends Controller
 
             return redirect(route('contratEnseignants.index'));
         }
+
         $tronc_communs = [];
         foreach ($contrat->enseignements as $enseignement){
             if ($enseignement->tronc_commun_id != null)
@@ -317,6 +303,7 @@ class ContratEnseignantController extends Controller
             return redirect()-back();
         }
         $this->teacherPayRepository->delete($id);
-        return redirect(route('contratEnseignants.index'));
+        Flash::success('Paiement supprimé avec succès');
+        return redirect()->back();
     }
 }
