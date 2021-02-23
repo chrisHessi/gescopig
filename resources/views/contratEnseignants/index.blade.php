@@ -154,27 +154,24 @@
 
                 @foreach($contrats as $contrat)
                     var total = 0
-                    var du = 0
-                    var verse =0
-                    var rest = 0
 
                     @foreach($enseignements[$contrat->id] as $enseignement)
                         var mh = {{ ($enseignement->mhTotal < $enseignement->mhEff) ? $enseignement->mhTotal : $enseignement->mhEff }}
                         total += parseInt('{{ (int)(($enseignement->ecue->semestre->cycle->label == 'Licence') ? $contrat->mh_licence : $contrat->mh_master) }}') * mh
                     @endforeach
-                    du = total * (1 - 0.05)
-                    verse = parseInt('{{ (!empty($contrat->payments)) ? $contrat->payments->sum('montant') : 0 }}')
-                    rest = du - verse
+                    var du = total * (1 - 0.05)
+                    var verse = parseInt('{{ (!empty($contrat->payments)) ? $contrat->payments->sum('montant') : 0 }}')
+                    var rest = du - verse
 
                     $('#'+'{{ 'total-'.$contrat->id }}').html(total)
                     $('#'+'{{ 'du-'.$contrat->id }}').html(du)
                     $('#'+'{{ 'verse-'.$contrat->id }}').html(verse)
                     $('#'+'{{ 'rest-'.$contrat->id }}').html(rest)
 
-                    var total = 0
-                    var du = 0
-                    var verse =0
-                    var rest = 0
+                    total = 0
+                    du = 0
+                    verse =0
+                    rest = 0
                 @endforeach
 
                 var table = $('#contrats-table').DataTable({
