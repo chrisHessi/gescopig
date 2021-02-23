@@ -13,9 +13,7 @@ class UpdatePaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::table('teacher_pays', function (Blueprint $table) {
-            $table->string('tranche')->change();
-        });
+        DB::statement("ALTER TABLE teacher_pays MODIFY tranche VARCHAR(255) NOT NULL");
     }
 
     /**
@@ -25,8 +23,6 @@ class UpdatePaymentsTable extends Migration
      */
     public function down()
     {
-        Schema::table('teacher_pays', function (Blueprint $table) {
-            //
-        });
+        DB::statement("ALTER TABLE teacher_pays MODIFY tranche ENUM('4/5', '1/5', '100%') NOT NULL");
     }
 }
