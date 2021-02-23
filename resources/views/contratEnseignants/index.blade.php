@@ -171,6 +171,10 @@
                     $('#'+'{{ 'verse-'.$contrat->id }}').html(verse)
                     $('#'+'{{ 'rest-'.$contrat->id }}').html(rest)
 
+                    var total = 0
+                    var du = 0
+                    var verse =0
+                    var rest = 0
                 @endforeach
 
                 var table = $('#contrats-table').DataTable({
