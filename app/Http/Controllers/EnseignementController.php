@@ -294,14 +294,13 @@ class EnseignementController extends AppBaseController
         }
 
         $input = $request->all();
+        $mheff = (int)($ens->mhEff + $request->input('mhEff'));
         $enseignements = $ens->ecue->enseignements->where('contrat_enseignant_id', $ens->contratEnseignant->id);
-        $mheff = $request->input('mhEff');
-//        dd((int)($enseignements->first()->mhEff +$input['mhEff']), $enseignements->first()->mhEff);
+
+        $input['mhEff'] = $mheff;
         foreach ($enseignements as $enseignement){
-            $input['mhEff'] = (int)($enseignement->mhEff + $mheff);
             $enseignement = $this->enseignementRepository->update($input, $enseignement->id);
         }
-//        dd($input);
 
         Flash::success('Enseignement updated successfully.');
 
