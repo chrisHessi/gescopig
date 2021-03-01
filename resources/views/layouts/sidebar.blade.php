@@ -41,6 +41,9 @@
                 </span>
                     </a>
                     <ul class="treeview-menu">
+                        @can('print diplome')
+                            <li><a href="{!! url('scolarites/attestations/search/1') !!}">Enregistrer Notes</a></li>
+                        @endcan
                         @can('create notes')
                             <li><a href="{!! url('notes/search/1') !!}">Enregistrer Notes</a></li>
                         @endcan

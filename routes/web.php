@@ -129,7 +129,7 @@ Route::prefix('')->middleware('auth')->group(function(){
     Route::post('scolarites/printSuspension', 'ScolariteController@suspensions')->name('scolarites.suspensions');
 
     Route::get('scolarites/attestations/search/{n}', 'ScolariteController@search')->name('scolarites.search'); // pour selectionner la classe a imprimer
-    Route::get('scolarites/attestations/select/{specialite}/{cycle}', 'ScolariteController@select_admis')->name('scolarites.select_admis');
+    Route::get('scolarites/attestations/select/{cycle}/{specialite}', 'ScolariteController@select_admis')->name('scolarites.select_admis');
     Route::post('scolarites/attestations_reussite', 'ScolariteController@attestations_reussite')->name('scolarites.attestations_reussite');
 
     Route::get('resultatNominatifs/search/{n}', 'ResultatNominatifController@search')->name('resultatNominatifs.search');
