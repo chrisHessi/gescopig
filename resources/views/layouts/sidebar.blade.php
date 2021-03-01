@@ -42,7 +42,7 @@
                 </span>
                     </a>
                     <ul class="treeview-menu">
-                        @can('print diplome')
+                        @can('print diplomes')
                             <li><a href="{!! url('scolarites/attestations/search/1') !!}">Attestations</a></li>
                         @endcan
                     </ul>
