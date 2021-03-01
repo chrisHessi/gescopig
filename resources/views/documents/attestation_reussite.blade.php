@@ -104,7 +104,7 @@
 
     $(function () {
         @foreach($contrats as $contrat)
-            var moy = parseInt({{ $contrat->semestre_infos->avg('moyenne') }})
+            var moy = parseInt({{ $contrat->semestre_infos->sum('moyenne')/2 }})
             if (moy < 12) {
                 $("{{ "#mention-".$contrat->id }}").html("Passable")
             }
