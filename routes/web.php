@@ -128,6 +128,9 @@ Route::prefix('')->middleware('auth')->group(function(){
     Route::get('scolarites/printSuspension', 'ScolariteController@printSuspension')->name('scolarites.printSuspension');
     Route::post('scolarites/printSuspension', 'ScolariteController@suspensions')->name('scolarites.suspensions');
 
+    Route::get('scolarites/attestations/search/{n}', 'ScolariteController@search')->name('scolarites.search'); // pour selectionner la classe a imprimer
+    Route::get('scolarites/attestations/select/{specialite}/{cycle}', 'ScolariteController@select_admis')->name('scolarites.select_admis');
+    Route::post('scolarites/attestations_reussite', 'ScolariteController@attestations_reussite')->name('scolarites.attestations_reussite');
 
     Route::get('resultatNominatifs/search/{n}', 'ResultatNominatifController@search')->name('resultatNominatifs.search');
     Route::get('resultatNominatifs/create/{specialite}/{cycle}', 'ResultatNominatifController@create')->name('resultatNominatifs.create');
@@ -147,9 +150,7 @@ Route::prefix('')->middleware('auth')->group(function(){
     Route::delete('contratEnseignants/delete/{id}', 'ContratEnseignantController@delete_payment')->name('contratEnseignants.delete_payment');
     Route::patch('contratEnseignants/update_payment/{id}', 'ContratEnseignantController@update_payment')->name('contratEnseignants.update_payment');
 
-    Route::get('attestation', function (){
-        return view('documents.attestation_reussite');
-    });
+
 
     Route::resource('academicCalendars', 'AcademicCalendarController');
 

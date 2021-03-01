@@ -32,7 +32,7 @@
                         <i class="">
                         </i>
                     </div>
-                    @if($model == 'resultatNominatifs')
+                    @if($model == 'resultatNominatifs' || $model == 'scolarites')
                         <a href="{!! route($model .'.'.$method,[$cycle->id, $specialite->id]) !!}" class="small-box-footer ">
                             <font style="vertical-align: inherit;">
                                 <font style="vertical-align: inherit;">
@@ -97,7 +97,7 @@
             get_academic()
         });
 
-        @if($model == 'notes')
+        @if($model == 'notes' || $model == 'scolarites')
         $('#academic_year_id').change(function () {
             get_academic()
         })

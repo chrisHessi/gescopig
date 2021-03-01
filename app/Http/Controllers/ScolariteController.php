@@ -17,6 +17,7 @@ use App\Repositories\EcheancierRepository;
 use App\Repositories\InscriptionRepository;
 use App\Repositories\PreinscriptionRepository;
 use App\Repositories\ScolariteRepository;
+use App\Repositories\SpecialiteRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use function PHPSTORM_META\type;
@@ -33,13 +34,15 @@ class ScolariteController extends Controller
     protected $certificatRepository;
     protected $inscriptionRepository;
     protected $preinscriptionRepository;
+    protected $specialiteRepository;
 
 
     public function __construct(AnneeAcademic $academicYear, AutorisationRepository $autorisationRepository,
                                 ContratRepository $contratRepository, CycleRepository $cycleRepository,
                                 EcheancierRepository $echeancierRepository, AttestationRepository $attestationRepository,
                                 CertificatRepository $certificatRepository, InscriptionRepository $inscriptionRepository,
-                                PreinscriptionRepository $preinscriptionRepository, Request $request)
+                                PreinscriptionRepository $preinscriptionRepository, Request $request,
+                                SpecialiteRepository $specialiteRepository, AcademicYearRepository $academicYearRepository)
     {
 
         if(request()->server("SCRIPT_NAME") !== 'artisan') {
@@ -68,18 +71,27 @@ class ScolariteController extends Controller
         $this->certificatRepository = $certificatRepository;
         $this->inscriptionRepository = $inscriptionRepository;
         $this->preinscriptionRepository = $preinscriptionRepository;
+        $this->specialiteRepository = $specialiteRepository;
+        $this->academicYearRepository = $academicYearRepository;
     }
 
     public function search($n){
 //        $specialites = $this->specialiteRepository->all();
         $cycles = $this->cycleRepository->all();
         if($n == '1')
-            $method = 'create';
+            $method = 'select_admis';
         elseif($n == '2')
             $method = 'affiche';
         $model = 'scolarites';
 
-        return view('search',compact('cycles','model', 'method'));
+        $academicYears = [];
+        $ay = AcademicYear::all();
+        foreach ($ay as $a){
+            $academicYears[$a->id] = $a->debut.'/'.$a->fin;
+        }
+        $cur_year= $this->academicYear;
+
+        return view('search',compact('cycles','model', 'method', 'academicYears', 'cur_year'));
     }
 
     public function index(){
@@ -88,6 +100,52 @@ class ScolariteController extends Controller
         $today = Carbon::today();
         $echeanciers = $this->echeancierRepository->findWhere(['academic_year_id' => $academicYear->id, ['date', '<=', $today]]);
         return view('scolarites.index', compact('contrats', 'academicYear', 'echeanciers'));
+    }
+
+    public function select_admis($spec, $c, Request $request){
+        $aa = ($request->ay_id == null) ? AcademicYear::find($this->academicYear) : $this->academicYearRepository->findWithoutFail($request->ay_id);
+
+        $specialite = $this->specialiteRepository->findWithoutFail($spec);
+        $cycle = $this->cycleRepository->findWithoutFail($c);
+        $contrats_list = Contrat::join('apprenants', 'apprenant_id', '=', 'apprenants.id')
+            ->select('contrats.*')
+            ->where('specialite_id', $spec)
+            ->where('cycle_id', $cycle->id)
+            ->where('contrats.academic_year_id', $aa->id)
+            ->orderBy('apprenants.nom')
+            ->orderBy('apprenants.prenom')
+            ->get();
+        $contrats = [];
+        foreach ($contrats_list as $contrat){ //On selectionne les contrats qui ont une note semestrielle dans les deux semestres
+            if ($contrat->semestre_infos->count() >= 1){
+                $contrats[$contrat->id] = $contrat;
+            }
+        }
+
+        return view('scolarites.select_admis', compact('contrats'));
+    }
+
+    public function attestations_reussite(Request $request){
+        $session_fr = $request->session_fr;
+        $session_en = $request->session_en;
+        $date = $request->date;
+
+        $contrats = $this->contratRepository->findWhereIn('id', $request->contrat_id);
+        $speciality = [
+            "CG" => "Audit and Management Control",
+            "BF" => "Banking and Corporate Finance",
+            "TL" => "Transport, Customs and Logistic Transit",
+            "CMD" => "Communication, Maketing and Digital",
+            "MAACO" => "Audit and Management Control",
+            "MAFINE" => "Finance",
+            "MATRAS" => "Transport an Supply Chain Management",
+            "MACMAD" => "Communication, Maketing and Digital",
+            "MAQUAP" => "Quality and Project Management",
+            "MAFIDA" => "Taxation and Business Law",
+            "MAMES" => "Corporate Management"
+        ];
+
+        return view("documents.attestation_reussite", compact('contrats', 'session_en', 'session_fr', 'date', 'speciality'));
     }
 
     public function inscrits(){
