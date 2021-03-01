@@ -33,6 +33,22 @@
             <!-- Optionally, you can add icons to the links -->
             {{--<li class="active"><a href="#"><i class="fa fa-link"></i> <span>Link</span></a></li>--}}
             {{--<li><a href="{{ route('generate-pdf') }}"><i class="fa fa-link"></i> <span>generer un pdf</span></a></li>--}}
+
+            @can('print diplomes')
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-link"></i> <span>Diplomation</span>
+                        <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @can('print diplome')
+                            <li><a href="{!! url('scolarites/attestations/search/1') !!}">Attestations</a></li>
+                        @endcan
+                    </ul>
+                </li>
+            @endcan
+
             @can('read notes')
                 <li class="treeview">
                     <a href="#"><i class="fa fa-link"></i> <span>Notes</span>
@@ -41,9 +57,6 @@
                 </span>
                     </a>
                     <ul class="treeview-menu">
-                        @can('print diplome')
-                            <li><a href="{!! url('scolarites/attestations/search/1') !!}">Enregistrer Notes</a></li>
-                        @endcan
                         @can('create notes')
                             <li><a href="{!! url('notes/search/1') !!}">Enregistrer Notes</a></li>
                         @endcan
