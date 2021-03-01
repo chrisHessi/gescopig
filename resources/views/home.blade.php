@@ -21,7 +21,7 @@
                 <div class="box-footer no-padding">
                     <ul class="nav nav-stacked">
                         @can('print diplomes')
-                            <li><a href="{!! url('scolarites/attestations/search/1') !!}">Attestations</a></li>
+                            <li><a href="{!! url('scolarites/attestations/search/1') !!}">Imprimer Attestations</a></li>
                         @endcan
                         @can('create apprenants')
                             <li><a href="{!! url('apprenants/create') !!}">Enregistrer Nouvel apprenant</a></li>
