@@ -102,7 +102,7 @@ class ScolariteController extends Controller
         return view('scolarites.index', compact('contrats', 'academicYear', 'echeanciers'));
     }
 
-    public function select_admis($spec, $c, Request $request){
+    public function select_admis($c, $spec, Request $request){
         $aa = ($request->ay_id == null) ? AcademicYear::find($this->academicYear) : $this->academicYearRepository->findWithoutFail($request->ay_id);
 
         $specialite = $this->specialiteRepository->findWithoutFail($spec);
