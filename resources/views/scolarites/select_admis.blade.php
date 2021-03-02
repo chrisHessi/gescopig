@@ -13,6 +13,12 @@
     </section>
     <div class="content">
         @include('adminlte-templates::common.errors')
+        <div class="box-header">
+            <h4 class="pull-right" style="padding: 0px">
+                {!! Form::submit('Imprimer', ['class' => 'btn btn-primary']) !!}
+                <a href="{!! route('scolarites.search', ['1']) !!}" class="btn btn-default">Cancel</a>
+            </h4>
+        </div>
         <div class="box box-primary">
             {!! Form::open(['route' =>'scolarites.attestations_reussite'], ['onSubmit'=>'window.open()']) !!}
             <div class="box-header">
@@ -56,7 +62,7 @@
             </div>
             <div class="box-footer">
                 <h4 class="pull-right" style="padding: 0px">
-                    {!! Form::submit('Imprimer PV', ['class' => 'btn btn-primary']) !!}
+                    {!! Form::submit('Imprimer', ['class' => 'btn btn-primary']) !!}
                     <a href="{!! route('scolarites.search', ['1']) !!}" class="btn btn-default">Cancel</a>
                 </h4>
             </div>
