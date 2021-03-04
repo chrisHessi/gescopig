@@ -83,19 +83,19 @@ class EnseignementController extends AppBaseController
 //        return $enseignementDataTable->render('enseignements.index');
 
         $enseignements = $this->enseignementRepository->findWhere(['academic_year_id' => $this->anneeAcademic]);
-        $tc = [];
-
-        foreach ($enseignements as $enseignement){
-            if($enseignement->tronc_commun_id != null){
-                if (!in_array($enseignement->tronc_commun_id, $tc)){ // Si le tronc commun n'a pas encore été exploré on l'ajoute aux tableau de id de tc
-                    $tc[] = $enseignement->tronc_commun_id;
-                    foreach ($enseignement->tronc_commun->enseignements as $ens){ //pour chaque enseignement de ce tronc commun on affecte le meme enseignant
-                        $ens->contrat_enseignant_id = $enseignement->contrat_enseignant_id;
-                        $ens->save();
-                    }
-                }
-            }
-        }
+//        $tc = [];
+//
+//        foreach ($enseignements as $enseignement){
+//            if($enseignement->tronc_commun_id != null){
+//                if (!in_array($enseignement->tronc_commun_id, $tc)){ // Si le tronc commun n'a pas encore été exploré on l'ajoute aux tableau de id de tc
+//                    $tc[] = $enseignement->tronc_commun_id;
+//                    foreach ($enseignement->tronc_commun->enseignements as $ens){ //pour chaque enseignement de ce tronc commun on affecte le meme enseignant
+//                        $ens->contrat_enseignant_id = $enseignement->contrat_enseignant_id;
+//                        $ens->save();
+//                    }
+//                }
+//            }
+//        }
 
         return view('enseignements.index', compact('enseignements'));
     }
