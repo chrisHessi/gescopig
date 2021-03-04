@@ -154,9 +154,10 @@
 
                 @foreach($contrats as $contrat)
                     var total = 0
+                    var mh = 0
 
                     @foreach($enseignements[$contrat->id] as $enseignement)
-                        var mh = {{ ($enseignement->mhTotal < $enseignement->mhEff) ? $enseignement->mhTotal : $enseignement->mhEff }}
+                        mh = parseInt('{{ ($enseignement->mhTotal < $enseignement->mhEff) ? $enseignement->mhTotal : $enseignement->mhEff }}')
                         total += (parseInt('{{ (int)(($enseignement->ecue->semestre->cycle->label == 'Licence') ? $contrat->mh_licence : $contrat->mh_master) }}') * mh)
                     @endforeach
                     var du = total * (1 - 0.05)
