@@ -83,6 +83,19 @@ class EnseignementController extends AppBaseController
 //        return $enseignementDataTable->render('enseignements.index');
 
         $enseignements = $this->enseignementRepository->findWhere(['academic_year_id' => $this->anneeAcademic]);
+        $tc = [];
+
+        foreach ($enseignements as $enseignement){
+            if($enseignement->tronc_commun_id != null){
+                if (!in_array($enseignement->tronc_commun_id, $tc)){ // Si le tronc commun n'a pas encore été exploré on l'ajoute aux tableau de id de tc
+                    $tc[] = $enseignement->tronc_commun_id;
+                    foreach ($enseignement->tronc_commun->enseignements as $ens){ //pour chaque enseignement de ce tronc commun on affecte le meme enseignant
+                        $ens->contrat_enseignant_id = $enseignement->contrat_enseignant_id;
+                        $ens->save();
+                    }
+                }
+            }
+        }
 
         return view('enseignements.index', compact('enseignements'));
     }
@@ -337,13 +350,31 @@ class EnseignementController extends AppBaseController
             return redirect(route('enseignements.index'));
         }
         
-        $enseignement = $this->enseignementRepository->update($input, $id);
+//        $enseignement = $this->enseignementRepository->update($input, $id);
+
+        /**
+         * Si l'enseignement est un tronc commun on modifie tout les enseignement reliés au tronc commun
+         * Si non on modifie uniquement l'enseignement
+         */
+        if ($enseignement->tronc_commun_id != null){
+            foreach ($enseignement->tronc_commun->enseignements as $ens){
+                $this->enseignementRepository->update($input, $ens->id);
+            }
+        }
+        else{
+            $enseignement = $this->enseignementRepository->update($input, $id);
+        }
 
         /** On verifie que tous les enseignements ayant le meme ecue et le même enseignant possede le meme id de tronc commun */
         $ecue = $enseignement->ecue;
         if ($ecue->enseignements->where('contrat_enseignant_id', $enseignement->contratEnseignant->id)->count() > 1){
-            $tc = $ecue->enseignements->where('tronc_commun_id', '!=', null)->first();
-            $tc = ($tc != null) ? $tc->id : TroncCommun::create()->id;
+
+            // Si l'enseignement possède un id de tronc commun on affecte celui ci à tous les tronc enseignement ayant
+            // le meme enseignant et le meme ecue
+
+            $enstc = ($enseignement->tronc_commun_id != null) ? $enseignement : $ecue->enseignements->where('tronc_commun_id', '!=', null)->first(); // On recupere le premier id de tronc commun
+
+            $tc = ($enstc != null) ? $enstc->tronc_commun->id : TroncCommun::create()->id;
 
             foreach ($ecue->enseignements->where('contrat_enseignant_id', $enseignement->contratEnseignant->id) as $e){
                 $e->tronc_commun_id = $tc;
@@ -351,7 +382,7 @@ class EnseignementController extends AppBaseController
             }
 
         }
-        //dd($enseignement);
+
 
         Flash::success('Enseignement updated successfully.');
 
