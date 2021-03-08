@@ -13,6 +13,7 @@
     </section>
     <div class="content">
         @include('adminlte-templates::common.errors')
+        {!! Form::open(['route' =>'scolarites.attestations_reussite'], ['onSubmit'=>'window.open()']) !!}
         <div class="box-header">
             <h4 class="pull-right" style="padding: 0px">
                 {!! Form::submit('Imprimer', ['class' => 'btn btn-primary']) !!}
@@ -20,7 +21,7 @@
             </h4>
         </div>
         <div class="box box-primary">
-            {!! Form::open(['route' =>'scolarites.attestations_reussite'], ['onSubmit'=>'window.open()']) !!}
+
             <div class="box-header">
                 <div class="form-group col-xs-4 ">
                     {!! Form::label('session_fr', 'Session (FR):') !!}
