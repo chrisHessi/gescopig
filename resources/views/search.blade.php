@@ -36,7 +36,7 @@
                         <a href="{!! route($model .'.'.$method,[$cycle->id, $specialite->id]) !!}" class="small-box-footer ">
                             <font style="vertical-align: inherit;">
                                 <font style="vertical-align: inherit;">
-                                    {!! ($method == 'create')?'Enregistrer resultats' : 'Afficher les resultats' !!}
+                                    {!! ($model == 'scolarites') ? 'Imprimer attestation' : (($method == 'create')? 'Enregistrer resultats' :  'Afficher les resultats') !!}
                                 </font>
                             </font>
                             <i class="fa fa-arrow-circle-right"></i>

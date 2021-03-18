@@ -49,18 +49,18 @@
         <div class="container-fluid" id="rnr">
             @foreach($contrats as $contrat)
                 <div class="contenu" style="text-align: justify">
-                    <br><p><strong>Les soussignés <br><small><i>The undersigned</i></small></strong></p>
-                    <p>Vu le procès – verbal du Jury en date du <b>{{ Carbon\Carbon::parse($date)->format('d/m/Y') }}</b> certifient que : <br><small><i>Considering the jury’s decison of, <b>{{ Carbon\Carbon::parse($date)->format('d/m/Y') }}</b> certify that :</i></small></p>
+                    <br><p><strong>Les soussignés, <br><small><i>The undersigned</i></small></strong></p>
+                    <p>Vu le procès – verbal du Jury en date du <b>{{ Carbon\Carbon::parse($date)->format('d/m/Y') }}</b>, certifient que : <br><small><i>Considering the jury’s decison of, <b>{{ Carbon\Carbon::parse($date)->format('d/m/Y') }}</b> certify that :</i></small></p>
                     <p>M./Mme/Mlle <strong>{{ $contrat->apprenant->nom. ' ' .$contrat->apprenant->prenom }}</strong><br><small><i>Mr, (Miss)</i></small></p>
                     <p>
-                        Né(e) le :  {{ $contrat->apprenant->dateNaissance->format('d/m/Y') }} <span class="lieuNaissance">à : {{ $contrat->apprenant->lieuNaissance }}</span> <br>
+                        Né.e le :  {{ $contrat->apprenant->dateNaissance->format('d/m/Y') }} <span class="lieuNaissance">à : {{ $contrat->apprenant->lieuNaissance }}</span> <br>
                         <small><i>Born on <span class="lieuNaissanceen">at :</span></i></small>
                     </p>
-                    <p>Inscrit(e) sous le matricule N° : <b>{{ $contrat->apprenant->matricule }}</b> <br><small><i>Registration number :</i></small></p>
+                    <p>Inscrit.e sous le matricule N° : <b>{{ $contrat->apprenant->matricule }}</b> <br><small><i>Registration number :</i></small></p>
                     <p>A validé la totalité des Unités d’Enseignement requises pour l’obtention du diplôme de <strong>{{ ($contrat->cycle->label == "Licence") ? "LICENCE PROFESSIONNELLE" : "MASTER PROFESSIONNEL" }}</strong>.
                         <br><small><i>Has successfully validated all the teaching units required for the award of <strong>{{ ($contrat->cycle->label == "Licence") ? "PROFESSIONAL BACHELOR DEGREE" : "PROFESSIONAL MASTER DEGREE" }}</strong>.</i></small></p>
                     <div class="row">
-                        <p class="col-xs-8"><u>Domaine</u> : <strong>SCIENCES ECONOMIQUES ET DE GESTION</strong> <br>
+                        <p class="col-xs-8"><u>Domaine</u> : <strong>SCIENCES &Eacute;CONOMIQUES ET DE GESTION</strong> <br>
                                 <small><i><strong>Discipline : </strong>Economic Science and Business Administration</i></small></p>
                         <p class="col-xs-4">Mention : <b id="{{ 'mention-'. $contrat->id }}"></b> <br><small><i>Distinction:</i></small></p>
                     </div>
