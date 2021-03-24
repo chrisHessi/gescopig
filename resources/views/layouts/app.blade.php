@@ -28,10 +28,10 @@
     <link rel="../src/stylesheet" href="bootstrap-table-filter.css">
     <meta name="csrf-token">
     <style>
-        .container-fluid {
-            max-width: 1250px;
-            overflow-x: scroll;
-        }
+        /*.container-fluid {*/
+            /*max-width: 1250px;*/
+            /*overflow-x: scroll;*/
+        /*}*/
     </style>
 
 

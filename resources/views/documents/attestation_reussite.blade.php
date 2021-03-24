@@ -19,6 +19,9 @@
                 body .contenu{
                     padding-top: 250px;
                 }
+                .main-footer{
+                    display: none;
+                }
             }
 
             .lieuNaissance{
@@ -76,6 +79,11 @@
 
                 <div class="row">
                     <div class="col-xs-6">
+                        <p><strong>Fait à douala le :</strong></p><br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
                         <p class="pull-left"><strong><u>Le Directeur de L'ESSEC/ The Director of ESSEC</u></strong></p><br><br><br><br>
                         <p class="pull-left"><strong>Pr Georges Bertrand TAMOKWE PIAPTIE</strong></p>
                     </div>
@@ -125,8 +133,8 @@
         var originalContents = document.body.innerHTML;
         document.body.innerHTML = printContents;
 
-        document.body.innerHTML = originalContents;
         window.onload = window.print(printContents);
+        document.body.innerHTML = originalContents;
     })
 </script>
 @endsection
