@@ -79,7 +79,7 @@
 
                 <div class="row">
                     <div class="col-xs-6">
-                        <p><strong>Fait à douala le :</strong></p><br>
+                        <p><strong><u>Fait à douala le :</u></strong></p><br>
                     </div>
                 </div>
                 <div class="row">
