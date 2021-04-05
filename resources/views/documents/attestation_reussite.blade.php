@@ -88,7 +88,7 @@
                         <p class="pull-left"><strong><u>Pr Georges Bertrand TAMOKWE PIAPTIE</u></strong></p>
                     </div>
                     <div class="col-xs-6">
-                        <p class="text-right"><strong>Le Responsable Académique/ The Head Teacher:</strong></p><br><br><br>
+                        <p class="text-right"><strong>Le Responsable Académique/ The Head Teacher</strong></p><br><br><br>
                         <p class="text-right"><strong><u>Pr Germain NDJIEUNDE</u></strong></p>
                     </div>
                 </div>
