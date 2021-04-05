@@ -84,12 +84,12 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-6">
-                        <p class="pull-left"><strong><u>Le Directeur de L'ESSEC/ The Director of ESSEC</u></strong></p><br><br><br><br>
-                        <p class="pull-left"><strong>Pr Georges Bertrand TAMOKWE PIAPTIE</strong></p>
+                        <p class="pull-left"><strong>Le Directeur de L'ESSEC/ The Director of ESSEC</strong></p><br><br><br><br>
+                        <p class="pull-left"><strong><u>Pr Georges Bertrand TAMOKWE PIAPTIE</u></strong></p>
                     </div>
                     <div class="col-xs-6">
-                        <p class="text-right"><strong><u>Le Responsable Académique/ The Head Teacher:</u></strong></p><br><br><br>
-                        <p class="text-right"><strong>Pr Germain NDJIEUNDE</strong></p>
+                        <p class="text-right"><strong>Le Responsable Académique/ The Head Teacher:</strong></p><br><br><br>
+                        <p class="text-right"><strong><u>Pr Germain NDJIEUNDE</u></strong></p>
                     </div>
                 </div>
                 <div style="page-break-after: always;" ></div>
