@@ -135,11 +135,11 @@ class ScolariteController extends Controller
             "CG" => "Audit and Management Control",
             "BF" => "Banking and Corporate Finance",
             "TL" => "Transport, Customs and Logistic Transit",
-            "CMD" => "Communication, Maketing and Digital",
+            "CMD" => "Communication, Marketing and Digital",
             "MAACO" => "Audit and Management Control",
             "MAFINE" => "Finance",
             "MATRAS" => "Transport an Supply Chain Management",
-            "MACMAD" => "Communication, Maketing and Digital",
+            "MACMAD" => "Communication, Marketing and Digital",
             "MAQUAP" => "Quality and Project Management",
             "MAFIDA" => "Taxation and Business Law",
             "MAMES" => "Corporate Management"
