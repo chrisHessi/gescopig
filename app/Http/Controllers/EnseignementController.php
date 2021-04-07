@@ -342,7 +342,7 @@ class EnseignementController extends AppBaseController
     public function update($id, CreateEnseignementRequest $request)
     {
         $enseignement = $this->enseignementRepository->findWithoutFail($id);
-        $input = $request->all();
+        $input = $request->except('specialite_id');
 
         if (empty($enseignement)) {
             Flash::error('Enseignement not found');
