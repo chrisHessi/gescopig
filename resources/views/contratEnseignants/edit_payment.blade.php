@@ -28,7 +28,7 @@
 
                 <div class="form-group col-xs-3 doc">
                     {!! Form::label('tranche', 'tranche:') !!}
-                    {!! Form::select('tranche', null, ['class' => 'form-control']) !!}
+                    {!! Form::text('tranche', null, ['class' => 'form-control']) !!}
                 </div>
 
                 <div class="form-group col-xs-3 doc">
