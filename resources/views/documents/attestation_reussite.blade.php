@@ -69,7 +69,7 @@
                     </div>
                     <p><b>Spécialité : <b>{{ $contrat->specialite->title }}</b> </b><br><small><i>Speciality: {{ $speciality[$contrat->specialite->slug] }}</i></small></p>
                     <div class="row">
-                        <p class="col-xs-8">Année Académique : <b>{{ $contrat->academic_year->debut. '/' .$contrat->academic_year->fin }}</b> <br><small><i>Year : </i></small></p>
+                        <p class="col-xs-8">Année Académique : <b>{{ $contrat->academic_year->debut. '/' .$contrat->academic_year->fin }}</b> <br><small><i>Academic Year : </i></small></p>
                         <p class="col-xs-4"><b>Session: {{ $session_fr }} </b><br><small><i>Session: {{ $session_en }}</i></small></p>
                     </div>
                     <br>
@@ -79,7 +79,7 @@
 
                 <div class="row">
                     <div class="col-xs-6">
-                        <p><strong><u>Fait à douala le :</u></strong></p><br>
+                        <p><strong><u>Fait à douala le :</u></strong><br><small><i>Done at Douala on : </i></small></p><br>
                     </div>
                 </div>
                 <div class="row">
