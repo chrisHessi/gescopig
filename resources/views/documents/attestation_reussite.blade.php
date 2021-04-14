@@ -72,14 +72,14 @@
                         <p class="col-xs-8">Année Académique : <b>{{ $contrat->academic_year->debut. '/' .$contrat->academic_year->fin }}</b> <br><small><i>Academic Year : </i></small></p>
                         <p class="col-xs-4"><b>Session: {{ $session_fr }} </b><br><small><i>Session: {{ $session_en }}</i></small></p>
                     </div>
-                    <br>
+                    {{--<br>--}}
                     <p>En foi de quoi la présente attestation est établie et lui est délivrée pour servir et valoir ce que de droit <strong>en attendant la remise effective dudit diplôme.</strong></p>
                     <p><small><i>In witness where of this individual results testimonial is issued to serve the purpose for which it may be intended, pending effective delivery of said diploma.</i></small></p>
                 </div>
 
                 <div class="row">
                     <div class="col-xs-6">
-                        <p><strong>Fait à douala le :</strong><br><small><i>Done at Douala on : </i></small></p><br>
+                        <p><strong>Fait à douala le :</strong><br><small><i>Done at Douala on : </i></small></p>
                     </div>
                 </div>
                 <div class="row">
