@@ -17,7 +17,7 @@
                     display: none;
                 }
                 body .contenu{
-                    padding-top: 250px;
+                    padding-top: 260px;
                 }
                 .main-footer{
                     display: none;
