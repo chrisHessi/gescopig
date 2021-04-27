@@ -196,7 +196,7 @@
                     // console.log(suspension, date_susp)
 
                     if(button.attr('id') == 'suspension'){
-                        var url = 'http://'+ window.location.host + '/public/scolarites/suspension/'+contrat+'?date_susp='+date_susp+'&reduction='+reduction+'&signataire='+signataire+'&titre='+titre
+                        var url = 'http://'+ window.location.host + '/scolarites/suspension/'+contrat+'?date_susp='+date_susp+'&reduction='+reduction+'&signataire='+signataire+'&titre='+titre
                     }
 
                     else if(button.attr('id') !== 'autorisation'){
