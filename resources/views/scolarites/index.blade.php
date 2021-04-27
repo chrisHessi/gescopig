@@ -129,10 +129,10 @@
                             {!! Form::label('date_susp', 'Date d\'échéance:') !!}
                             {!! Form::date('date_susp', null, ['class' => 'form-control']) !!}
                         </div>
-                        <div class="form-group col-xs-4 susp">
-                            {!! Form::label('reduction', 'Bourse/Réduction:') !!}
-                            {!! Form::number('reduction', null, ['class' => 'form-control']) !!}
-                        </div>
+                        {{--<div class="form-group col-xs-4 susp">--}}
+                            {{--{!! Form::label('reduction', 'Bourse/Réduction:') !!}--}}
+                            {{--{!! Form::text('reduction', null, ['class' => 'form-control']) !!}--}}
+                        {{--</div>--}}
                         <div class="form-group col-xs-4 doc">
                             {!! Form::label('titre', 'titre signataire:') !!}
                             {!! Form::text('titre', null, ['class' => 'form-control']) !!}
@@ -196,7 +196,7 @@
                     // console.log(suspension, date_susp)
 
                     if(button.attr('id') == 'suspension'){
-                        var url = 'http://'+ window.location.host + '/scolarites/suspension/'+contrat+'?date_susp='+date_susp+'&reduction='+reduction+'&signataire='+signataire+'&titre='+titre
+                        var url = 'http://'+ window.location.host + '/public/scolarites/suspension/'+contrat+'?date_susp='+date_susp+'&reduction='+reduction+'&signataire='+signataire+'&titre='+titre
                     }
 
                     else if(button.attr('id') !== 'autorisation'){

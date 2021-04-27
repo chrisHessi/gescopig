@@ -22,11 +22,11 @@
             padding: 0px;
         }
         .big-text p{
-            font-size: 16px;
+            font-size: 15px;
             line-height: 14px;
         }
         .logo-container{
-            margin: 20px auto;
+            margin: 10px auto;
             border-bottom: solid 5px;
         }
         #acad{
@@ -46,20 +46,10 @@
         .borderless > thead > tr > td,
         .borderless > thead > tr > th {
             border: none;
-            font-size: 14px;
+            font-size: 12px;
         }
         .tuteur > thead > tr {
             background-color: grey;
-        }
-        .echeancier{
-            margin-bottom: 5px;
-        }
-        .footer{
-            background-color: #0b58a2;
-            position: fixed;
-            bottom: 10px;
-            width:90%;
-            margin-left: 30px;
         }
         .footer p{
             color: #ffffff;
@@ -96,7 +86,7 @@
                 font-size: 11px;
             }
             .logo_pigier{
-                width: 60%;
+                width: 80%;
                 height: 200px;
             }
         }
@@ -105,11 +95,11 @@
         }
 
         .message p{
-            font-size: 18px;
-            line-height: 30px;
+            font-size: 12px;
+            line-height: 20px;
         }
         div .message{
-            margin-top: 30px
+            margin-top: 15px
         }
     </style>
 </head>
@@ -121,9 +111,9 @@
         <section class="content container-fluid .page-break" >
             <div class="container-fluid">
                 <div class="logo-container row">
-                    <div class="col-xs-2"><img src="{{ ($contrat->cycle->label == 'MBA') ? url('images/mbway.jpg') : url('images/logo_pigier.jpg') }}" alt="logo pigier" class="logo {{($contrat->cycle->label != 'MBA' ? 'pigier_logo' : 'logo')}}"></div>
+                    <div class="col-xs-3"><img src="{{ ($contrat->cycle->label == 'MBA') ? url('images/mbway.jpg') : url('images/logo_pigier.jpg') }}" alt="logo pigier" class="logo {{($contrat->cycle->label != 'MBA' ? 'pigier_logo' : 'logo')}}"></div>
                     <div class="col-xs-2 text-right small-text"><p>ECOLE SUPERIEURE DE COMMERCE ET DE MANAGEMENT <br>BP: 1133 Douala</p></div>
-                    <div class="col-xs-5 text-center big-text">
+                    <div class="col-xs-4 text-center big-text">
                         <h4><strong>AVIS DE SUSPENSION</strong></h4>
                     </div>
                     <div class="col-xs-3 pull-left col-offset-1">
@@ -131,7 +121,7 @@
                         <p class="text-right"><i> {{ $academicYear->debut. '-' .$academicYear->fin }} </i></p>
                     </div>
                 </div>
-            
+
                 <div class="row infos apprenant">
                     <div class="col-xs-5">
                         <table class="table borderless">
@@ -144,11 +134,11 @@
                                 <td>{{ $academicYear->fin. '-' .$contrat->id }}</td>
                             </tr>
                             <tr>
-                                <th>Matricule</th>
+                                <th>Matricule :</th>
                                 <td>{{ $contrat->apprenant->matricule }}</td>
                             </tr>
                             <tr>
-                                <th>Spécialité-Niveau</th>
+                                <th>Spécialité-Niveau :</th>
                                 <td>{{ $contrat->specialite->slug. ' '. $contrat->cycle->niveau }}</td>
                             </tr>
                         </table>
@@ -157,22 +147,26 @@
                     <div class="col-xs-6 col-offset-1 text-right pull-right">
                         <table class="table borderless">
                             <tr>
-                                <th>Total de la scolarité:</th>
+                                <th>Montant de la scolarité :</th>
                                 <td>{{ $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') }}</td>
                             </tr>
                             <tr>
-                                <th>Bourse/Réduction:</th>
-                                <td>{{ $reduction }}</td>
+                                <th>Bourse/Réduction :</th>
+                                <td>{{ -$contrat->corkages->where('reduction', true)->sum('montant') }}</td>
                             </tr>
                             <tr>
-                                <th>Total payé:</th>
+                                <th>Autres frais :</th>
+                                <td>{{ $contrat->corkages->where('reduction', false)->sum('montant') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Total payé :</th>
                                 <td>
                                     {{ $contrat->versements->sum('montant') }}
                                 </td>
                             </tr>
                             <tr>
                                 <th>Solde en cours:</th>
-                                <td>{{ $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') - $contrat->versements->sum('montant') - $reduction}}</td>
+                                <td>{{ $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->sum('montant') - $contrat->versements->sum('montant') + $contrat->corkages->sum('montant')}}</td>
                             </tr>
                             <tr>
                                 <th>Montant portant avis:</th>
@@ -192,17 +186,18 @@
                         La Direction de l'école PIGIER CAMEROUN eu égard à l'article 1 du contrat préalablement conclu, vous rappelle que le non respect de l'échéance sus-mentionnée, nous met dans la triste obligation de vous suspendre temporairement des cours à partir du {{ Carbon\Carbon::parse($date_susp)->format('d/m/Y') }}. <br/>
 
                         Nous comptons donc sur votre sens aigu de responsbilité pour que diligence soit faite.<br/>
-                        Merci de votre comprehension.<br/><br/>
+                        Merci de votre comprehension.<br/>
                     </p>
 
-                    <p><strong>{{ (env('APP_URL') == 'https://www.gescopayaounde.com') ? 'Le Directeur Délégué' : 'La Directrice Administrative'}}</strong></p>
+                    <p><strong>{{ (env('APP_URL') == 'https://www.gescopayaounde.com') ? 'Le Directeur Délégué' : 'La Sécrétaire Générale'}}</strong></p>
                     @if($titre)
                         <p>{{ $titre }}</p>
                     @endif
                     <br><br>
 
                     <p><strong>{{ ($titre) ? $signataire : ((env('APP_URL') == 'https://www.gescopayaounde.com') ? 'MINKALA ABEGA RAPHAEL' : "Kristie TAFOU") }}</strong></p>
-                </div> 
+                </div>
+
             </div> 
         </section>
     </div>           
