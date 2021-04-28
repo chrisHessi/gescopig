@@ -170,7 +170,7 @@
                             </tr>
                             <tr>
                                 <th>Montant portant avis:</th>
-                                <td>{{ (($contrat->moratoire) ? $contrat->moratoires->where('date', '<=', Carbon\Carbon::today())->sum('montant') : $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->where('date', '<=', Carbon\Carbon::today())->sum('montant'))- $contrat->versements->sum('montant')- $reduction }}</td>
+                                <td>{{ (($contrat->moratoire) ? $contrat->moratoires->where('date', '<=', Carbon\Carbon::today())->sum('montant') : $contrat->cycle->echeanciers->where('academic_year_id', $contrat->academic_year_id)->where('date', '<=', Carbon\Carbon::today())->sum('montant')) + $contrat->versements->sum('montant')- $contrat->corkages->sum('montant') }}</td>
                             </tr>
                             <tr>
                                 <th>Date portant échéance:</th>
