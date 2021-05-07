@@ -133,7 +133,7 @@
                         @endforeach
                         <th>{{ sizeof($ues) }}</th>
                         <th rowspan="4" class="vertical bg-info"><div><span>Moyenne Semestrielle</span></div></th>
-                        <th colspan="3">Resultat Semestre</th>
+                        <th colspan="2">Resultat Semestre</th>
                     </tr>
                     <tr class="info">
                         @foreach($ues as $ue)
@@ -148,7 +148,7 @@
                         @endforeach
                         <th rowspan="3" class="vertical"><div><span>UE Validée(s) | UE à Valider</span></div></th>
                         <th rowspan="3" class="vertical"><div><span>Validé</span></div></th>
-                        <th rowspan="3" class="vertical"><div><span>Validé par Compensation</span></div></th>
+                        {{--<th rowspan="3" class="vertical"><div><span>Validé par Compensation</span></div></th>--}}
                         <th rowspan="3" class="vertical"><div><span>Non Validé</span></div></th>
                     </tr>
                     <tr class="bg-warning">
@@ -229,11 +229,11 @@
                                 X
                             @endif
                         </td>
-                        <td>
-                            @if($contrat->semestre_infos->where('semestre_id', $semestre->id)->first()->mention == 'Validé par Compensation')
-                                X
-                            @endif
-                        </td>
+                        {{--<td>--}}
+                            {{--@if($contrat->semestre_infos->where('semestre_id', $semestre->id)->first()->mention == 'Validé par Compensation')--}}
+                                {{--X--}}
+                            {{--@endif--}}
+                        {{--</td>--}}
                         <td>
                             @if($contrat->semestre_infos->where('semestre_id', $semestre->id)->first()->mention == 'Non Validé')
                                 X

@@ -709,11 +709,11 @@ class NoteController extends Controller
             if($nbUeValid == sizeof($ues)){
                 $semestreInfo->mention = 'Validé';
             }
-            elseif(sizeof($ues) > $nbUeValid && (sizeof($ues) - $nbUeValid) ==1){
-                $semestreInfo->mention = 'Validé par Compensation';
-                $semestreInfo->creditObt = 30;
-                $semestreInfo->nbUeValid = sizeof($ues);
-            }
+//            elseif(sizeof($ues) > $nbUeValid && (sizeof($ues) - $nbUeValid) ==1){
+//                $semestreInfo->mention = 'Validé par Compensation';
+//                $semestreInfo->creditObt = 30;
+//                $semestreInfo->nbUeValid = sizeof($ues);
+//            }
             else{
                 $semestreInfo->mention = 'Non Validé';
             }
