@@ -160,7 +160,7 @@
                         mh = parseInt('{{ ($enseignement->mhTotal < $enseignement->mhEff) ? $enseignement->mhTotal : $enseignement->mhEff }}')
                         total += (parseInt('{{ (int)(($enseignement->ecue->semestre->cycle->label == 'Licence') ? $contrat->mh_licence : $contrat->mh_master) }}') * mh)
                     @endforeach
-                    var du = total * (1 - 0.05)
+                    var du = total * (1 - 0.055)
                     var verse = parseInt('{{ (!empty($contrat->payments)) ? $contrat->payments->sum('montant') : 0 }}')
                     var rest = du - verse
 
