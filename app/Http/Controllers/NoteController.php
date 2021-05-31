@@ -72,7 +72,7 @@ class NoteController extends Controller
             'MAFINE' => 5,
             'MAQUAP' => 6,
             'MATRAS' => 7,
-            'MAFIDA' => 9,
+            'MAFIDA' => 7,
             'EMBA' => 8,
         ];
     }

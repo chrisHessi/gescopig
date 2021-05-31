@@ -104,8 +104,8 @@
             <div class="col-xs-6">
                 <h1 class="text-center">PROCES VERBAL DE DELIBERATION</h1>
                 <h1 class="text-center">Résultat des Examens {{ $semestre->title. ' ' .$session }}</h1>
-                <h1 class="text-center">Domaine : Sciences Economiques et de Gestion</h1>
-                <h1 class="text-center">Mention : Science de gestion</h1>
+                <h1 class="text-center">Domaine : {{ ($contrats->first()->specialite->slug == "MAFIDA") ? "Sciences Juridiques, Politiques et Administratives" : "Sciences Economiques et de Gestion" }}</h1>
+                <h1 class="text-center">Mention : {{ ($contrats->first()->specialite->slug == "MAFIDA") ? "Sciences Juridiques" : "Sciences de Gestion" }}</h1>
                 <h1 class="text-center">Spécialité : {{ $contrats->first()->specialite->slug. " (" .$contrats->first()->specialite->title. ")" }}</h1>
                 <h1 class="text-center">Niveau : {{$semestre->cycle->label. ' ' .$semestre->cycle->niveau}}</h1>
                 <h1 class="text-center">Année Académique : {{ $academicYear->debut. '-' .$academicYear->fin }}</h1>
