@@ -356,14 +356,14 @@ class EnseignementController extends AppBaseController
          * Si l'enseignement est un tronc commun on modifie tout les enseignement reliés au tronc commun
          * Si non on modifie uniquement l'enseignement
          */
-        if ($enseignement->tronc_commun_id != null){
-            foreach ($enseignement->tronc_commun->enseignements as $ens){
-                $this->enseignementRepository->update($input, $ens->id);
-            }
-        }
-        else{
-            $enseignement = $this->enseignementRepository->update($input, $id);
-        }
+//        if ($enseignement->tronc_commun_id != null){
+//            foreach ($enseignement->tronc_commun->enseignements as $ens){
+//                $this->enseignementRepository->update($input, $ens->id);
+//            }
+//        }
+//        else{
+//        }
+        $enseignement = $this->enseignementRepository->update($input, $id);
 
         /** On verifie que tous les enseignements ayant le meme ecue et le même enseignant possede le meme id de tronc commun */
         $ecue = $enseignement->ecue;
