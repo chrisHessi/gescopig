@@ -383,6 +383,8 @@ class EnseignementController extends AppBaseController
 
         }
 
+        // si non mettre tronc commun id =0
+
 
         Flash::success('Enseignement updated successfully.');
 

@@ -121,7 +121,7 @@
                                         </tr>
                                         <tr>
                                             <th>Parcours / Cycle Degree: </th>
-                                            <td>{{ $enseignements->first()->ecue->semestre->cycle->label }} Professionnelle</td>
+                                            <td>{{ $enseignements->first()->ecue->semestre->cycle->label .' '. (($enseignements->first()->ecue->semestre->cycle->label == 'Master') ? 'Professionnel' : 'Professionnelle') }}</td>
                                         </tr>
                                         <tr>
                                             <th>Specialité et niveau/ Speciality Level: </th>
