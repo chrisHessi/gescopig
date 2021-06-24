@@ -36,6 +36,7 @@
                         <th>Diplôme d'entrée</th>
                         <th>Spécialite</th>
                         <th>Téléphone</th>
+                        <th>Email</th>
                         <th>Année Académique</th>
                         <th>Noms des Parents</th>
                         <th>Profession parents</th>
@@ -62,6 +63,7 @@
                             <th>{{ $contrat->apprenant->diplome }}</th>
                             <td>{{ $contrat->specialite->slug. ' ' .$contrat->cycle->niveau }}</td>
                             <td>{{ $contrat->apprenant->tel }}</td>
+                            <td>{{ $contrat->apprenant->email }}</td>
                             <td>{{ $contrat->academic_year->debut. '/' .$contrat->academic_year->fin }}</td>
                             <td>
                                 @foreach($contrat->apprenant->tutors as $tutor)
