@@ -14,7 +14,6 @@ class UpdateTeacherPaysTable extends Migration
     public function up()
     {
         Schema::table('teacher_pays', function (Blueprint $table) {
-            $table->boolean('tronc_commun');
             $table->integer('teachable_id')->nullable();
             $table->string('teachable_type');
         });

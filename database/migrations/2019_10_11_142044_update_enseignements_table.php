@@ -13,9 +13,7 @@ class UpdateEnseignementsTable2 extends Migration
      */
     public function up()
     {
-        Schema::table('enseignements', function (Blueprint $table) {
-            $table->integer('contrat_enseignant_id')->unsigned();
-        });
+        //
     }
 
     /**

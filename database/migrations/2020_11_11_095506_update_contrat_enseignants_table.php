@@ -13,17 +13,9 @@ class UpdateContratEnseignantsTable2 extends Migration
      */
     public function up()
     {
-        Schema::table('contrat_enseignants', function (Blueprint $table) {
-            $table->integer('rang')->nullable();
-        });
+//
 
-        Schema::table('enseignants', function (Blueprint $table) {
-            $table->date('date_naissance')->nullable();
-            $table->string('lieu_naissance')->nullable();
-            $table->string('domicile')->nullable();
-            $table->string('nationalite')->nullable();
-            $table->string('profession')->nullable();
-        });
+
     }
 
     /**
@@ -33,16 +25,6 @@ class UpdateContratEnseignantsTable2 extends Migration
      */
     public function down()
     {
-        Schema::table('enseignants', function (Blueprint $table) {
-            $table->dropColumn('date_naissance')->nullable();
-            $table->dropColumn('lieu_naissance')->nullable();
-            $table->dropColumn('domicile')->nullable();
-            $table->dropColumn('nationalite')->nullable();
-            $table->dropColumn('profession')->nullable();
-        });
-
-        Schema::table('contrat_enseignants', function (Blueprint $table) {
-            $table->dropColumn('rang')->nullable();
-        });
+//
     }
 }

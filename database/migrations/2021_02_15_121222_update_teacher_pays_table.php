@@ -14,7 +14,7 @@ class UpdateTeacherPaysTable2 extends Migration
     public function up()
     {
         Schema::table('teacher_pays', function (Blueprint $table) {
-            $table->dropColumn('tronc_commun');
+//
         });
     }
 

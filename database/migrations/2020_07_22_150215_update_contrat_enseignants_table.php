@@ -16,6 +16,7 @@ class UpdateContratEnseignantsTable extends Migration
         Schema::table('contrat_enseignants', function (Blueprint $table) {
             $table->integer('mh_licence')->unsigned()->nullable();
             $table->integer('mh_master')->unsigned()->nullable();
+            $table->integer('rang')->nullable();
         });
     }
 
@@ -26,6 +27,10 @@ class UpdateContratEnseignantsTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('contrat_enseignants', function (Blueprint $table) {
+            $table->dropColumn('rang')->nullable();
+            $table->dropColumn('mh_licence')->nullable();
+            $table->dropColumn('mh_master')->nullable();
+        });
     }
 }

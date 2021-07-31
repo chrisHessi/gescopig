@@ -14,8 +14,7 @@ class UpdateEnseignementsTable3 extends Migration
     public function up()
     {
         Schema::table('enseignements', function (Blueprint $table) {
-            $table->integer('tronc_commun_id')->unsigned()->nullable();
-            $table->foreign('tronc_commun_id')->references('id')->on('tronc_communs');
+//
         });
     }
 

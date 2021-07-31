@@ -21,6 +21,10 @@ class CreateContratEnseignantsTable extends Migration
             $table->foreign('enseignant_id')->references('id')->on('enseignants');
             $table->timestamps();
         });
+
+        Schema::table('enseignements', function (Blueprint $table) {
+            $table->integer('contrat_enseignant_id')->unsigned();
+        });
     }
 
     /**

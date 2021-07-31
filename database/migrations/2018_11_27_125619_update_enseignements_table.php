@@ -17,6 +17,8 @@ class UpdateEnseignementsTable extends Migration
             $table->boolean('communication')->default(false);
             $table->boolean('cc')->default(false);
             $table->boolean('progression')->default(false);
+            $table->integer('tronc_commun_id')->unsigned()->nullable();
+            $table->foreign('tronc_commun_id')->references('id')->on('tronc_communs');
         });
     }
 
