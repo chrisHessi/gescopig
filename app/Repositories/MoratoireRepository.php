@@ -10,7 +10,7 @@ namespace App\Repositories;
 
 
 use App\Models\Moratoire;
-//use InfyOm\Generator\Common\BaseRepository;
+use InfyOm\Generator\Common\BaseRepository;
 
 class MoratoireRepository extends BaseRepository
 {
