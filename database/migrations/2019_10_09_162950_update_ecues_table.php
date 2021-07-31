@@ -13,9 +13,7 @@ class UpdateEcuesTable2 extends Migration
      */
     public function up()
     {
-        Schema::table('ecues', function (Blueprint $table) {
-            $table->integer('academic_year_id')->unsigned();
-        });
+
     }
 
     /**

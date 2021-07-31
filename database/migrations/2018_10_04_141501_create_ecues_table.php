@@ -18,6 +18,8 @@ class CreateEcuesTable extends Migration
             $table->string('title');
             $table->integer('semestre_id')->unsigned();
             $table->string('slug');
+            $table->integer('academic_year_id')->unsigned();
+            $table->foreign('academic_year_id')->references('id')->on('academic_years');
             $table->foreign('semestre_id')->references('id')->on('semestres');
             $table->timestamps();
             $table->softDeletes();

@@ -20,10 +20,6 @@ class CreateAccessCardsTable extends Migration
             $table->timestamps();
         });
 
-        Schema::table('ecues', function (Blueprint $table) {
-            $table->foreign('academic_year_id')->references('id')->on('academic_years');
-        });
-
 
 
         Schema::disableForeignKeyConstraints();
