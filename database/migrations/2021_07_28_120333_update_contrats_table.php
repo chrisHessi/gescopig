@@ -4,27 +4,27 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateContratsTable extends Migration
-{
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::table('contrats', function (Blueprint $table) {
-            $table->string('');
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
-    }
-}
+//class UpdateContratsTable2 extends Migration
+//{
+//    /**
+//     * Run the migrations.
+//     *
+//     * @return void
+//     */
+//    public function up()
+//    {
+//        Schema::table('contrats', function (Blueprint $table) {
+//            $table->string('');
+//        });
+//    }
+//
+//    /**
+//     * Reverse the migrations.
+//     *
+//     * @return void
+//     */
+//    public function down()
+//    {
+//        //
+//    }
+//}
