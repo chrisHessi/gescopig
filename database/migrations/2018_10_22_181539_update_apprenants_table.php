@@ -25,9 +25,9 @@ class UpdateApprenantsTable extends Migration
             $table->string('etablissement_provenance');
 
         });
-        Schema::table('tutors', function (Blueprint $table) {
-            $table->foreign('apprenant_id')->references('id')->on('apprenants');
-        });
+//        Schema::table('tutors', function (Blueprint $table) {
+//            $table->foreign('apprenant_id')->references('id')->on('apprenants');
+//        });
         Schema::enableForeignKeyConstraints();
     }
 
