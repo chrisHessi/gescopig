@@ -15,7 +15,6 @@ class UpdateEcuesTable2 extends Migration
     {
         Schema::table('ecues', function (Blueprint $table) {
             $table->integer('academic_year_id')->unsigned();
-//            $table->foreign('academic_year_id')->references('id')->on('academic_years');
         });
     }
 
