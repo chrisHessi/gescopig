@@ -81,4 +81,13 @@ class ApprenantRepository extends BaseRepository
         $inputApprenant = $request->except('name', 'profession', 'addresse', 'tel_mobile', 'tel_bureau', 'tel_fixe', 'type');
         $apprenant->update($inputApprenant);
     }
+
+    private function getVille($id_ville){
+        $ville = [
+            1 => 'DLA',
+            2 => 'YDE'
+        ];
+
+        return $ville[$id_ville];
+    }
 }
