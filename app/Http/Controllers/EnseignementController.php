@@ -134,6 +134,8 @@ class EnseignementController extends AppBaseController
         return view('enseignements.create', compact('ecues', 'enseignants', 'ues', 'specialite'));
     }
 
+
+
     public function search($n){
         $specialites = $this->specialiteRepository->all();
         $cycles = $this->cycleRepository->all();
