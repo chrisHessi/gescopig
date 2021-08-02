@@ -122,6 +122,7 @@ class NoteController extends Controller
         $specialite = $this->specialiteRepository->findWithoutFail($spe);
         $ecues = $specialite->ecues->where('semestre_id', $semestre->id);
         $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
+
         $ens = [];
         foreach($ecues as $ec){
             $enseignement = $ec->enseignements->where('specialite_id', $specialite->id)->where('academic_year_id', '==', $aa->id)->first();
@@ -129,10 +130,318 @@ class NoteController extends Controller
         }
         $enseignements = $this->enseignementRepository->findWhereIn('id', $ens);
 
-//        dd($enseignements);
-
-
         return view('notes.affiche', compact('enseignements', 'specialite', 'semestre'));
+    }
+
+    /**
+     * Afficher la page où l'on va renseigner les notes obtenues par les etudiants dans l'ecue choisies.
+     *
+     * @param  int  $id reprensente l'id de l'enseignement choisi
+     * @return \Illuminate\Http\Response
+     */
+    public function show($type, $id){
+        $enseignement = $this->enseignementRepository->findWithoutFail($id);
+        $specialite = $enseignement->specialite->id;
+        $cycle = $enseignement->ecue->semestre->cycle->id;
+        $sem = $enseignement->ecue->semestre->id;
+
+        // $contrats = $this->contratRepository->findWhere(['specialite_id' => $specialite, 'cycle_id' => $cycle, 'academic_year_id' => $this->anneeAcademic->id]);
+
+        $c = Contrat::join('apprenants', 'apprenant_id', '=', 'apprenants.id')
+            ->select('contrats.*')
+            ->where('specialite_id', $specialite)
+            ->where('cycle_id', $cycle)
+            ->where('contrats.academic_year_id', $enseignement->academic_year_id)
+            ->orderBy('apprenants.nom')
+            ->orderBy('apprenants.prenom');
+
+        //Si on est en deuxieme session? on recupere les etudiant qui son alles en 2e session
+        $contrats = ($type != 'session2') ? $c->get() : $c->whereHas('semestre_infos', function($q) use ($sem){
+            $q->where('session', 'session2')->where('semestre_id', $sem);
+        })->get();
+
+        $ccComp = true;
+
+        // controller que tous les apprenants ont deja une note de cc;
+        foreach($contrats as $contrat){
+            if(!$contrat->notes->where('enseignement_id', $enseignement->id)->first() && $type != 'cc')
+                $ccComp = false;
+        }
+
+        if(!$ccComp){
+            Flash::error('Un ou plusieurs apprenants n\'ont pas de note de CC');
+            return redirect()->back();
+        }
+
+        return view('notes.show', compact('enseignement', 'contrats' , 'type'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store($type, $enseignement, Request $request){
+        $input = $request->except('_token', 'DataTables_Table_0_length');
+        $enseignement    = $this->enseignementRepository->findWithoutFail($enseignement);
+        foreach($input as $key => $value){
+            $contrat = $this->contratRepository->findWithoutFail($key);
+
+            $note = $this->noteRepository->updateOrCreate(
+                ['enseignement_id' => $enseignement->id, 'contrat_id' => $key],
+                [$type => ($value != null) ? $value : 0]
+            );
+            if($type != 'cc'){
+                if($type == 'session1'){
+                    $note->del1 = ($note->session1 == 0) ? 0 : $note->cc*0.4 + $note->session1*0.6;
+                    $note->save();
+                }
+                elseif($type == 'session2'){
+                    $note->del2 = ($note->session2 == 0) ? 0 : $note->cc*0.4 + $note->session2*0.6;
+                    $note->save();
+                }
+            }
+            if($type == 'cc'){//lorsqu'on enregistre le cc apres la note d'examen le syteme recalcule la note finale
+                $note->del1 = ($note->del1 != null) ? $note->cc*0.4 + $note->session1*0.6 : null;
+                $note->del2 = ($note->del2 != null) ? $note->cc*0.4 + $note->session2*0.6 : null;
+                $note->save();
+            }
+
+        }
+        return redirect()->route('notes.affiche', [$enseignement->ecue->semestre->id, $note->contrat->specialite->id]);
+    }
+
+    /**
+     * @param $sem
+     * @param $spec
+     * @param $session
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     *
+     * Liste des etudiants à deliberer (possibilité de choisir les etudiants avant delibération)
+     *
+     */
+
+    public function a_deliberer($sem, $spec, $session, Request $request){
+
+        $cycle = $this->semestreRepository->findWithoutFail($sem)->cycle;
+        $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
+
+        //on recupere tous les contrats par ordre alphabetique
+
+        $c = Contrat::join('apprenants', 'apprenant_id', '=', 'apprenants.id')
+            ->select('contrats.*')
+            ->where('specialite_id', $spec)
+            ->where('cycle_id', $cycle->id)
+            ->where('contrats.academic_year_id', $aa->id)
+            ->orderBy('apprenants.nom')
+            ->orderBy('apprenants.prenom');
+
+        //Si on est en deuxieme session? on recupere les etudiant qui son alles en 2e session
+        $contrats = ($session == 'session1') ? $c->get() : $c->whereHas('semestre_infos', function($q) use ($sem){
+            $q->where('session', 'session2')->where('semestre_id', $sem);
+        })->get();
+
+        if (empty($contrats)) {
+            Flash::error('Aucun apprenant dans cette classe');
+            return redirect()->back();
+        }
+        return view('notes.a_deliberer', compact('contrats', 'sem', 'session', 'spec'));
+    }
+
+    public function pv($sem, $spec, $session, Request $request){
+        $id = $request->input('contrat_id');
+        if (empty($id)) {
+            Flash::error('Selectionnez au moins un étudiant');
+            return redirect()->back();
+        }
+        $cycle = $this->semestreRepository->findWithoutFail($sem)->cycle;
+        $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
+
+        //on recupere tous les contrats par ordre alphabetique
+
+        $c = Contrat::join('apprenants', 'apprenant_id', '=', 'apprenants.id')
+            ->select('contrats.*')
+            ->where('specialite_id', $spec)
+            ->where('cycle_id', $cycle->id)
+            ->where('contrats.academic_year_id', $aa->id)
+            ->whereIn('contrats.id', $id)
+            ->orderBy('apprenants.nom')
+            ->orderBy('apprenants.prenom');
+
+        //Si on est en deuxieme session? on recupere les etudiant qui son alles en 2e session
+        $contrats = ($session == 'session1') ? $c->get() : $c->whereHas('semestre_infos', function($q) use ($sem){
+            $q->where('session', 'session2')->where('semestre_id', $sem);
+        })->get();
+
+//        dd($contrats, $id, $request->ay_id, $aa->id);
+
+        if (empty($contrats)) {
+            Flash::error('Aucun des apprenants selectionnés dans cette classe ne possède de note');
+            return redirect()->back();
+        }
+
+        $i=0; // increment d'effectif
+        $semestre = $this->semestreRepository->findWithoutFail($sem);
+        $specialite = $this->specialiteRepository->findWithoutFail($spec);
+        $ecues =[];
+        $academicYear = $aa;
+        $ec = $specialite->ecues->where('semestre_id', $sem);
+        foreach($ec as $ecue){
+            $ecues[] = $ecue->id;
+        }
+        // $enseignements = $specialite->enseignements->whereIn('ecue_id', $ecues)->where('academic_year_id', $this->anneeAcademic->id);
+
+        $enseignements = Enseignement::whereHas('notes')->whereIn('ecue_id', $ecues)->where('academic_year_id', $aa->id)->where('specialite_id', $specialite->id)->get();
+
+        // dd($enseignements);
+
+        $ues = [];
+        foreach($enseignements as $enseignement){
+            $ues[$enseignement->ue->id] = $enseignement->ue;
+        }
+        // dd($ues);
+
+        foreach($contrats as $contrat){
+            $result = $this->saveNotes($contrat, $enseignements, $session, $sem); // renvoi true si tous les enseignements ont une note de cc
+        }
+
+        //Controle pour verifier que tous les apprenants ont des notes enregistrées
+        foreach ($contrats as $contrat) {
+            foreach ($enseignements as $enseignement) {
+                if($contrat->notes->where('enseignement_id', $enseignement->id)->first() == null){
+                    Flash::error('L\'etudiant(e) '. $contrat->apprenant->nom .' '. $contrat->apprenant->prenom .' ne possede pas de note de '. $enseignement->ecue->title);
+                    return redirect()->back();
+                }
+            }
+        }
+
+
+        $specialityCode = $this->specialityCode[$specialite->slug];
+        return view('notes.pv', compact('contrats', 'enseignements', 'ues', 'semestre', 'i', 'academicYear', 'session', 'specialite', 'specialityCode' ));
+    }
+
+    /**
+     * cette fonction est une fonction interne qui permettra d'enregistrer les
+     * informations sur le semestre de l'etudiant
+     *
+     *
+     */
+    protected function saveNotes($contrat, $enseignements, $session, $semestre){
+        $semestreInfo = $this->semestreInfoRepository->firstOrNew([
+            'semestre_id'=>$semestre,
+            'contrat_id' => $contrat->id
+        ]);
+        // dd($session);
+        $semestreInfo->session = $session;
+        $elimSemestre = false;
+
+        $creditObtsem = 0;
+        $nbUeValid = 0;
+        $totalSem = 0;
+        // dd($session);
+        $ues = [];
+
+        foreach ($enseignements as $enseignement){
+            $ues[$enseignement->ue_id] = $enseignement->ue;
+        }
+
+        foreach ($ues as $ue){
+            $ueInfo = $this->ueInfoRepository->firstOrNew(['ue_id' => $ue->id, 'contrat_id' => $contrat->id]);
+            $elim = false;
+            $creditTot = $enseignements->where('ue_id', $ue->id)->sum('credits');
+            $creditObt = 0;
+            $totalUe = 0;
+            //en fonction des notes enjambement. lorsque ce sera géré.
+            $note = 0;
+
+
+            // $notes=[];
+            foreach ($enseignements->where('ue_id', $ue->id) as $enseignement){
+                if($contrat->notes->where('enseignement_id', $enseignement->id)->first() == null){
+                    return false;
+                }
+
+
+
+                $note = ($session == 'session1') ? $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1 : $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2;
+                if ($session == 'session1'){
+                    $note = $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1 ;
+                }
+                elseif($session == 'session2'){
+
+                    $del1 = $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1;
+                    $del2 = $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2;
+
+                    $note = ($del2 > $del1) ? $del2 : $del1; //Si la note deuxieme session est superieure a la note de premiere session considerer la note de 2e session sinon considerer la 1ere session
+                    // dd($note);
+                }
+                elseif($session == 'enjambement'){
+                    $note = $contrat->notes->where('enseignement_id', $enseignement->id)->first()->enjambement;
+                }
+                $totalUe += $note * $enseignement->credits;
+                if ($note < 5){
+                    $elim = $elimSemestre = true;
+                }
+                if($note >= 10) {
+                    $creditObt += $enseignement->credits;
+                }
+
+            }
+
+            $ueInfo->creditObt = $creditObt;
+            $ueInfo->creditTot = $creditTot;
+            $ueInfo->moyenne = $totalUe / $ueInfo->creditTot;
+            $ueInfo->totalNotes = $totalUe;
+
+            $totalSem += $ueInfo->totalNotes;
+
+
+            if(!$elim && $ueInfo->moyenne >= 10){
+                $ueInfo->mention = 'Validé';
+                $ueInfo->creditObt = $ueInfo->creditTot;
+                $nbUeValid +=1;
+            }
+            else{
+                $ueInfo->mention = 'Non Validé';
+            }
+            $ueInfo->save();
+            $creditObtsem += $ueInfo->creditObt;
+        }
+// dd($totalSem);
+        $semestreInfo->moyenne = $totalSem/30;
+        $semestreInfo->creditObt = $creditObtsem;
+        $semestreInfo->nbUeValid = $nbUeValid;
+        $semestreInfo->totalNotes = $totalSem;
+
+        /*
+         * Si une ou plusieurs unités d'enseignements n'ont pas obtenus de note eliminatoire,
+         * on verifie que l'apprenant a valider au moins (n-1) unités d'enseignement du semestre
+         * le cas echeant le semestre est considéré comme non validé
+         */
+        if(!$elimSemestre && $semestreInfo->moyenne >= 10){
+            if($nbUeValid == sizeof($ues)){
+                $semestreInfo->mention = 'Validé';
+            }
+//            elseif(sizeof($ues) > $nbUeValid && (sizeof($ues) - $nbUeValid) ==1){
+//                $semestreInfo->mention = 'Validé par Compensation';
+//                $semestreInfo->creditObt = 30;
+//                $semestreInfo->nbUeValid = sizeof($ues);
+//            }
+            else{
+                $semestreInfo->mention = 'Non Validé';
+            }
+        }
+        else{
+            $semestreInfo->mention = 'Non Validé';
+        }
+        // dd($session);
+        if($session == 'session1'){
+            $semestreInfo->session = ($semestreInfo->mention == 'Non Validé') ? 'session2' : 'session1';
+        }
+
+        $semestreInfo->save();
+        return true;
     }
 
     /**
@@ -154,6 +463,7 @@ class NoteController extends Controller
         return view('notes.deliberation', compact('specialite', 'semestre', 'contrats'));
 
     }
+
 
     public function noteDeliberation($type, $app, $sem){
         $contrat = $this->contratRepository->findWithoutFail($app);
@@ -324,88 +634,11 @@ class NoteController extends Controller
         return view('notes.rattrapage', compact('contrats', 'enseignements'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store($type, $enseignement, Request $request){
-        $input = $request->except('_token', 'DataTables_Table_0_length');
-        $enseignement    = $this->enseignementRepository->findWithoutFail($enseignement);
-        foreach($input as $key => $value){
-            $contrat = $this->contratRepository->findWithoutFail($key);
 
-            $note = $this->noteRepository->updateOrCreate(
-                ['enseignement_id' => $enseignement->id, 'contrat_id' => $key],
-                [$type => ($value != null) ? $value : 0]
-            );
-            if($type != 'cc'){
-                if($type == 'session1'){
-                    $note->del1 = ($note->session1 == 0) ? 0 : $note->cc*0.4 + $note->session1*0.6;
-                    $note->save();
-                }
-                elseif($type == 'session2'){
-                    $note->del2 = ($note->session2 == 0) ? 0 : $note->cc*0.4 + $note->session2*0.6;
-                    $note->save();
-                }
-            }
-            if($type == 'cc'){//lorsqu'on envoi enregistre le cc apres la note d'examen le syteme recalcule la note finale
-                $note->del1 = ($note->del1 != null) ? $note->cc*0.4 + $note->session1*0.6 : null;
-                $note->del2 = ($note->del2 != null) ? $note->cc*0.4 + $note->session2*0.6 : null;
-                $note->save();
-            }
-
-        }
-        return redirect()->route('notes.affiche', [$enseignement->ecue->semestre->id, $note->contrat->specialite->id]);
-    }
 
     public function getNoteContrat($contrat, $enseignement){
         $note = $this->noteRepository->findWhere(['enseignement_id' => $enseignement, 'contrat_id' => $contrat]);
         return response()->json($note);
-    }
-
-    /**
-     * Afficher la page où l'on va renseigner les notes obtenues par les etudiants dans l'ecue choisies.
-     *
-     * @param  int  $id reprensente l'id de l'enseignement choisi
-     * @return \Illuminate\Http\Response
-     */
-    public function show($type, $id){
-        $enseignement = $this->enseignementRepository->findWithoutFail($id);
-        $specialite = $enseignement->specialite->id;
-        $cycle = $enseignement->ecue->semestre->cycle->id;
-        $sem = $enseignement->ecue->semestre->id;
-
-        // $contrats = $this->contratRepository->findWhere(['specialite_id' => $specialite, 'cycle_id' => $cycle, 'academic_year_id' => $this->anneeAcademic->id]);
-
-        $c = Contrat::join('apprenants', 'apprenant_id', '=', 'apprenants.id')
-            ->select('contrats.*')
-            ->where('specialite_id', $specialite)
-            ->where('cycle_id', $cycle)
-            ->where('contrats.academic_year_id', $enseignement->academic_year_id)
-            ->orderBy('apprenants.nom')
-            ->orderBy('apprenants.prenom');
-
-        //Si on est en deuxieme session? on recupere les etudiant qui son alles en 2e session
-        $contrats = ($type != 'session2') ? $c->get() : $c->whereHas('semestre_infos', function($q) use ($sem){
-            $q->where('session', 'session2')->where('semestre_id', $sem);
-        })->get();
-
-        $ccComp = false;
-
-        // controller que tous les apprenants ont deja une note de cc;
-        foreach($contrats as $contrat){
-            if(!$contrat->notes->where('enseignement_id', $enseignement->id)->first() && $type != 'cc')
-                $ccComp = true;
-        }
-
-        if($ccComp){
-            Flash::error('Un ou plusieurs apprenants n\'ont pas de note de CC');
-            return redirect()->back();
-        }
-
-        return view('notes.show', compact('enseignement', 'contrats' , 'type'));
     }
 
     public function imprime($sem, $specialite, Request $request){
@@ -476,111 +709,7 @@ class NoteController extends Controller
         return view('notes.rn_intermediaire', compact('contrats', 'enseignements', 'semestre', 'i', 'academicYear', 'session'));
     }
 
-    /**
-     * @param $sem
-     * @param $spec
-     * @param $session
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     *
-     * Liste des etudiants à deliberer (possibilité de choisir les etudiants avant delibération)
-     *
-     */
 
-    public function a_deliberer($sem, $spec, $session, Request $request){
-
-        $cycle = $this->semestreRepository->findWithoutFail($sem)->cycle;
-        $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
-
-        //on recupere tous les contrats par ordre alphabetique
-
-        $c = Contrat::join('apprenants', 'apprenant_id', '=', 'apprenants.id')
-            ->select('contrats.*')
-            ->where('specialite_id', $spec)
-            ->where('cycle_id', $cycle->id)
-            ->where('contrats.academic_year_id', $aa->id)
-            ->orderBy('apprenants.nom')
-            ->orderBy('apprenants.prenom');
-
-        //Si on est en deuxieme session? on recupere les etudiant qui son alles en 2e session
-        $contrats = ($session == 'session1') ? $c->get() : $c->whereHas('semestre_infos', function($q) use ($sem){
-            $q->where('session', 'session2')->where('semestre_id', $sem);
-        })->get();
-
-        if (empty($contrats)) {
-            Flash::error('Aucun apprenant dans cette classe');
-            return redirect()->back();
-        }
-        return view('notes.a_deliberer', compact('contrats', 'sem', 'session', 'spec'));
-    }
-
-    public function pv($sem, $spec, $session, Request $request){
-        $id = $request->input('contrat_id');
-        if (empty($id)) {
-            Flash::error('Selectionnez au moins un étudiant');
-            return redirect()->back();
-        }
-        $cycle = $this->semestreRepository->findWithoutFail($sem)->cycle;
-        $aa = ($request->ay_id == null) ? $this->anneeAcademic : $this->academicYearRepository->findWithoutFail($request->ay_id);
-
-        //on recupere tous les contrats par ordre alphabetique
-
-        $c = Contrat::join('apprenants', 'apprenant_id', '=', 'apprenants.id')
-            ->select('contrats.*')
-            ->where('specialite_id', $spec)
-            ->where('cycle_id', $cycle->id)
-            ->where('contrats.academic_year_id', $aa->id)
-            ->whereIn('contrats.id', $id)
-            ->orderBy('apprenants.nom')
-            ->orderBy('apprenants.prenom');
-
-        //Si on est en deuxieme session? on recupere les etudiant qui son alles en 2e session
-        $contrats = ($session == 'session1') ? $c->get() : $c->whereHas('semestre_infos', function($q) use ($sem){
-            $q->where('session', 'session2')->where('semestre_id', $sem);
-        })->get();
-
-//        dd($contrats, $id, $request->ay_id, $aa->id);
-
-        if (empty($contrats)) {
-            Flash::error('Aucun des apprenants selectionnés dans cette classe ne possède de note');
-            return redirect()->back();
-        }
-        $i=0; // increment d'effectif
-        $semestre = $this->semestreRepository->findWithoutFail($sem);
-        $specialite = $this->specialiteRepository->findWithoutFail($spec);
-        $ecues =[];
-        $academicYear = $aa;
-        $ec = $specialite->ecues->where('semestre_id', $sem);
-        foreach($ec as $ecue){
-            $ecues[] = $ecue->id;
-        }
-        // $enseignements = $specialite->enseignements->whereIn('ecue_id', $ecues)->where('academic_year_id', $this->anneeAcademic->id);
-        $enseignements = Enseignement::whereHas('notes')->whereIn('ecue_id', $ecues)->where('academic_year_id', $aa->id)->where('specialite_id', $specialite->id)->get();
-        // dd($enseignements);
-
-        $ues = [];
-        foreach($enseignements as $enseignement){
-            $ues[$enseignement->ue->id] = $enseignement->ue;
-        }
-        // dd($ues);
-
-        foreach($contrats as $contrat){
-            $result = $this->saveNotes($contrat, $enseignements, $session, $sem); // renvoi true si tous les enseignements ont une note de cc
-        }
-
-        //Controle pour verifier que tous les apprenants ont des notes enregistrées
-        foreach ($contrats as $contrat) {
-            foreach ($enseignements as $enseignement) {
-                if($contrat->notes->where('enseignement_id', $enseignement->id)->first() == null){
-                    Flash::error('L\'etudiant(e) '. $contrat->apprenant->nom .' '. $contrat->apprenant->prenom .' ne possede pas de note de '. $enseignement->ecue->title);
-                    return redirect()->back();
-                }
-            }
-        }
-        
-
-        $specialityCode = $this->specialityCode[$specialite->slug];
-        return view('notes.pv', compact('contrats', 'enseignements', 'ues', 'semestre', 'i', 'academicYear', 'session', 'specialite', 'specialityCode' ));
-    }
 
     public function pvcc($sem, $spec, Request $request){
         $specialite = $this->specialiteRepository->findWithoutFail($spec);
@@ -608,127 +737,7 @@ class NoteController extends Controller
         return view('notes.pvcc', compact('contrats', 'enseignements', 'academicYear', 'semestre'));
     }
 
-    /**
-     * cette fonction est une fonction interne qui permettra d'enregistrer les
-     * informations sur le semestre de l'etudiant
-     *
-     *
-     */
-    protected function saveNotes($contrat, $enseignements, $session, $semestre){
-        $semestreInfo = $this->semestreInfoRepository->firstOrNew([
-            'semestre_id'=>$semestre,
-            'contrat_id' => $contrat->id
-        ]);
-        // dd($session);
-        $semestreInfo->session = $session;
-        $elimSemestre = false;
-        $creditObtsem = 0;
-        $nbUeValid = 0;
-        $totalSem = 0;
-        // dd($session);
-        $ues = [];
 
-        foreach ($enseignements as $enseignement){
-            $ues[$enseignement->ue_id] = $enseignement->ue;
-        }
-
-        foreach ($ues as $ue){
-            $ueInfo = $this->ueInfoRepository->firstOrNew(['ue_id' => $ue->id, 'contrat_id' => $contrat->id]);
-            $elim = false;
-            $creditTot = $enseignements->where('ue_id', $ue->id)->sum('credits');
-            $creditObt = 0;
-            $totalUe = 0;
-            //en fonction des notes enjambement. lorsque ce sera géré.
-            $note = 0;
-
-
-            // $notes=[];
-            foreach ($enseignements->where('ue_id', $ue->id) as $enseignement){
-                if($contrat->notes->where('enseignement_id', $enseignement->id)->first() == null){
-                    return false;
-                }
-
-
-
-                $note = ($session == 'session1') ? $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1 : $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2;
-                if ($session == 'session1'){
-                    $note = $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1 ;
-                }
-                elseif($session == 'session2'){
-
-                    $del1 = $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1;
-                    $del2 = $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2;
-
-                    $note = ($del2 > $del1) ? $del2 : $del1; //Si la note deuxieme session est superieure a la note de premiere session considerer la note de 2e session sinon considerer la 1ere session
-                    // dd($note);
-                }
-                elseif($session == 'enjambement'){
-                    $note = $contrat->notes->where('enseignement_id', $enseignement->id)->first()->enjambement;
-                }
-                $totalUe += $note * $enseignement->credits;
-                if ($note < 5){
-                    $elim = $elimSemestre = true;
-                }
-                if($note >= 10) {
-                    $creditObt += $enseignement->credits;
-                }
-
-            }
-
-            $ueInfo->creditObt = $creditObt;
-            $ueInfo->creditTot = $creditTot;
-            $ueInfo->moyenne = $totalUe / $ueInfo->creditTot;
-            $ueInfo->totalNotes = $totalUe;
-
-            $totalSem += $ueInfo->totalNotes;
-
-
-            if(!$elim && $ueInfo->moyenne >= 10){
-                $ueInfo->mention = 'Validé';
-                $ueInfo->creditObt = $ueInfo->creditTot;
-                $nbUeValid +=1;
-            }
-            else{
-                $ueInfo->mention = 'Non Validé';
-            }
-            $ueInfo->save();
-            $creditObtsem += $ueInfo->creditObt;
-        }
-// dd($totalSem);
-        $semestreInfo->moyenne = $totalSem/30;
-        $semestreInfo->creditObt = $creditObtsem;
-        $semestreInfo->nbUeValid = $nbUeValid;
-        $semestreInfo->totalNotes = $totalSem;
-
-        /*
-         * Si une ou plusieurs unités d'enseignements n'ont pas obtenus de note eliminatoire,
-         * on verifie que l'apprenant a valider au moins (n-1) unités d'enseignement du semestre
-         * le cas echeant le semestre est considéré comme non validé
-         */
-        if(!$elimSemestre && $semestreInfo->moyenne >= 10){
-            if($nbUeValid == sizeof($ues)){
-                $semestreInfo->mention = 'Validé';
-            }
-//            elseif(sizeof($ues) > $nbUeValid && (sizeof($ues) - $nbUeValid) ==1){
-//                $semestreInfo->mention = 'Validé par Compensation';
-//                $semestreInfo->creditObt = 30;
-//                $semestreInfo->nbUeValid = sizeof($ues);
-//            }
-            else{
-                $semestreInfo->mention = 'Non Validé';
-            }
-        }
-        else{
-            $semestreInfo->mention = 'Non Validé';
-        }
-        // dd($session);
-        if($session == 'session1'){
-            $semestreInfo->session = ($semestreInfo->mention == 'Non Validé') ? 'session2' : 'session1';
-        }
-
-        $semestreInfo->save();
-        return true;
-    }
 
     /**
      * API methods definition Start

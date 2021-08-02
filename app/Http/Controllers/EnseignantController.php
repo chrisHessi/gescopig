@@ -80,7 +80,7 @@ class EnseignantController extends AppBaseController
         $last_range = $this->contratEnseignantRepository->findWhere(['academic_year_id' => $this->academicYear])->last()->rang;
         $rang = $last_range + 1;
 
-        $contratInput = $request->except(['mh_licence', 'mh_master']);
+        $contratInput = $request->only(['mh_licence', 'mh_master']);
 
         $contratInput['enseignant_id'] = $enseignant->id;
         $contratInput['academic_year_id'] = $this->academicYear;
