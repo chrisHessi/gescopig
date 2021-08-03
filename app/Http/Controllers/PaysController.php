@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Repositories\PaysRepository;
 use Illuminate\Http\Request;
+use Laracasts\Flash\Flash;
 
 class PaysController extends Controller
 {
@@ -48,7 +49,7 @@ class PaysController extends Controller
 
         $pays = $this->paysRepository->create($input);
 
-        Flash::success('Le pays '. $pays->nom. ' a été créé avec succès');
+        Flash::success('Le pays ' . $pays->nom . ' a été créé avec succès');
 
         return redirect(route('pays.index'));
     }
@@ -78,7 +79,7 @@ class PaysController extends Controller
 
             return redirect(route('pays.index'));
         }
-        return view('pays.edit', compact('ville'));
+        return view('pays.edit', compact('pays'));
     }
 
     /**
@@ -119,9 +120,10 @@ class PaysController extends Controller
             return redirect(route('pays.index'));
         }
 
+        $paysName = $pays->nom;
         $pays = $this->paysRepository->delete($id);
 
-        Flash::success('Le pays'. $pays->nom. ' a été supprimé avec succès.');
+        Flash::success('Le pays "' . $paysName . '" a été supprimé avec succès.');
 
         return redirect(route('pays.index'));
     }

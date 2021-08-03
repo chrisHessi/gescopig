@@ -14,23 +14,23 @@
 
 
 Auth::routes();
-Route::prefix('admin')->namespace('Back')->group(function(){
+Route::prefix('admin')->namespace('Back')->group(function () {
     Route::name('admin')->get('/', 'AdminController@index');
 });
-Route::prefix('')->middleware('auth')->group(function(){
+Route::prefix('')->middleware('auth')->group(function () {
     Route::get('/', 'HomeController@index')->name('home');
     Route::get('home', 'HomeController@index');
-    Route::get('absences/updateJustif/{justification}/{absence}', ['middleware' => 'permission:edit absences','uses' => 'AbsenceController@justif'])->name('absences.updateJustif');
+    Route::get('absences/updateJustif/{justification}/{absence}', ['middleware' => 'permission:edit absences', 'uses' => 'AbsenceController@justif'])->name('absences.updateJustif');
 
-    Route::get('absences/updateJustif/{justification}/{absence}', ['middleware' => 'permission:edit absences','uses' => 'AbsenceController@updateJustif'])->name('absences.updateJustif');
+    Route::get('absences/updateJustif/{justification}/{absence}', ['middleware' => 'permission:edit absences', 'uses' => 'AbsenceController@updateJustif'])->name('absences.updateJustif');
 
-    Route::get('absences/search/{n}', ['middleware' => 'permission:create absences|read absences|read enseignements','uses' => 'AbsenceController@search'])->name('absences.search');
+    Route::get('absences/search/{n}', ['middleware' => 'permission:create absences|read absences|read enseignements', 'uses' => 'AbsenceController@search'])->name('absences.search');
     Route::get('absences/etat', 'AbsenceController@etat')->name('absences.etat');
-    Route::get('absences/affiche/{semestre}/{specialite}', ['middleware' => 'permission:read absences','uses' => 'AbsenceController@affiche'] )->name('absences.affiche');
-    Route::get('absences/create/{semestre}/{specialite}', ['middleware' => 'permission:create absences','uses' => 'AbsenceController@create'] )->name('absences.create');
-    Route::get('absences/{apprenant}/edit/{semestre}', ['middleware' => 'permission:read absences','uses' => 'AbsenceController@edit'])->name('absences.edit');
-//    Route::get('absence/afficheData, AbsenceController@afficheData')->name('absences.afficheData');
-    Route::resource('absences', 'AbsenceController')->except('create','edit', 'show');
+    Route::get('absences/affiche/{semestre}/{specialite}', ['middleware' => 'permission:read absences', 'uses' => 'AbsenceController@affiche'])->name('absences.affiche');
+    Route::get('absences/create/{semestre}/{specialite}', ['middleware' => 'permission:create absences', 'uses' => 'AbsenceController@create'])->name('absences.create');
+    Route::get('absences/{apprenant}/edit/{semestre}', ['middleware' => 'permission:read absences', 'uses' => 'AbsenceController@edit'])->name('absences.edit');
+    //    Route::get('absence/afficheData, AbsenceController@afficheData')->name('absences.afficheData');
+    Route::resource('absences', 'AbsenceController')->except('create', 'edit', 'show');
 
     Route::name('specialites.getData')->get('specialites/getData', 'SpecialiteController@getData');
 
@@ -62,7 +62,7 @@ Route::prefix('')->middleware('auth')->group(function(){
     Route::get('enseignements/{specialite}/editMh', 'EnseignementController@editMh')->name('enseignements.editMh');
     Route::get('enseignements/create/{semestre}/{specialite}', 'EnseignementController@create')->name('enseignements.create');
     Route::get('enseignements/rapport/{n}', 'EnseignementController@rapport')->name('rapport');
-//    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+    //    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
     Route::resource('roles', 'RoleController');
     Route::resource('permissions', 'PermissionController');
@@ -114,11 +114,11 @@ Route::prefix('')->middleware('auth')->group(function(){
     Route::get('scolarites/old', 'ScolariteController@old')->name('scolarites.old');
     Route::get('scolarites/inscrits', 'ScolariteController@inscrits')->name('scolarites.inscrits');
 
-    Route::get('rnr', function(){
+    Route::get('rnr', function () {
         return view('notes.rnr_imprime');
     });
-    Route::get('certificat/{type}', function($type){
-        return view('documents.certificat')->with(['type'=>$type]);
+    Route::get('certificat/{type}', function ($type) {
+        return view('documents.certificat')->with(['type' => $type]);
     });
     Route::get('scolarites/contrats/{id}', 'ScolariteController@contrats')->name('scolarites.contrat');
     Route::get('scolarites/attestation/{contrat}/{type}', 'ScolariteController@attestation')->name('scolarites.attestation');
@@ -136,7 +136,7 @@ Route::prefix('')->middleware('auth')->group(function(){
     Route::get('resultatNominatifs/create/{specialite}/{cycle}', 'ResultatNominatifController@create')->name('resultatNominatifs.create');
     Route::post('resultatNominatifs', 'ResultatNominatifController@store')->name('resultatNominatifs.store');
 
-//    Route::post('notes/{enseignement}/{contrat}', 'NoteController@store')->name('notes.store');
+    //    Route::post('notes/{enseignement}/{contrat}', 'NoteController@store')->name('notes.store');
 
     Route::resource('academicYears', 'AcademicYearController');
 
@@ -157,4 +157,7 @@ Route::prefix('')->middleware('auth')->group(function(){
     Route::resource('corkages', 'CorkageController')->except('create');
     Route::get('corkages/create/{id}', 'CorkageController@create')->name('corkages.create');
 
+    // 02/08/2021
+    Route::resource('pays', 'PaysController');
+    Route::resource('villes', 'VilleController');
 });
