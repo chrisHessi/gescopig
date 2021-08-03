@@ -182,15 +182,15 @@ class ContratEnseignantController extends Controller
         return redirect(route('contratEnseignants.index'));
     }
 
-    public function versements($id, Request $request)
+    public function versements($tronc_commun_id, Request $request)
     {
         //        $contrat = $this->contratEnseignantRepository->findWithoutFail($id);
         $type = $request->type;
         if ($type) {
-            $teachable = TroncCommun::find($id);
+            $teachable = TroncCommun::find($tronc_commun_id);
             $contrat = $teachable->enseignements->first()->contratEnseignant;
         } else {
-            $teachable = $this->enseignementRepository->findWithoutFail($id);
+            $teachable = $this->enseignementRepository->findWithoutFail($tronc_commun_id);
             $contrat = $teachable->contratEnseignant;
         }
         if (empty($teachable)) {
