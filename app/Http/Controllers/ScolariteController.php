@@ -149,11 +149,69 @@ class ScolariteController extends Controller
     }
 
     public function inscrits(){
-        $academicYear = $this->academicYear;
+        $currentYear = $this->academicYear;
+        $years = $this->academicYearRepository->all();
+        $specialites = $this->specialiteRepository->all();
+        $cycles = $this->cycleRepository->all();
+
+        $filterYears = [];
+        $filterSpecialites = [];
+        $filterCycles = [];
+
+        foreach ($years as $year){
+            $filterYears[$year->id] = $year->debut. '/' .$year->fin;
+        }
+
+        foreach ($specialites as $specialite){
+            $filterSpecialites[$specialite->id] = $specialite->slug. '-' .$specialite->title;
+        }
+
+        foreach ($cycles as $cycle){
+            $filterCycles[$cycle->id] = $cycle->label. ' ' .$cycle->niveau;
+        }
+
         $contrats = $this->contratRepository->all();
         $today = Carbon::today();
-        $echeanciers = $this->echeancierRepository->findWhere(['academic_year_id' => $academicYear->id, ['date', '<=', $today]]);
-        return view('scolarites.inscrits', compact('contrats', 'academicYear', 'echeanciers'));
+        $echeanciers = $this->echeancierRepository->findWhere(['academic_year_id' => $currentYear->id, ['date', '<=', $today]]);
+        return view('scolarites.inscrits', compact('contrats', 'currentYear', 'echeanciers', 'filterYears', 'filterCycles', 'filterSpecialites'));
+    }
+
+    public function filter(Request $request){
+        $currentYear = $this->academicYear;
+        $today = Carbon::today();
+        $echeanciers = $this->echeancierRepository->findWhere(['academic_year_id' => $currentYear->id, ['date', '<=', $today]]);
+
+        $years = $this->academicYearRepository->all();
+        $specialites = $this->specialiteRepository->all();
+        $cycles = $this->cycleRepository->all();
+
+        $filterYears = [];
+        $filterSpecialites = [];
+        $filterCycles = [];
+
+        foreach ($years as $y){
+            $filterYears[$y->id] = $y->debut. '/' .$y->fin;
+        }
+
+        foreach ($specialites as $sp){
+            $filterSpecialites[$sp->id] = $sp->slug. '-' .$sp->title;
+        }
+
+        foreach ($cycles as $c){
+            $filterCycles[$c->id] = $c->label. ' ' .$c->niveau;
+        }
+
+        $year = $this->academicYearRepository->findWithoutFail($request->year);
+        $specialite = $this->specialiteRepository->findWithoutFail($request->specialite);
+        $cycle = $this->cycleRepository->findWithoutFail($request->cycle);
+
+        $contrats = (empty($year)) ? $this->contratRepository->all() : $this->contratRepository->findWhere(['academic_year_id' => $year->id]);
+
+        $contrats = (empty($specialite)) ? $contrats : $contrats->where('specialite_id', $specialite->id);
+
+        $contrats = (empty($cycle)) ? $contrats : $contrats->where('cycle_id', $cycle->id);
+
+        return view('scolarites.inscrits', compact('contrats', 'currentYear', 'echeanciers', 'filterYears', 'filterCycles', 'filterSpecialites'));
     }
 
     public function old(){

@@ -113,6 +113,7 @@ Route::prefix('')->middleware('auth')->group(function(){
     Route::get('scolarites', 'ScolariteController@index')->name('scolarites.index');
     Route::get('scolarites/old', 'ScolariteController@old')->name('scolarites.old');
     Route::get('scolarites/inscrits', 'ScolariteController@inscrits')->name('scolarites.inscrits');
+    Route::post('scolarites/filter', 'ScolariteController@filter')->name('scolarites.filter');
 
     Route::get('rnr', function(){
         return view('notes.rnr_imprime');
