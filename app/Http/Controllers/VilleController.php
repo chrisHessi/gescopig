@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\PaysRepository;
 use App\Repositories\VilleRepository;
 use Illuminate\Http\Request;
+use Laracasts\Flash\Flash;
 
 class VilleController extends Controller
 {
     protected $villeRepository;
+    protected $paysRepository;
 
-    public function __construct(VilleRepository $villeRepository)
+    public function __construct(VilleRepository $villeRepository, PaysRepository $paysRepository)
     {
         $this->villeRepository = $villeRepository;
+        $this->paysRepository = $paysRepository;
     }
     /**
      * Display a listing of the resource.
@@ -20,9 +24,9 @@ class VilleController extends Controller
      */
     public function index()
     {
-        $ville = $this->villeRepository->all();
+        $villes = $this->villeRepository->all();
 
-        return view('ville.index', compact('ville'));
+        return view('villes.index', compact('villes'));
     }
 
     /**
@@ -32,7 +36,15 @@ class VilleController extends Controller
      */
     public function create()
     {
-        return view('ville.create');
+        $pays = $this->paysRepository->all();
+
+        $paysNames = [];
+
+        foreach ($pays as $payi) {
+            $paysNames[$payi->id] = $payi->nom;
+        }
+
+        return view('villes.create', compact("paysNames"));
     }
 
     /**
@@ -47,9 +59,9 @@ class VilleController extends Controller
 
         $ville = $this->villeRepository->create($input);
 
-        Flash::success('La ville '. $ville->nom. ' a été créé avec succès');
+        Flash::success('La ville ' . $ville->nom . ' a été créé avec succès');
 
-        return redirect(route('ville.index'));
+        return redirect(route('villes.index'));
     }
 
     /**
@@ -73,11 +85,20 @@ class VilleController extends Controller
     {
         $ville = $this->villeRepository->find($id);
         if (empty($ville)) {
-            Flash::error('Ce ville n\'existe plus en base de données');
+            Flash::error('Cette ville n\'existe plus en base de données');
 
             return redirect(route('ville.index'));
         }
-        return view('ville.edit', compact('ville'));
+
+
+        $pays = $this->paysRepository->all();
+
+        $paysNames = [];
+
+        foreach ($pays as $payi) {
+            $paysNames[$payi->id] = $payi->nom;
+        }
+        return view('villes.edit', compact('ville', 'paysNames'));
     }
 
     /**
@@ -98,9 +119,9 @@ class VilleController extends Controller
 
         $ville = $this->villeRepository->update($request->all(), $id);
 
-        Flash::success('Le pays'. $ville->nom. ' a été mis à jour avec succès.');
+        Flash::success('La ville "' . $ville->nom . '" a été mis à jour avec succès.');
 
-        return redirect(route('ville.index'));
+        return redirect(route('villes.index'));
     }
 
     /**
@@ -118,9 +139,10 @@ class VilleController extends Controller
             return redirect(route('ville.index'));
         }
 
+        $villeNom = $ville->nom;
         $ville = $this->villeRepository->delete($id);
-        Flash::success('Le pays'. $ville->nom. ' a été supprimé avec succès.');
+        Flash::success('La ville "' . $villeNom . '" a été supprimée avec succès.');
 
-        return redirect(route('ville.index'));
+        return redirect(route('villes.index'));
     }
 }
