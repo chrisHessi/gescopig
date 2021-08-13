@@ -44,6 +44,7 @@
                     <table class="table table-bordered table-responsive" id="moratoire-table">
                         <thead>
                         <tr>
+                            <th>Matricule</th>
                             <th>Nom et Prénom</th>
                             <th>Specialité</th>
                             <th>Année académique</th>
@@ -63,6 +64,7 @@
                                 @if(!$contrat->apprenant)
                                     <td>Apprenant au contrat N°{{ $contrat->id }} a été supprimé de la BD</td>
                                 @else
+                                    <td>{!! $contrat->apprenant->matricule !!}</td>
                                     <td>{!! $contrat->apprenant->nom. ' ' .$contrat->apprenant->prenom !!}</td>
                                     <td>
                                         {!! $contrat->specialite->slug. ' ' .$contrat->cycle->niveau !!}

@@ -29,7 +29,7 @@
                     </div>
                     <div class="form-group col-sm-4">
                         {!! Form::label('tranche', 'Tranche') !!}
-                        {!! Form::select('tranche', ['Inscription' => 'Inscription','Tranche1' => 'Tranche1', 'Tranche2' => 'Tranche2', 'Tranche3' => 'Tranche3', 'Tranche4' => 'Tranche4'], isset($echeancier) ? $echeancier->tranche : null, ['class' => 'form-control']) !!}
+                        {!! Form::select('tranche', ['Inscription' => 'Inscription','Tranche1' => 'Tranche1', 'Tranche2' => 'Tranche2', 'Tranche3' => 'Tranche3', 'Tranche4' => 'Tranche4', 'Bourse/Reduction' => 'Bourse/Reduction'], isset($echeancier) ? $echeancier->tranche : null, ['class' => 'form-control']) !!}
                     </div>
                     <div class="form-group col-xs-4">
                         {!! Form::label('montant', 'Montant :') !!}
