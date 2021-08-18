@@ -31,6 +31,7 @@ Route::prefix('')->middleware('auth')->group(function () {
     Route::get('absences/{apprenant}/edit/{semestre}', ['middleware' => 'permission:read absences', 'uses' => 'AbsenceController@edit'])->name('absences.edit');
     //    Route::get('absence/afficheData, AbsenceController@afficheData')->name('absences.afficheData');
     Route::resource('absences', 'AbsenceController')->except('create', 'edit', 'show');
+    Route::get('absences/test', 'AbsenceController@test');
 
     Route::name('specialites.getData')->get('specialites/getData', 'SpecialiteController@getData');
 
@@ -68,7 +69,7 @@ Route::prefix('')->middleware('auth')->group(function () {
     Route::resource('permissions', 'PermissionController');
     Route::resource('users', 'UserController');
 
-    Route::get('absences/test', 'AbsenceController@test');
+
 
     Route::resource('catUes', 'CatUeController')->except('show');
     Route::resource('ues', 'UeController')->except('show');
@@ -114,13 +115,6 @@ Route::prefix('')->middleware('auth')->group(function () {
     Route::get('scolarites/old', 'ScolariteController@old')->name('scolarites.old');
     Route::get('scolarites/inscrits', 'ScolariteController@inscrits')->name('scolarites.inscrits');
     Route::post('scolarites/filter', 'ScolariteController@filter')->name('scolarites.filter');
-
-    Route::get('rnr', function () {
-        return view('notes.rnr_imprime');
-    });
-    Route::get('certificat/{type}', function ($type) {
-        return view('documents.certificat')->with(['type' => $type]);
-    });
     Route::get('scolarites/contrats/{id}', 'ScolariteController@contrats')->name('scolarites.contrat');
     Route::get('scolarites/attestation/{contrat}/{type}', 'ScolariteController@attestation')->name('scolarites.attestation');
     Route::get('scolarites/certificat/{contrat}/{type}', 'ScolariteController@certificat')->name('scolarites.certificat');
@@ -132,6 +126,14 @@ Route::prefix('')->middleware('auth')->group(function () {
     Route::get('scolarites/attestations/search/{n}', 'ScolariteController@search')->name('scolarites.search'); // pour selectionner la classe a imprimer
     Route::get('scolarites/attestations/select/{cycle}/{specialite}', 'ScolariteController@select_admis')->name('scolarites.select_admis');
     Route::post('scolarites/attestations_reussite', 'ScolariteController@attestations_reussite')->name('scolarites.attestations_reussite');
+
+    Route::get('rnr', function () {
+        return view('notes.rnr_imprime');
+    });
+    Route::get('certificat/{type}', function ($type) {
+        return view('documents.certificat')->with(['type' => $type]);
+    });
+
 
     Route::get('resultatNominatifs/search/{n}', 'ResultatNominatifController@search')->name('resultatNominatifs.search');
     Route::get('resultatNominatifs/create/{specialite}/{cycle}', 'ResultatNominatifController@create')->name('resultatNominatifs.create');
