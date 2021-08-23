@@ -19,7 +19,7 @@ class UserTableSeeder extends Seeder
         ]);
 
         $role = Role::create([
-            'name' => 'admin'
+            'name' => 'Admin'
         ]);
 
         $role->givePermissionTo($permission);

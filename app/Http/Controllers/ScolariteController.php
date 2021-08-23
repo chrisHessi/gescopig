@@ -81,7 +81,8 @@ class ScolariteController extends Controller
         if($n == '1')
             $method = 'select_admis';
         elseif($n == '2')
-            $method = 'affiche';
+            $method = 'affiche'; // à comprendre
+
         $model = 'scolarites';
 
         $academicYears = [];

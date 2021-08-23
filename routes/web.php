@@ -123,6 +123,8 @@ Route::prefix('')->middleware('auth')->group(function () {
     Route::get('scolarites/printSuspension', 'ScolariteController@printSuspension')->name('scolarites.printSuspension');
     Route::post('scolarites/printSuspension', 'ScolariteController@suspensions')->name('scolarites.suspensions');
 
+    // Impression des attestations
+
     Route::get('scolarites/attestations/search/{n}', 'ScolariteController@search')->name('scolarites.search'); // pour selectionner la classe a imprimer
     Route::get('scolarites/attestations/select/{cycle}/{specialite}', 'ScolariteController@select_admis')->name('scolarites.select_admis');
     Route::post('scolarites/attestations_reussite', 'ScolariteController@attestations_reussite')->name('scolarites.attestations_reussite');

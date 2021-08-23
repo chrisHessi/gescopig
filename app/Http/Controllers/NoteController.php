@@ -334,7 +334,7 @@ class NoteController extends Controller
         ]);
         // dd($session);
         $semestreInfo->session = $session;
-        $elimSemestre = false;
+        $elimSemestre = false; // Verifier que l'étudiant n'a aucune note éliminatoire dans le semestre
 
         $creditObtsem = 0;
         $nbUeValid = 0;
@@ -348,7 +348,7 @@ class NoteController extends Controller
 
         foreach ($ues as $ue){
             $ueInfo = $this->ueInfoRepository->firstOrNew(['ue_id' => $ue->id, 'contrat_id' => $contrat->id]);
-            $elim = false;
+            $elim = false; // verifier que l'etudiant a une note éliminatoire dans l'unité d'enseignement
             $creditTot = $enseignements->where('ue_id', $ue->id)->sum('credits');
             $creditObt = 0;
             $totalUe = 0;
@@ -370,10 +370,9 @@ class NoteController extends Controller
                 }
                 elseif($session == 'session2'){
 
-                    $del1 = $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1;
                     $del2 = $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2;
 
-                    $note = ($del2 > $del1) ? $del2 : $del1; //Si la note deuxieme session est superieure a la note de premiere session considerer la note de 2e session sinon considerer la 1ere session
+                    $note = $del2;
                     // dd($note);
                 }
                 elseif($session == 'enjambement'){

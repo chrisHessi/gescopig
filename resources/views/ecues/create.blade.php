@@ -82,7 +82,10 @@
                 var ay = $("#academic_year_id").val()
                 if (ay !='') {
                     $("#ecue, #semestre_id").attr('disabled', false)
-                    var url = 'http://' + window.location.host + '/public/ecues/' + ay + '/getEcues'
+                    if(window.location.host == 'pigier.test:81')
+                        var url = 'http://' + window.location.host + '/public/ecues/' + ay + '/getEcues'
+                    else
+                        var url = 'http://' + window.location.host + '/ecues/' + ay + '/getEcues'
                     $.ajax({
                         url: url,
                         type: 'get',
@@ -100,7 +103,10 @@
                                     onClickEvent: function (e) {
 
                                         var id = $('#ecue').getSelectedItemData().id;
-                                        window.location.href = 'http://' + window.location.host + '/ecues/' + id + '/edit';
+                                        if(window.location.host == 'pigier.test:81')
+                                            window.location.href = 'http://' + window.location.host + '/public/ecues/' + id + '/edit';
+                                        else
+                                            window.location.href = 'http://' + window.location.host + '/ecues/' + id + '/edit';
                                     }
                                 }
                             };

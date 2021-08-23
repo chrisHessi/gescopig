@@ -46,8 +46,7 @@ class SemestreController extends AppBaseController
         $semestres = $this->semestreRepository->all();
         $calendars = $this->academicCalendarRepository->findWhere(['academic_year_id' => $this->academicYear]);
 
-        return view('semestres.index')
-            ->with('calendars', $calendars);
+        return view('semestres.index', compact('semestres', 'calendars'));
     }
 
     /**
