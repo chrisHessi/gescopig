@@ -118,7 +118,7 @@ class SemestreController extends AppBaseController
     public function edit($id)
     {
         $semestre = $this->semestreRepository->findWithoutFail($id);
-        $calendar = $semestre->academic_calendars->where('academic_year_id', $this->academicYear);
+        $calendar = $semestre->academic_calendars->where('academic_year_id', $this->academicYear)->first();
         $c = $this->cycleRepository->all();
         $cycle = array();
 
@@ -132,7 +132,7 @@ class SemestreController extends AppBaseController
             return redirect(route('semestres.index'));
         }
 
-        return view('semestres.edit')->with(['calendar' => $calendar, 'cycle' => $cycle]);
+        return view('semestres.edit')->with(['calendar' => $calendar, 'cycle' => $cycle, 'semestre' => $semestre]);
     }
 
     /**
@@ -146,14 +146,21 @@ class SemestreController extends AppBaseController
     public function update($id, UpdateSemestreRequest $request)
     {
         $semestre = $this->semestreRepository->findWithoutFail($id);
+        $calendar = $semestre->academic_calendars->where('academic_year_id', $this->academicYear)->first();
 
         if (empty($semestre)) {
             Flash::error('Semestre not found');
 
             return redirect(route('semestres.index'));
         }
+        if (empty($calendar)) {
+            Flash::error('Veillez ajouter un calendrier pour le '. $semestre->title);
 
-        $semestre = $this->semestreRepository->update($request->all(), $id);
+            return redirect(route('semestres.index'));
+        }
+
+        $semestre = $this->semestreRepository->update($request->except(['dateDebutPrevue', 'dateDebut', 'dateFinPrevue', 'dateFin']), $id);
+        $calendar = $this->academicCalendarRepository->update($request->only(['dateDebutPrevue', 'dateDebut', 'dateFinPrevue', 'dateFin']), $calendar->id);
 
         Flash::success('Semestre updated successfully.');
 
