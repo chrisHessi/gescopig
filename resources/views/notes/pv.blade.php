@@ -193,10 +193,10 @@
                                         </td>
                                     @elseif($session == 'session2')
                                         <td>
-                                            {!! ($contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 > $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1) ? $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 : $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1 !!}
+                                            {!! ($contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 != null) ? $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 : $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1 !!}
                                         </td>
                                         <td>
-                                            {!! (($contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 > $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1) ? $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 : $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1) * $enseignement->credits !!}
+                                            {!! (($contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 != null) ? $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 : $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1) * $enseignement->credits !!}
                                         </td>
                                     @elseif($session == 'enjambement')
                                         <td>

@@ -370,10 +370,7 @@ class NoteController extends Controller
                 }
                 elseif($session == 'session2'){
 
-                    $del2 = $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2;
-
-                    $note = $del2;
-                    // dd($note);
+                    $note = ($contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 != null) ? $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del2 : $contrat->notes->where('enseignement_id', $enseignement->id)->first()->del1;
                 }
                 elseif($session == 'enjambement'){
                     $note = $contrat->notes->where('enseignement_id', $enseignement->id)->first()->enjambement;
